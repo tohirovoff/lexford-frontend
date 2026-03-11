@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import LoadingSpinner from "@/components/ui/loading-spinner"
+import { Skeleton } from "@/components/ui/skeleton"
 import CoinDisplay from "@/components/ui/coin-display"
 import { Gavel, Clock, CheckCircle, XCircle, Package, Calendar, Search, Plus, Trophy, User } from "lucide-react"
 import { toast } from "sonner"
@@ -124,7 +125,34 @@ export default function AuctionPage() {
     }
   }
 
-  if (auctionsLoading) return <LoadingSpinner fullScreen />
+  if (auctionsLoading) {
+    return (
+      <div className="space-y-8 max-w-7xl mx-auto pb-20 pt-20 animate-in fade-in duration-500">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="space-y-3">
+            <Skeleton className="h-10 w-64" />
+            <Skeleton className="h-4 w-80" />
+          </div>
+          <Skeleton className="h-12 w-48 rounded-xl" />
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-24 rounded-xl" />
+          ))}
+        </div>
+        <div className="flex gap-6 border-b border-gray-100 pb-3">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-5 w-20" />
+          ))}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <Skeleton key={i} className="h-[400px] rounded-2xl shadow-sm border border-gray-100" />
+          ))}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-20 pt-20">

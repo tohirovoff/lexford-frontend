@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useSelector } from "react-redux"
-import { useGetMyTransactionsQuery, useCreateTransactionMutation, useGetAllTransactionsQuery } from "@/lib/api/coinsApi"
+import { useGetUserTransactionsQuery, useCreateTransactionMutation } from "@/lib/api/coinsApi"
 import { useGetAllClassesQuery } from "@/lib/api/classesApi"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -28,28 +28,26 @@ export default function CoinsPage() {
   const [amount, setAmount] = useState<string>("")
   const [reason, setReason] = useState<string>("")
   const [transactionType, setTransactionType] = useState<"reward" | "penalty">("reward")
+  const [filterType, setFilterType] = useState<string>("all")
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   // Queries
   // Queries
   const { 
-    data: myTransactions, 
-    isLoading: myLoading, 
-    error: myError 
-  } = useGetMyTransactionsQuery(undefined, { skip: isTeacherOrAdmin })
-  
-  const { 
-    data: allTransactions, 
-    isLoading: allLoading, 
-    error: allError 
-  } = useGetAllTransactionsQuery(undefined, { skip: !isTeacherOrAdmin })
+    data: rawTransactions, 
+    isLoading: transactionsLoading, 
+    error: transactionsError 
+  } = useGetUserTransactionsQuery(user?.id, { skip: !user?.id })
 
-  const transactions = isTeacherOrAdmin ? allTransactions : myTransactions
-  const transactionsLoading = isTeacherOrAdmin ? allLoading : myLoading
-  const transactionsError = isTeacherOrAdmin ? allError : myError
+  const filteredTransactions = (rawTransactions || []).filter((tx: any) => {
+    const amt = Number(tx.amount)
+    if (filterType === "income") return amt > 0
+    if (filterType === "expense") return amt < 0
+    return true
+  })
 
-  console.log("Transactions data:", transactions)
+  console.log("Transactions data:", rawTransactions)
   console.log("Transactions error:", transactionsError)
   const { data: classesResponse } = useGetAllClassesQuery(undefined, { skip: !isTeacherOrAdmin })
   
@@ -63,7 +61,7 @@ export default function CoinsPage() {
   const [createTransaction, { isLoading: isSubmitting }] = useCreateTransactionMutation()
 
   // Stats calculation
-  const stats = (transactions || []).reduce(
+  const stats = (rawTransactions || []).reduce(
     (acc: any, tx: any) => {
       const amt = Number(tx.amount)
       if (amt > 0) acc.earned += amt
@@ -84,12 +82,14 @@ export default function CoinsPage() {
     }
 
     try {
+      const finalAmount = transactionType === "penalty" ? -Math.abs(Number(amount)) : Math.abs(Number(amount))
+      
       const payload = {
         user_id: Number(selectedStudentId),
-        amount: Number(amount),
+        amount: finalAmount,
         type: transactionType,
         reason: reason,
-        created_by: Number(user?.id) // Add who created this transaction
+        created_by: Number(user?.id)
       }
 
       await createTransaction(payload).unwrap()
@@ -282,7 +282,7 @@ export default function CoinsPage() {
                   <History className="h-5 w-5 text-gray-500" />
                   Tranzaksiyalar tarixi
                 </CardTitle>
-                <Tabs defaultValue="all" className="w-[300px]">
+                <Tabs value={filterType} onValueChange={setFilterType} className="w-[300px]">
                   <TabsList className="grid w-full grid-cols-3 h-8">
                     <TabsTrigger value="all" className="text-xs">Barchasi</TabsTrigger>
                     <TabsTrigger value="income" className="text-xs">Kirim</TabsTrigger>
@@ -298,7 +298,7 @@ export default function CoinsPage() {
                     <p className="font-medium">Xatolik yuz berdi</p>
                     <p className="text-sm mt-1">{JSON.stringify(transactionsError)}</p>
                   </div>
-                ) : (!transactions || transactions.length === 0) ? (
+                ) : (!filteredTransactions || filteredTransactions.length === 0) ? (
                   <div className="flex flex-col items-center justify-center py-16 text-gray-500">
                     <div className="bg-gray-100 p-4 rounded-full mb-3">
                       <History className="h-8 w-8 text-gray-400" />
@@ -307,8 +307,10 @@ export default function CoinsPage() {
                   </div>
                 ) : (
                  <div className="divide-y divide-gray-100">
-                   {transactions.map((tx: any) => {
+                   {filteredTransactions.map((tx: any) => {
                      const isPositive = Number(tx.amount) > 0
+                     const isSelf = tx.user_id === user?.id
+                     
                      return (
                        <div key={tx._id || tx.id} className="p-4 hover:bg-gray-50 transition-colors flex items-center justify-between gap-4">
                          <div className="flex items-center gap-4">
@@ -321,6 +323,9 @@ export default function CoinsPage() {
                                <Badge variant="secondary" className="text-[10px] h-5">
                                  {tx.type === 'reward' ? "Mukofot" : tx.type === 'penalty' ? "Jarima" : tx.type === 'attendance' ? "Davomat" : tx.type}
                                </Badge>
+                               <span className="text-[10px] font-medium text-gray-400 italic">
+                                  {isSelf ? "Olingan" : `Yuborilgan (@${tx.receiver?.username || 'user'})`}
+                               </span>
                                <span className="text-xs text-gray-500">
                                  {new Date(tx.createdAt || tx.created_at).toLocaleDateString("uz-UZ", { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                                </span>

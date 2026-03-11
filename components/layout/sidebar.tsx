@@ -37,7 +37,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       href: "/users",
       label: "Foydalanuvchilar",
       icon: Users,
-      roles: ["admin", "teacher"],
+      roles: ["admin"],
     },
     {
       href: "/classes",
@@ -85,7 +85,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   return (
     <>
-      {/* Mobile overlay - faqat sidebar ochiq bo‘lganda */}
+      {/* Mobile overlay - faqat sidebar ochiq bo'lganda */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
@@ -95,25 +95,25 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-gray-200 shadow-2xl
+        className={`fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 shadow-2xl
           transform transition-all duration-300 ease-in-out lg:translate-x-0
           ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         {/* Logo + Close button */}
-        <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+        <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
           <Link href="/dashboard" className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-red-700 rounded-xl flex items-center justify-center shadow-md">
               <span className="text-white font-bold text-2xl">L</span>
             </div>
-            <span className="text-2xl font-bold text-gray-900">Lexford</span>
+            <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">Lexford</span>
           </Link>
 
           <button
             onClick={onClose}
-            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             aria-label="Close sidebar"
           >
-            <X className="w-6 h-6 text-gray-600" />
+            <X className="w-6 h-6 text-gray-600 dark:text-gray-400" />
           </button>
         </div>
 
@@ -128,8 +128,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   className={`flex items-center gap-4 px-5 py-4 rounded-2xl text-base transition-all duration-200
                     ${
                       isActive(item.href)
-                        ? "bg-gradient-to-r from-red-50 to-red-100 text-red-700 font-semibold shadow-sm"
-                        : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                        ? "bg-gradient-to-r from-red-50 to-red-100 dark:from-red-950 dark:to-red-900 text-red-700 dark:text-red-400 font-semibold shadow-sm"
+                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
                     }`}
                 >
                   <item.icon className="w-6 h-6" />
@@ -141,24 +141,24 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         </nav>
 
         {/* Bottom section: Role badge + Logout */}
-        <div className="p-6 border-t border-gray-100 mt-auto">
+        <div className="p-6 border-t border-gray-100 dark:border-gray-800 mt-auto">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div
                 className={`px-4 py-2 rounded-full text-sm font-medium shadow-sm
                   ${
                     user?.role === "admin"
-                      ? "bg-red-100 text-red-700"
+                      ? "bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400"
                       : user?.role === "teacher"
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-green-100 text-green-700"
+                      ? "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-400"
+                      : "bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-400"
                   }`}
               >
                 {getRoleLabel(user?.role)}
               </div>
 
               {user?.class_name && (
-                <span className="text-sm text-gray-600 hidden lg:block">
+                <span className="text-sm text-gray-600 dark:text-gray-400 hidden lg:block">
                   {user.class_name}
                 </span>
               )}
@@ -169,7 +169,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 dispatch(logout())
                 onClose() // mobil qurilmada yopilishi uchun
               }}
-              className="p-3 rounded-xl hover:bg-red-50 text-red-600 transition-colors hover:shadow-sm"
+              className="p-3 rounded-xl hover:bg-red-50 dark:hover:bg-red-950 text-red-600 dark:text-red-400 transition-colors hover:shadow-sm"
               title="Chiqish"
             >
               <LogOut className="w-5 h-5" />

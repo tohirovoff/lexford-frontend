@@ -44,17 +44,17 @@ export default function Header({ onMenuClick }: HeaderProps) {
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 z-40 shadow-sm backdrop-blur-sm bg-opacity-90">
+    <header className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 z-40 shadow-sm backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90">
       <div className="flex items-center justify-between h-full px-4 md:px-8 max-w-screen-2xl mx-auto">
         {/* Left: Logo + Hamburger (mobil uchun) */}
         <div className="flex items-center gap-5">
           {/* Hamburger - faqat mobil */}
           <button
             onClick={onMenuClick}
-            className="p-2 rounded-xl hover:bg-gray-100 transition-colors lg:hidden"
+            className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors lg:hidden"
             aria-label="Open sidebar"
           >
-            <Menu className="w-7 h-7 text-gray-700" />
+            <Menu className="w-7 h-7 text-gray-700 dark:text-gray-300" />
           </button>
 
           {/* Logo */}
@@ -62,7 +62,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
             <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-red-700 rounded-xl flex items-center justify-center shadow-lg">
               <span className="text-white font-extrabold text-2xl">L</span>
             </div>
-            <span className="text-2xl font-extrabold text-gray-900 hidden md:block">Lexford</span>
+            <span className="text-2xl font-extrabold text-gray-900 dark:text-gray-100 hidden md:block">Lexford</span>
           </Link>
         </div>
 
@@ -80,42 +80,42 @@ export default function Header({ onMenuClick }: HeaderProps) {
             <div className="relative" ref={userRef}>
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className="flex items-center gap-3 px-2 py-1.5 rounded-xl hover:bg-gray-100 transition-all duration-200"
+                className="flex items-center gap-3 px-2 py-1.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
               >
-                <div className="w-11 h-11 rounded-full overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 border-2 border-white shadow-md">
+                <div className="w-11 h-11 rounded-full overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 border-2 border-white dark:border-gray-700 shadow-md">
                   {user?.profile_picture ? (
                     <img
-                      src={getImageUrl(user.profile_picture)}
+                      src={getImageUrl(user.profile_picture) || undefined}
                       alt={user.fullname}
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-red-100 text-red-600">
+                    <div className="w-full h-full flex items-center justify-center bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400">
                       <UserCircle className="w-7 h-7" />
                     </div>
                   )}
                 </div>
                 <div className="hidden md:block text-left">
-                  <p className="text-sm font-semibold text-gray-900 truncate max-w-[160px]">
+                  <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate max-w-[160px]">
                     {user?.fullname || user?.username}
                   </p>
-                  <p className="text-xs text-gray-500">{getRoleLabel(user?.role)}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{getRoleLabel(user?.role)}</p>
                 </div>
-                <ChevronDown className="w-4 h-4 text-gray-500" />
+                <ChevronDown className="w-4 h-4 text-gray-500 dark:text-gray-400" />
               </button>
 
               {userDropdownOpen && (
-                <div className="absolute right-0 mt-3 w-72 bg-white rounded-2xl shadow-2xl border border-gray-200 py-2 z-50 animate-fade-in">
+                <div className="absolute right-0 mt-3 w-72 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 py-2 z-50 animate-fade-in">
                   {/* User Info */}
-                  <div className="px-6 py-4 border-b border-gray-100">
-                    <p className="font-semibold text-lg text-gray-900">{user?.fullname}</p>
-                    <p className="text-sm text-gray-600">@{user?.username}</p>
+                  <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-800">
+                    <p className="font-semibold text-lg text-gray-900 dark:text-gray-100">{user?.fullname}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">@{user?.username}</p>
                   </div>
 
                   {/* Menu Items */}
                   <Link
                     href="/profile"
-                    className="flex items-center gap-4 px-6 py-4 text-gray-800 hover:bg-gray-50 transition-colors"
+                    className="flex items-center gap-4 px-6 py-4 text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                     onClick={() => setUserDropdownOpen(false)}
                   >
                     <UserCircle className="w-5 h-5" />
@@ -127,7 +127,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
                       handleLogout()
                       setUserDropdownOpen(false)
                     }}
-                    className="w-full flex items-center gap-4 px-6 py-4 text-red-600 hover:bg-red-50 transition-colors"
+                    className="w-full flex items-center gap-4 px-6 py-4 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950 transition-colors"
                   >
                     <LogOut className="w-5 h-5" />
                     Chiqish

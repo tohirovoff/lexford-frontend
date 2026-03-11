@@ -102,12 +102,22 @@ export default function ProfilePage() {
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <div className="flex flex-col sm:flex-row items-center gap-6">
           <div className="relative">
-            <div className="w-24 h-24 rounded-full bg-red-100 flex items-center justify-center overflow-hidden border-4 border-white shadow-lg">
-              {imagePreview || user?.profile_picture ? (
+            <div className="w-24 h-24 rounded-full bg-red-100 flex items-center justify-center overflow-hidden border-4 border-white shadow-lg relative">
+              {imagePreview || getImageUrl(user?.profile_picture) ? (
                 <img
-                  src={imagePreview || getImageUrl(user?.profile_picture)}
+                  src={imagePreview || getImageUrl(user?.profile_picture) || ""}
                   alt={user?.fullname}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = 'none';
+                    const parent = (e.target as HTMLImageElement).parentElement;
+                    if (parent && !parent.querySelector('.fallback-icon')) {
+                      const icon = document.createElement('div');
+                      icon.className = 'fallback-icon flex items-center justify-center w-full h-full';
+                      icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-12 h-12 text-red-600"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
+                      parent.appendChild(icon);
+                    }
+                  }}
                 />
               ) : (
                 <User className="w-12 h-12 text-red-600" />

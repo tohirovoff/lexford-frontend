@@ -1,19 +1,24 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { useGetAllUsersQuery, useDeleteUserMutation, useUpdateUserMutation } from "@/lib/api/usersApi"
+import { useGetAllUsersQuery, useDeleteUserMutation, useUpdateUserMutation, useCreateUserMutation } from "@/lib/api/usersApi"
 import { useGetAllClassesQuery } from "@/lib/api/classesApi"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import LoadingSpinner from "@/components/ui/loading-spinner"
-import { Search, Trash2, Eye, Users, GraduationCap, UserCog } from "lucide-react"
-import { getImageUrl } from "@/lib/utils"
+import { Search, Trash2, Eye, Users, GraduationCap, UserCog, Calendar as CalendarIcon, CheckCircle2, XCircle, Clock, Plus, Loader2 } from "lucide-react"
+import { getImageUrl, getProfileImageUrl } from "@/lib/utils"
+import { useGetStudentStatsQuery } from "@/lib/api/attendanceApi"
+import { Calendar } from "@/components/ui/calendar"
+import { useSelector } from "react-redux"
+import { toast } from "sonner"
 
 export default function UsersListPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -22,6 +27,19 @@ export default function UsersListPage() {
   const [deleteConfirm, setDeleteConfirm] = useState<any>(null)
   const [selectedClass, setSelectedClass] = useState<string>("")
   const [updateSuccess, setUpdateSuccess] = useState(false)
+  
+  const { user: currentUser } = useSelector((state: any) => state.auth)
+  const isAdmin = currentUser?.role === "admin"
+
+  const [isAddUserOpen, setIsAddUserOpen] = useState(false)
+  const [newUser, setNewUser] = useState({
+    fullname: "",
+    username: "",
+    password: "",
+    role: "student",
+    class_id: "",
+    grade: "",
+  })
 
   const { data: usersResponse, isLoading, error } = useGetAllUsersQuery(undefined)
   const users = Array.isArray(usersResponse) ? usersResponse : usersResponse?.data || []
@@ -29,6 +47,7 @@ export default function UsersListPage() {
   const classes = Array.isArray(classesResponse) ? classesResponse : classesResponse?.data || []
   const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation()
   const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation()
+  const [createUser, { isLoading: isCreating }] = useCreateUserMutation()
 
   const filteredUsers = useMemo(() => {
     if (!users) return []
@@ -65,6 +84,44 @@ export default function UsersListPage() {
     }
   }
 
+  const handleCreateUser = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newUser.fullname || !newUser.username || !newUser.password || !newUser.role) {
+      toast.error("Iltimos, barcha majburiy maydonlarni to'ldiring")
+      return
+    }
+
+    try {
+      const payload: any = {
+        fullname: newUser.fullname,
+        username: newUser.username,
+        password: newUser.password,
+        role: newUser.role,
+      }
+
+      if (newUser.role === "student") {
+        payload.coins = 0
+        if (newUser.class_id && newUser.class_id !== "none") {
+          payload.class_id = parseInt(newUser.class_id)
+        }
+        if (newUser.grade) {
+          payload.grade = String(newUser.grade)
+        }
+      } else {
+        // Teacher yoki Admin uchun
+        payload.class_id = null;
+      }
+
+      await createUser(payload).unwrap()
+      toast.success("Foydalanuvchi muvaffaqiyatli qo'shildi")
+      setIsAddUserOpen(false)
+      setNewUser({ fullname: "", username: "", password: "", role: "student", class_id: "", grade: "" })
+    } catch (err: any) {
+      console.error(err)
+      toast.error(err?.data?.message || err?.data?.error || "Xatolik yuz berdi")
+    }
+  }
+
   const handleUserDetailsOpen = (user: any) => {
     setSelectedUser(user)
     setSelectedClass(user.classId || "")
@@ -98,9 +155,116 @@ export default function UsersListPage() {
     <div className="space-y-6 max-w-7xl mx-auto pt-4 md:pt-6">
       <div className="flex items-center justify-between">
         <div>
-           <h1 className="text-2xl font-bold text-gray-900">Foydalanuvchilar</h1>
-           <p className="text-gray-500">Tizimdagi barcha foydalanuvchilar ro'yxati</p>
+           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Foydalanuvchilar</h1>
+           <p className="text-gray-500 dark:text-gray-400">Tizimdagi barcha foydalanuvchilar ro'yxati</p>
         </div>
+        {isAdmin && (
+          <Dialog open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-red-600 hover:bg-red-700 text-white rounded-xl shadow-md">
+                <Plus className="w-5 h-5 mr-2" />
+                Foydalanuvchi qo'shish
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Yangi foydalanuvchi qo'shish</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleCreateUser} className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="fullname">To'liq ism</Label>
+                  <Input
+                    id="fullname"
+                    placeholder="Falonchiyev Pistonchi"
+                    value={newUser.fullname}
+                    onChange={(e) => setNewUser({ ...newUser, fullname: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="username">Username</Label>
+                  <Input
+                    id="username"
+                    placeholder="username123"
+                    value={newUser.username}
+                    onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">Parol</Label>
+                  <Input
+                    id="password"
+                    type="text"
+                    placeholder="Parol kiriting"
+                    value={newUser.password}
+                    onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Roli</Label>
+                  <Select
+                    value={newUser.role}
+                    onValueChange={(val) => setNewUser({ ...newUser, role: val })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Rolni tanlang" />
+                    </SelectTrigger>
+                    <SelectContent className="z-[110]">
+                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="teacher">O'qituvchi</SelectItem>
+                      <SelectItem value="student">O'quvchi</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                {newUser.role === "student" && (
+                  <>
+                    <div className="space-y-2">
+                      <Label>Sinf (Ixtiyoriy)</Label>
+                      <Select
+                        value={newUser.class_id}
+                        onValueChange={(val) => setNewUser({ ...newUser, class_id: val })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Sinfni tanlang" />
+                        </SelectTrigger>
+                        <SelectContent className="z-[110]">
+                          <SelectItem value="none">Sinfga qo'shmaslik</SelectItem>
+                          {classes.map((cls: any) => (
+                            <SelectItem key={cls.id || cls._id} value={String(cls.id || cls._id)}>
+                              {cls.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    {newUser.class_id === "none" && (
+                      <div className="space-y-2 animate-in fade-in zoom-in duration-200">
+                        <Label htmlFor="grade">Daraja (Grade) - Ixtiyoriy</Label>
+                        <Input
+                          id="grade"
+                          placeholder="Sinf darajasi (masalan: 10)"
+                          value={newUser.grade}
+                          onChange={(e) => setNewUser({ ...newUser, grade: e.target.value })}
+                        />
+                      </div>
+                    )}
+                  </>
+                )}
+
+                <Button type="submit" disabled={isCreating} className="w-full bg-red-600 hover:bg-red-700">
+                  {isCreating ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Qo'shilmoqda...
+                    </>
+                  ) : (
+                    "Qo'shish"
+                  )}
+                </Button>
+              </form>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
 
       {/* Stats Cards */}
@@ -188,6 +352,7 @@ export default function UsersListPage() {
                 <TableHead>Foydalanuvchi</TableHead>
                 <TableHead>Username</TableHead>
                 <TableHead>Rol</TableHead>
+                <TableHead>Sinf</TableHead>
                 <TableHead>Tangalar</TableHead>
                 <TableHead className="text-right">Amallar</TableHead>
               </TableRow>
@@ -198,7 +363,7 @@ export default function UsersListPage() {
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar>
-                        <AvatarImage src={getImageUrl(user.profile_picture)} />
+                        <AvatarImage src={getProfileImageUrl(user.profile_picture)} />
                         <AvatarFallback className="bg-red-100 text-red-700">
                           {user.fullname?.charAt(0) || "U"}
                         </AvatarFallback>
@@ -213,7 +378,15 @@ export default function UsersListPage() {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <span className="font-medium text-amber-600">{user.coinBalance || 0}</span>
+                    <span className="text-sm text-gray-600 font-medium">
+                       {user.class?.name || user.class_name || (user.role === 'student' ? "Sinf yo'q" : '—')}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1.5">
+                       <span className="font-bold text-amber-600">{user.coins || user.coinBalance || 0}</span>
+                       <span className="text-[10px] text-amber-500 uppercase font-bold">tanga</span>
+                    </div>
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
@@ -234,7 +407,7 @@ export default function UsersListPage() {
               ))}
               {filteredUsers.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                  <TableCell colSpan={6} className="text-center py-8 text-gray-500">
                     Foydalanuvchilar topilmadi
                   </TableCell>
                 </TableRow>
@@ -254,7 +427,7 @@ export default function UsersListPage() {
             <div className="space-y-4">
               <div className="flex items-center gap-4">
                 <Avatar className="h-16 w-16">
-                  <AvatarImage src={getImageUrl(selectedUser.profile_picture)} />
+                  <AvatarImage src={getProfileImageUrl(selectedUser.profile_picture)} />
                   <AvatarFallback className="bg-red-100 text-red-700 text-xl">
                     {selectedUser.fullname?.charAt(0)}
                   </AvatarFallback>
@@ -310,11 +483,15 @@ export default function UsersListPage() {
                     <p className="font-medium">{selectedUser.classId || "-"}</p>
                   )}
                 </div>
-                <div>
-                  <p className="text-gray-500">Davomat</p>
-                  <p className="font-medium">
-                    {selectedUser.attendanceStreak || 0} kun
-                  </p>
+                <div className="col-span-2">
+                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Davomat kalendari</p>
+                   <AttendanceCalendar studentId={selectedUser.id} />
+                </div>
+
+                <div className="col-span-2 mt-4 pt-4 border-t border-gray-100 text-center">
+                   <p className="text-xs text-gray-400">
+                      Sinfni o'zgartirish faqat administratorlar uchun ruxsat etilgan
+                   </p>
                 </div>
               </div>
             </div>
@@ -339,6 +516,56 @@ export default function UsersListPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+    </div>
+  )
+}
+
+function AttendanceCalendar({ studentId }: { studentId: number }) {
+  const { data: stats, isLoading } = useGetStudentStatsQuery(studentId, { skip: !studentId })
+  
+  if (isLoading) return <div className="p-4 flex justify-center"><LoadingSpinner size="sm" /></div>
+  if (!stats) return <p className="text-xs text-center text-gray-400 py-4">Ma'lumot topilmadi</p>
+
+  const presentDays = (stats.recent_attendances || []).map((d: string) => new Date(d))
+  const lateDays = (stats.recent_late_days || []).map((d: string) => new Date(d))
+  
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap gap-3 mb-2">
+        <div className="flex items-center gap-1.5 text-[10px] font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full border border-green-100">
+          <div className="w-1.5 h-1.5 rounded-full bg-green-500" /> Kelgan
+        </div>
+        <div className="flex items-center gap-1.5 text-[10px] font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded-full border border-amber-100">
+          <div className="w-1.5 h-1.5 rounded-full bg-amber-500" /> Kechikkan
+        </div>
+      </div>
+      
+      <div className="border rounded-xl p-3 bg-white shadow-sm overflow-hidden flex justify-center">
+        <Calendar
+          mode="multiple"
+          selected={[...presentDays, ...lateDays]}
+          modifiers={{
+            present: presentDays,
+            late: lateDays,
+          }}
+          modifiersClassNames={{
+            present: "bg-green-100! text-green-700! font-bold rounded-full",
+            late: "bg-amber-100! text-amber-700! font-bold rounded-full",
+          }}
+          className="p-0 border-0"
+        />
+      </div>
+      
+      <div className="grid grid-cols-2 gap-2">
+        <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
+           <p className="text-[10px] text-gray-400 uppercase font-bold tracking-tight">Umumiy kelgan</p>
+           <p className="text-lg font-bold text-gray-900">{stats.total_days_present || 0} kun</p>
+        </div>
+        <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
+           <p className="text-[10px] text-gray-400 uppercase font-bold tracking-tight">Kechikkanlar</p>
+           <p className="text-lg font-bold text-gray-900">{stats.total_days_late || 0} kun</p>
+        </div>
+      </div>
     </div>
   )
 }

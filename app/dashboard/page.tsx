@@ -9,6 +9,7 @@ import {
 import { useGetAllClassesQuery } from "@/lib/api/classesApi"
 import { useGetUserTransactionsQuery } from "@/lib/api/coinsApi"
 import LoadingSpinner from "@/components/ui/loading-spinner"
+import { Skeleton } from "@/components/ui/skeleton"
 import CoinDisplay from "@/components/ui/coin-display"
 import StatCard from "@/components/ui/StatCard"
 import QuickActionCard from "@/components/ui/QuickActionCard"
@@ -59,7 +60,58 @@ export default function Dashboard() {
   const isLoading = loadingUsers || loadingClasses || loadingLeaderboard || loadingTransactions
 
   if (isLoading) {
-    return <LoadingSpinner fullScreen />
+    return (
+      <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
+        {/* Welcome Header Skeleton */}
+        <div className="bg-white/40 dark:bg-gray-900/40 rounded-xl p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6 border border-gray-100/50 backdrop-blur-sm">
+          <div className="space-y-3 flex-1">
+            <Skeleton className="h-10 w-[280px] md:w-[400px]" />
+            <Skeleton className="h-5 w-[140px]" />
+          </div>
+          <Skeleton className="h-16 w-16 rounded-full" />
+        </div>
+
+        {/* Stats Grid Skeleton */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-32 rounded-xl shadow-sm border border-gray-100/50" />
+          ))}
+        </div>
+
+        {/* Content Grid Skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Leaderboard Skeleton */}
+          <div className="bg-white/40 dark:bg-gray-900/40 rounded-xl border border-gray-100/50 p-6 lg:p-8 space-y-6">
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-8 w-40" />
+              <Skeleton className="h-8 w-8 rounded-lg" />
+            </div>
+            <div className="space-y-4">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="flex items-center gap-5 p-4 rounded-lg border border-gray-50/50">
+                   <Skeleton className="h-12 w-12 rounded-lg" />
+                   <div className="flex-1 space-y-2">
+                     <Skeleton className="h-5 w-3/4" />
+                     <Skeleton className="h-4 w-1/2" />
+                   </div>
+                   <Skeleton className="h-8 w-16" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Quick Actions Skeleton */}
+          <div className="bg-white/40 dark:bg-gray-900/40 rounded-xl border border-gray-100/50 p-6 lg:p-8 space-y-6">
+            <Skeleton className="h-8 w-48" />
+            <div className="grid grid-cols-2 gap-5">
+              {[1, 2, 3, 4].map((i) => (
+                <Skeleton key={i} className="h-32 rounded-xl" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (

@@ -7,11 +7,12 @@ import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Eye, EyeOff, LogIn } from "lucide-react";
+import { Eye, EyeOff, LogIn, XCircle } from "lucide-react";
 import { useLoginMutation } from "@/lib/api/authApi";
 import { decodeToken } from "@/lib/auth";
 import { setCredentials } from "@/lib/store";
 import { toast } from "sonner";
+import LoadingSpinner from "@/components/ui/loading-spinner";
 
 // Validation schema
 const loginSchema = z.object({
@@ -106,10 +107,18 @@ export default function LoginPage() {
             Hisobingizga kirish uchun ma'lumotlarni kiriting
           </p>
 
-          {/* Server xatosi */}
+          {/* Server xatosi - Prominent Error Display */}
           {serverError && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-              {serverError}
+            <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg shadow-sm animate-in fade-in slide-in-from-top-4 duration-300">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 mt-0.5">
+                  <XCircle className="h-5 w-5 text-red-500" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-red-800">Xatolik yuz berdi</h3>
+                  <p className="text-xs text-red-700 mt-1">{serverError}</p>
+                </div>
+              </div>
             </div>
           )}
 
@@ -175,11 +184,11 @@ export default function LoginPage() {
               disabled={isLoading}
               className="w-full py-3 px-4 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg
                          transition-all duration-200 flex items-center justify-center gap-2
-                         disabled:opacity-70 disabled:cursor-not-allowed shadow-md"
+                         disabled:opacity-70 disabled:cursor-not-allowed shadow-[0_4px_12px_rgba(220,38,38,0.25)] hover:shadow-[0_4px_20px_rgba(220,38,38,0.4)]"
             >
               {isLoading ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <LoadingSpinner size="sm" />
                   <span>Kirilmoqda...</span>
                 </>
               ) : (

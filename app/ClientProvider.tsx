@@ -2,6 +2,7 @@
 
 import { Provider } from "react-redux";
 import { store } from "@/lib/store";
+import { ThemeProvider } from "@/components/theme-provider";
 import { Analytics } from "@vercel/analytics/react";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
@@ -17,22 +18,30 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
 
   return (
     <Provider store={store}>
-      <div className="flex min-h-screen">
-        {/* Sidebar */}
-        {!isAuthPage && (
-          <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-        )}
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="light"
+        enableSystem={false}
+        disableTransitionOnChange
+      >
+        <div className="flex min-h-screen">
+          {/* Sidebar */}
+          {!isAuthPage && (
+            <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+          )}
 
-        <div className={`flex-1 flex flex-col ${!isAuthPage ? "lg:ml-72" : ""}`}>
-          {/* Header */}
-          {!isAuthPage && <Header onMenuClick={() => setSidebarOpen(true)} />}
+          <div className={`flex-1 flex flex-col ${!isAuthPage ? "lg:ml-72" : ""}`}>
+            {/* Header */}
+            {!isAuthPage && <Header onMenuClick={() => setSidebarOpen(true)} />}
 
-          <main className={`flex-1 ${!isAuthPage ? "p-6 md:p-10 overflow-y-auto" : "flex flex-col"}`}>{children}</main>
+            <main className={`flex-1 ${!isAuthPage ? "p-6 md:p-10 overflow-y-auto" : "flex flex-col"}`}>{children}</main>
+          </div>
         </div>
-      </div>
 
-      <Toaster position="top-right" richColors />
-      <Analytics />
+        <Toaster position="top-right" richColors />
+        <Analytics />
+      </ThemeProvider>
     </Provider>
   );
 }
+

@@ -15,6 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import LoadingSpinner from "@/components/ui/loading-spinner"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Calendar, Check, X, Clock, CheckCircle2, XCircle, AlertCircle, Save, UserCircle } from "lucide-react"
 import { toast } from "sonner" // Assuming sonner is installed or use default toast if available
 
@@ -27,7 +28,16 @@ export default function AttendanceMarkingPage() {
 
   // API Calls
   const { data: classesResponse, isLoading: classesLoading } = useGetAllClassesQuery(undefined)
-  const classes = Array.isArray(classesResponse) ? classesResponse : classesResponse?.data || []
+  const rawClasses = Array.isArray(classesResponse) ? classesResponse : classesResponse?.data || []
+  
+  // Role based class filtering
+  const { user } = useSelector((state: any) => state.auth)
+  const isAdmin = user?.role === "admin"
+  
+  const classes = useMemo(() => {
+    if (isAdmin) return rawClasses
+    return rawClasses.filter((cls: any) => (cls.teacher_id === user?.id || cls.teacher?.id === user?.id))
+  }, [rawClasses, isAdmin, user?.id])
 
   const selectedClass = classes?.find((cls: any) => (cls._id || cls.id).toString() === selectedClassId)
   const students = selectedClass?.students || []
@@ -64,9 +74,6 @@ export default function AttendanceMarkingPage() {
 
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-
-  // Get current user for teacher_id
-  const { user } = useSelector((state: any) => state.auth)
 
   const handleSubmit = async () => {
     if (!selectedClassId) return
@@ -191,7 +198,29 @@ export default function AttendanceMarkingPage() {
     return students.filter((s:any) => strIds.includes((s._id || s.id).toString()))
   }
 
-  if (classesLoading) return <LoadingSpinner fullScreen />
+  if (classesLoading) {
+    return (
+      <div className="space-y-6 max-w-6xl mx-auto pt-4 md:pt-6 animate-in fade-in duration-500">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-40" />
+            <Skeleton className="h-4 w-64" />
+          </div>
+          <Skeleton className="h-8 w-48 rounded-full" />
+        </div>
+        <Card className="p-6">
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-10 w-64" />
+          </div>
+        </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+           <Skeleton className="h-[400px] rounded-xl" />
+           <Skeleton className="h-[400px] rounded-xl" />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto pt-4 md:pt-6">
@@ -222,31 +251,44 @@ export default function AttendanceMarkingPage() {
       )}
 
       {/* Class Selection */}
-      <Card className="border-t-4 border-t-red-600 shadow-sm">
+      <Card className="border-t-4 border-t-red-600 shadow-sm overflow-hidden">
         <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row gap-4 items-end md:items-center">
-            <div className="w-full md:w-64 space-y-2">
-              <label className="text-sm font-medium text-gray-700">Sinfni tanlang</label>
-              <Select value={selectedClassId} onValueChange={setSelectedClassId}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Sinf tanlanmagan" />
-                </SelectTrigger>
-                <SelectContent>
-                  {classes?.map((cls: any) => (
-                    <SelectItem key={cls._id || cls.id} value={(cls._id || cls.id).toString()}>
-                      {cls.name} ({cls.grade || "Sinf"})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          {classes.length === 0 && !classesLoading ? (
+            <div className="flex flex-col items-center justify-center py-4 text-center">
+              <div className="w-12 h-12 bg-amber-50 rounded-full flex items-center justify-center mb-3">
+                <AlertCircle className="h-6 w-6 text-amber-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900">Sizga sinf biriktirilmagan</h3>
+              <p className="text-sm text-gray-500 max-w-xs">
+                Siz hozircha hech qanday sinfga rahbar qilib tayinlanmagansiz. 
+                Iltimos, adminstratorga murojaat qiling.
+              </p>
             </div>
-            
-            {selectedClassId && (
-               <div className="text-sm text-gray-500 pb-1">
-                 O'quvchilar soni: <span className="font-semibold text-gray-900">{students.length}</span> nafar
-               </div>
-            )}
-          </div>
+          ) : (
+            <div className="flex flex-col md:flex-row gap-4 items-end md:items-center">
+              <div className="w-full md:w-64 space-y-2">
+                <label className="text-sm font-medium text-gray-700">Sinfni tanlang</label>
+                <Select value={selectedClassId} onValueChange={setSelectedClassId}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Sinf tanlanmagan" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {classes?.map((cls: any) => (
+                      <SelectItem key={cls._id || cls.id} value={(cls._id || cls.id).toString()}>
+                        {cls.name} ({cls.grade || "Sinf"})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              {selectedClassId && (
+                <div className="text-sm text-gray-500 pb-1">
+                  O'quvchilar soni: <span className="font-semibold text-gray-900">{students.length}</span> nafar
+                </div>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -428,184 +470,161 @@ export default function AttendanceMarkingPage() {
                 )}
               </Button>
             </div>
-          </TabsContent>
-
-          <TabsContent value="history">
-            <Card className="shadow-sm">
-              <CardHeader>
-                <CardTitle>Davomat tarixi</CardTitle>
-                <p className="text-sm text-gray-500">Ushbu sinf uchun oxirgi qayd etilgan davomatlar (sanalar bo'yicha)</p>
+          </TabsContent>          <TabsContent value="history">
+            <Card className="shadow-sm overflow-hidden">
+              <CardHeader className="bg-gray-50/50 border-b">
+                <CardTitle className="text-xl">Davomat tarixi</CardTitle>
+                <p className="text-sm text-gray-500 font-normal">Oxirgi qayd etilgan davomatlar</p>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-6">
                 {historyLoading ? (
-                  <div className="py-12">
+                  <div className="py-20 flex flex-col items-center gap-4">
                     <LoadingSpinner />
+                    <p className="text-sm text-gray-400">Tarix yuklanmoqda...</p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-6">
                      {history?.map((record: any, index: number) => {
-                       const presentStudents = getDataFromIds(record.present_student_ids || [])
-                       const lateStudents = getDataFromIds(record.late_student_ids || [])
-                       
-                       // Calculate absent students
                        const presentIds = (record.present_student_ids || []).map((id: any) => id.toString())
                        const lateIds = (record.late_student_ids || []).map((id: any) => id.toString())
+                       
+                       const presentStudents = getDataFromIds(presentIds)
+                       const lateStudents = getDataFromIds(lateIds)
                        
                        const absentStudents = students.filter((s: any) => {
                          const id = (s._id || s.id).toString()
                          return !presentIds.includes(id) && !lateIds.includes(id)
                        })
 
-                       const recordStats = record.stats || {}
-                       
                        const recordDate = new Date(record.createdAt || record.date)
-                       const dayStr = recordDate.getDate().toString().padStart(2, '0')
-                       const monthStr = (recordDate.getMonth() + 1).toString().padStart(2, '0')
-                       const yearStr = recordDate.getFullYear()
-                       const dateDisplay = `${dayStr}-${monthStr}-${yearStr}`
-                       
+                       const dateStr = recordDate.toLocaleDateString("uz-UZ", { day: 'numeric', month: 'long', year: 'numeric' })
                        const uzbekWeekdays = ["Yakshanba", "Dushanba", "Seshanba", "Chorshanba", "Payshanba", "Juma", "Shanba"]
                        const weekday = uzbekWeekdays[recordDate.getDay()]
-                       const time = recordDate.toLocaleTimeString("uz-UZ", { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+                       const time = recordDate.toLocaleTimeString("uz-UZ", { hour: '2-digit', minute: '2-digit' })
 
                        return (
-                      <div key={record._id || record.id || index} className="group p-5 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
-                        {/* Header Section */}
-                        <div className="flex flex-col md:flex-row md:items-start justify-between mb-6 gap-4">
-                          <div className="flex items-start gap-4">
-                             {/* Date Box */}
-                             <div className="flex flex-col items-center justify-center bg-blue-50 w-24 h-16 rounded-xl border border-blue-100 text-blue-700 shadow-sm px-2">
-                               <span className="text-xl font-bold leading-none">{dateDisplay}</span>
-                             </div>
-
-                             <div>
-                               <div className="flex items-center gap-2 mb-1">
-                                 <h3 className="font-bold text-gray-900 text-lg capitalize">{weekday}</h3>
-                                 <Badge variant="outline" className="text-xs font-normal text-gray-500 bg-gray-50">
-                                   <Clock className="w-3 h-3 mr-1" />
-                                   {time}
-                                 </Badge>
+                       <div key={record._id || record.id || index} className="overflow-hidden border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
+                          {/* Top bar with stats highlight */}
+                          <div className="bg-gray-50/80 px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100">
+                            <div className="flex items-center gap-4">
+                              <div className="bg-white p-2.5 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center min-w-[60px]">
+                                <span className="text-xs font-bold text-red-600 uppercase tracking-tighter">{recordDate.getDate()}</span>
+                                <span className="text-[10px] text-gray-400 font-medium uppercase tracking-widest">{uzbekWeekdays[recordDate.getDay()].substring(0, 3)}</span>
+                              </div>
+                              <div>
+                                <h4 className="font-bold text-gray-900 leading-tight">{dateStr}</h4>
+                                <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-500">
+                                  <Clock className="w-3 h-3" />
+                                  <span>{time}</span>
+                                  <span className="text-gray-300 mx-1">•</span>
+                                  <span>{record.subject || "Umumiy dars"}</span>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="flex items-center gap-2">
+                               <div className="flex -space-x-2 mr-2 overflow-hidden">
+                                  {presentStudents.slice(0, 4).map((s: any) => (
+                                    <Avatar key={s.id} className="h-7 w-7 border-2 border-white ring-1 ring-gray-100">
+                                      <AvatarImage src={s.profilePicture} />
+                                      <AvatarFallback className="bg-green-50 text-[10px] text-green-600">{s.fullname?.charAt(0)}</AvatarFallback>
+                                    </Avatar>
+                                  ))}
+                                  {presentStudents.length > 4 && (
+                                    <div className="h-7 w-7 rounded-full bg-gray-100 border-2 border-white ring-1 ring-gray-100 flex items-center justify-center text-[8px] font-bold text-gray-500">
+                                      +{presentStudents.length - 4}
+                                    </div>
+                                  )}
                                </div>
-                               <p className="text-sm text-gray-500 font-medium">
-                                 {record.subject || "Fan ko'rsatilmagan"} • {selectedClass?.grade ?? "Sinf"}
-                               </p>
-                             </div>
+                               <div className="flex items-center gap-1.5 bg-green-50 text-green-700 px-2.5 py-1 rounded-full text-xs font-bold border border-green-100">
+                                 <Check className="w-3 h-3" />
+                                 {presentStudents.length}
+                               </div>
+                               <div className="flex items-center gap-1.5 bg-red-50 text-red-700 px-2.5 py-1 rounded-full text-xs font-bold border border-red-100">
+                                 <X className="w-3 h-3" />
+                                 {absentStudents.length}
+                               </div>
+                            </div>
                           </div>
-                          
-                          {/* Stats Grid */}
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full md:w-auto">
-                             <div className="flex flex-col items-center p-2 rounded-lg bg-green-50 border border-green-100">
-                               <span className="text-xs text-green-600 font-medium mb-1">Keldi</span>
-                               <span className="text-lg font-bold text-green-700">{presentStudents.length}</span>
-                             </div>
-                             <div className="flex flex-col items-center p-2 rounded-lg bg-amber-50 border border-amber-100">
-                               <span className="text-xs text-amber-600 font-medium mb-1">Kechikdi</span>
-                               <span className="text-lg font-bold text-amber-700">{lateStudents.length}</span>
-                             </div>
-                             <div className="flex flex-col items-center p-2 rounded-lg bg-red-50 border border-red-100">
-                               <span className="text-xs text-red-600 font-medium mb-1">Kelmadi</span>
-                               <span className="text-lg font-bold text-red-700">{absentStudents.length}</span>
-                             </div>
-                             <div className="flex flex-col items-center p-2 rounded-lg bg-gray-50 border border-gray-100">
-                               <span className="text-xs text-gray-500 font-medium mb-1">Jami</span>
-                               <span className="text-lg font-bold text-gray-700">{recordStats.total_students ?? students.length}</span>
-                             </div>
+
+                          <div className="p-5 grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {/* Present List */}
+                            <div className="space-y-3">
+                              <h5 className="text-[10px] font-bold text-green-600 uppercase tracking-widest flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 rounded-full bg-green-500 ring-4 ring-green-100"></span>
+                                Kelganlar
+                              </h5>
+                              <div className="space-y-2">
+                                {presentStudents.length > 0 ? presentStudents.map((s: any) => (
+                                  <div key={s.id} className="flex items-center gap-2 p-1.5 hover:bg-gray-50 rounded-lg transition-colors group">
+                                     <Avatar className="h-6 w-6 border-gray-100 group-hover:scale-110 transition-transform">
+                                       <AvatarImage src={s.profilePicture} />
+                                       <AvatarFallback className="bg-gray-50 text-[10px] font-bold">{s.fullname?.charAt(0)}</AvatarFallback>
+                                     </Avatar>
+                                     <span className="text-xs font-medium text-gray-700 truncate">{s.fullname}</span>
+                                  </div>
+                                )) : (
+                                  <p className="text-[10px] text-gray-400 italic py-2">Hali hech kim yo'q</p>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Late List */}
+                            <div className="space-y-3">
+                              <h5 className="text-[10px] font-bold text-amber-600 uppercase tracking-widest flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 ring-4 ring-amber-100"></span>
+                                Kechikkanlar
+                              </h5>
+                              <div className="space-y-2">
+                                {lateStudents.length > 0 ? lateStudents.map((s: any) => (
+                                  <div key={s.id} className="flex items-center gap-2 p-1.5 hover:bg-gray-50 rounded-lg transition-colors group">
+                                     <Avatar className="h-6 w-6 border-gray-100 group-hover:scale-110 transition-transform">
+                                       <AvatarImage src={s.profilePicture} />
+                                       <AvatarFallback className="bg-gray-50 text-[10px] font-bold">{s.fullname?.charAt(0)}</AvatarFallback>
+                                     </Avatar>
+                                     <span className="text-xs font-medium text-gray-700 truncate">{s.fullname}</span>
+                                  </div>
+                                )) : (
+                                  <p className="text-[10px] text-gray-400 italic py-2">Kechikkanlar yo'q</p>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Absent List */}
+                            <div className="space-y-3">
+                              <h5 className="text-[10px] font-bold text-red-600 uppercase tracking-widest flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 rounded-full bg-red-500 ring-4 ring-red-100"></span>
+                                Kelmaganlar
+                              </h5>
+                              <div className="space-y-2">
+                                {absentStudents.length > 0 ? absentStudents.map((s: any) => (
+                                  <div key={s.id} className="flex items-center gap-2 p-1.5 hover:bg-gray-50 rounded-lg transition-colors group">
+                                     <Avatar className="h-6 w-6 border-gray-100 group-hover:scale-110 transition-transform">
+                                       <AvatarImage src={s.profilePicture} />
+                                       <AvatarFallback className="bg-gray-50 text-[10px] font-bold">{s.fullname?.charAt(0)}</AvatarFallback>
+                                     </Avatar>
+                                     <span className="text-xs font-medium text-gray-700 truncate">{s.fullname}</span>
+                                  </div>
+                                )) : (
+                                  <p className="text-[10px] text-gray-400 italic py-2">Barakalla, hamma kelgan!</p>
+                                )}
+                              </div>
+                            </div>
                           </div>
-                        </div>
-
-                        <div className="space-y-4 pt-4 border-t border-gray-100">
-                          {/* Kelgan o'quvchilar */}
-                          {presentStudents.length > 0 && (
-                            <div>
-                              <p className="text-xs font-bold text-green-700 uppercase tracking-widest mb-3 flex items-center">
-                                <span className="w-1.5 h-1.5 rounded-full bg-green-500 mr-2"></span>
-                                Kelgan o'quvchilar ({presentStudents.length})
-                              </p>
-                              <div className="flex flex-wrap gap-2">
-                                {presentStudents.map((s: any) => (
-                                  <div key={s._id || s.id} className="group/student flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-gray-200 shadow-sm hover:border-green-300 hover:shadow-green-100 transition-all">
-                                    <Avatar className="h-6 w-6 border border-gray-100">
-                                      <AvatarImage src={s.profilePicture} />
-                                      <AvatarFallback className="bg-gray-50 text-gray-400">
-                                        <UserCircle className="w-full h-full p-0.5" />
-                                      </AvatarFallback>
-                                    </Avatar>
-                                    <span className="text-sm font-medium text-gray-700 group-hover/student:text-green-700 transition-colors">{s.fullname}</span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                          
-                          {/* Kechikkan o'quvchilar */}
-                          {lateStudents.length > 0 && (
-                            <div>
-                              <p className="text-xs font-bold text-amber-700 uppercase tracking-widest mb-3 flex items-center">
-                                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mr-2"></span>
-                                Kechikkan o'quvchilar ({lateStudents.length})
-                              </p>
-                              <div className="flex flex-wrap gap-2">
-                                {lateStudents.map((s: any) => (
-                                  <div key={s._id || s.id} className="group/student flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-gray-200 shadow-sm hover:border-amber-300 hover:shadow-amber-100 transition-all">
-                                    <Avatar className="h-6 w-6 border border-gray-100">
-                                      <AvatarImage src={s.profilePicture} />
-                                      <AvatarFallback className="bg-gray-50 text-gray-400">
-                                        <UserCircle className="w-full h-full p-0.5" />
-                                      </AvatarFallback>
-                                    </Avatar>
-                                    <span className="text-sm font-medium text-gray-700 group-hover/student:text-amber-700 transition-colors">{s.fullname}</span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Kelmagan o'quvchilar */}
-                          {absentStudents.length > 0 && (
-                            <div>
-                              <p className="text-xs font-bold text-red-700 uppercase tracking-widest mb-3 flex items-center">
-                                <span className="w-1.5 h-1.5 rounded-full bg-red-500 mr-2"></span>
-                                Kelmagan o'quvchilar ({absentStudents.length})
-                              </p>
-                              <div className="flex flex-wrap gap-2">
-                                {absentStudents.map((s: any) => (
-                                  <div key={s._id || s.id} className="group/student flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-gray-200 shadow-sm hover:border-red-300 hover:shadow-red-100 transition-all">
-                                    <Avatar className="h-6 w-6 border border-gray-100">
-                                      <AvatarImage src={s.profilePicture} />
-                                      <AvatarFallback className="bg-gray-50 text-gray-400">
-                                        <UserCircle className="w-full h-full p-0.5" />
-                                      </AvatarFallback>
-                                    </Avatar>
-                                    <span className="text-sm font-medium text-gray-700 group-hover/student:text-red-700 transition-colors">{s.fullname}</span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-
-                          {presentStudents.length === 0 && lateStudents.length === 0 && (
-                            <div className="flex flex-col items-center justify-center py-6 text-center bg-gray-50/50 rounded-lg border border-dashed border-gray-200">
-                               <XCircle className="w-8 h-8 text-gray-300 mb-2" />
-                               <p className="text-sm font-medium text-gray-500">Hech kim qatnashmagan</p>
-                               <span className="text-xs text-gray-400">Barcha o'quvchilar darsga kelmagan deb belgilangan</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
+                       </div>
                     )
                     })}
                     
                     {(!history || history.length === 0) && (
-                      <div className="flex flex-col items-center justify-center py-16 px-4 bg-white rounded-2xl border border-dashed border-gray-200 shadow-sm text-center">
-                        <div className="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-4 shadow-sm">
-                           <Calendar className="w-8 h-8" />
+                      <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
+                        <div className="w-20 h-20 bg-gray-50 text-gray-200 rounded-full flex items-center justify-center mb-6 border border-dashed border-gray-200">
+                           <Calendar className="w-10 h-10" />
                         </div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-1">Davomat tarixi topilmadi</h3>
-                        <p className="text-gray-500 max-w-sm mb-6">
+                        <h3 className="text-lg font-bold text-gray-900 mb-2">Davomat tarixi topilmadi</h3>
+                        <p className="text-gray-500 max-w-sm mb-8 text-sm">
                            Ushbu sinf uchun hali hech qanday davomat qayd etilmagan.
                         </p>
-                        <Button variant="outline" onClick={() => setActiveTab("mark")} className="gap-2">
-                           <CheckCircle2 className="w-4 h-4" />
+                        <Button onClick={() => setActiveTab("mark")} className="bg-red-600 hover:bg-red-700">
                            Davomat qilishga o'tish
                         </Button>
                       </div>

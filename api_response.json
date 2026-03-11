@@ -1,0 +1,83 @@
+[
+  {
+    "id": 2,
+    "name": "1-A",
+    "grade": "1",
+    "teacher_id": 3,
+    "student_count": 0,
+    "createdAt": "2026-03-10T10:18:52.680Z",
+    "updatedAt": "2026-03-10T10:18:52.680Z",
+    "teacher": {
+      "id": 3,
+      "username": "madina",
+      "fullname": "Madina Ravilevna",
+      "role": "teacher"
+    },
+    "students": [
+      {
+        "id": 8,
+        "username": "solihabegim",
+        "fullname": "Ravshanova Solihabegim",
+        "coins": 95,
+        "profile_picture": "/uploads/default-avatar.png"
+      }
+    ],
+    "attendances": [
+      {
+        "id": 1,
+        "class_id": 2,
+        "teacher_id": 3,
+        "date": "2026-03-11",
+        "subject": "1-A",
+        "present_student_ids": [
+          8
+        ],
+        "late_student_ids": [],
+        "createdAt": "2026-03-11T16:52:21.635Z",
+        "updatedAt": "2026-03-11T16:52:21.635Z"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "1-B",
+    "grade": "1",
+    "teacher_id": 10,
+    "student_count": 0,
+    "createdAt": "2026-03-11T16:56:53.692Z",
+    "updatedAt": "2026-03-11T16:56:53.692Z",
+    "teacher": {
+      "id": 10,
+      "username": "xolmatova",
+      "fullname": "Xolmatova Xusnida",
+      "role": "teacher"
+    },
+    "students": [
+      {
+        "id": 11,
+        "username": "kamron",
+        "fullname": "Xolmatov Kamron",
+        "coins": 0,
+        "profile_picture": "/uploads/default-avatar.png"
+      }
+    ],
+    "attendances": []
+  },
+  {
+    "id": 5,
+    "name": "6-A",
+    "grade": "6",
+    "teacher_id": 12,
+    "student_count": 0,
+    "createdAt": "2026-03-11T17:43:12.624Z",
+    "updatedAt": "2026-03-11T17:43:12.624Z",
+    "teacher": {
+      "id": 12,
+      "username": "jasur",
+      "fullname": "Mirzarahimov Jasur",
+      "role": "teacher"
+    },
+    "students": [],
+    "attendances": []
+  }
+]
