@@ -201,7 +201,7 @@ export default function Dashboard() {
                       {item.fullname || item.username || "Noma'lum"}
                     </p>
                     <p className="text-sm text-gray-600 mt-1">
-                      {item.class_name || "—"}
+                      {item.class_name || "Sinf yo'q"}
                     </p>
                   </div>
 
