@@ -38,6 +38,7 @@ export default function UsersListPage() {
     password: "",
     role: "student",
     class_id: "",
+    class_name: "",
     grade: "",
   })
 
@@ -104,18 +105,22 @@ export default function UsersListPage() {
         if (newUser.class_id && newUser.class_id !== "none") {
           payload.class_id = parseInt(newUser.class_id)
         }
+        if (newUser.class_name) {
+          payload.class_name = newUser.class_name
+        }
         if (newUser.grade) {
           payload.grade = String(newUser.grade)
         }
       } else {
         // Teacher yoki Admin uchun
         payload.class_id = null;
+        payload.class_name = null;
       }
 
       await createUser(payload).unwrap()
       toast.success("Foydalanuvchi muvaffaqiyatli qo'shildi")
       setIsAddUserOpen(false)
-      setNewUser({ fullname: "", username: "", password: "", role: "student", class_id: "", grade: "" })
+      setNewUser({ fullname: "", username: "", password: "", role: "student", class_id: "", class_name: "", grade: "" })
     } catch (err: any) {
       console.error(err)
       toast.error(err?.data?.message || err?.data?.error || "Xatolik yuz berdi")
@@ -124,7 +129,7 @@ export default function UsersListPage() {
 
   const handleUserDetailsOpen = (user: any) => {
     setSelectedUser(user)
-    setSelectedClass(user.classId || "")
+    setSelectedClass(user.class_id ? String(user.class_id) : (user.classId ? String(user.classId) : "none"))
     setUpdateSuccess(false)
   }
 
@@ -236,6 +241,15 @@ export default function UsersListPage() {
                           ))}
                         </SelectContent>
                       </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="class_name">Sinf nomi (Masalan: 6-A)</Label>
+                      <Input
+                        id="class_name"
+                        placeholder="Sinf nomini kiriting"
+                        value={newUser.class_name}
+                        onChange={(e) => setNewUser({ ...newUser, class_name: e.target.value })}
+                      />
                     </div>
                     {newUser.class_id === "none" && (
                       <div className="space-y-2 animate-in fade-in zoom-in duration-200">
@@ -448,51 +462,12 @@ export default function UsersListPage() {
                   <p className="text-gray-500">Tangalar</p>
                   <p className="font-medium text-amber-600">{selectedUser.coinBalance || 0}</p>
                 </div>
-                <div className="col-span-2">
-                  <p className="text-gray-500 mb-2">Sinf</p>
-                  {selectedUser.role === "student" ? (
-                    <div className="space-y-2">
-                      <Select value={selectedClass} onValueChange={setSelectedClass}>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Sinfni tanlang" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="">Sinfsiz</SelectItem>
-                          {classes.map((cls: any) => (
-                            <SelectItem key={cls._id} value={cls._id}>
-                              {cls.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      {selectedClass !== (selectedUser.classId || "") && (
-                        <Button 
-                          onClick={handleClassAssignment} 
-                          disabled={isUpdating}
-                          className="w-full bg-red-600 hover:bg-red-700"
-                          size="sm"
-                        >
-                          {isUpdating ? "Saqlanmoqda..." : "Sinfni saqlash"}
-                        </Button>
-                      )}
-                      {updateSuccess && (
-                        <p className="text-sm text-green-600">✓ Sinf muvaffaqiyatli o'zgartirildi!</p>
-                      )}
-                    </div>
-                  ) : (
-                    <p className="font-medium">{selectedUser.classId || "-"}</p>
-                  )}
-                </div>
-                <div className="col-span-2">
-                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Davomat kalendari</p>
-                   <AttendanceCalendar studentId={selectedUser.id} />
-                </div>
-
-                <div className="col-span-2 mt-4 pt-4 border-t border-gray-100 text-center">
-                   <p className="text-xs text-gray-400">
-                      Sinfni o'zgartirish faqat administratorlar uchun ruxsat etilgan
-                   </p>
-                </div>
+                {selectedUser.role === "student" && (
+                  <div className="col-span-2">
+                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Davomat kalendari</p>
+                     <AttendanceCalendar studentId={selectedUser.id} />
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -528,6 +503,7 @@ function AttendanceCalendar({ studentId }: { studentId: number }) {
 
   const presentDays = (stats.recent_attendances || []).map((d: string) => new Date(d))
   const lateDays = (stats.recent_late_days || []).map((d: string) => new Date(d))
+  const absentDays = (stats.recent_absent_days || []).map((d: string) => new Date(d))
   
   return (
     <div className="space-y-4">
@@ -538,33 +514,25 @@ function AttendanceCalendar({ studentId }: { studentId: number }) {
         <div className="flex items-center gap-1.5 text-[10px] font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded-full border border-amber-100">
           <div className="w-1.5 h-1.5 rounded-full bg-amber-500" /> Kechikkan
         </div>
+        <div className="flex items-center gap-1.5 text-[10px] font-medium text-red-600 bg-red-50 px-2 py-1 rounded-full border border-red-100">
+          <div className="w-1.5 h-1.5 rounded-full bg-red-500" /> Kelmagan
+        </div>
       </div>
       
-      <div className="border rounded-xl p-3 bg-white shadow-sm overflow-hidden flex justify-center">
+      <div className="border rounded-xl p-3 bg-white shadow-sm overflow-hidden flex justify-center pointer-events-none">
         <Calendar
-          mode="multiple"
-          selected={[...presentDays, ...lateDays]}
           modifiers={{
             present: presentDays,
             late: lateDays,
+            absent: absentDays,
           }}
           modifiersClassNames={{
             present: "bg-green-100! text-green-700! font-bold rounded-full",
             late: "bg-amber-100! text-amber-700! font-bold rounded-full",
+            absent: "bg-red-100! text-red-700! font-bold rounded-full",
           }}
           className="p-0 border-0"
         />
-      </div>
-      
-      <div className="grid grid-cols-2 gap-2">
-        <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
-           <p className="text-[10px] text-gray-400 uppercase font-bold tracking-tight">Umumiy kelgan</p>
-           <p className="text-lg font-bold text-gray-900">{stats.total_days_present || 0} kun</p>
-        </div>
-        <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
-           <p className="text-[10px] text-gray-400 uppercase font-bold tracking-tight">Kechikkanlar</p>
-           <p className="text-lg font-bold text-gray-900">{stats.total_days_late || 0} kun</p>
-        </div>
       </div>
     </div>
   )

@@ -16,10 +16,9 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Lexford - School Management System",
-  description: "Modern maktab boshqaruv tizimi",
+  description: "Zamonaviy maktab boshqaruv tizimi",
   icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-icon.png",
+    icon: "/Container-1.png",
   },
 };
 

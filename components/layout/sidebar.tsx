@@ -14,6 +14,7 @@ import {
   Settings,
   LogOut,
   X,
+  ShoppingBag,
 } from "lucide-react"
 
 interface SidebarProps {
@@ -58,9 +59,9 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       roles: ["admin", "teacher", "student"],
     },
     {
-      href: "/auctions",
-      label: "Auksionlar",
-      icon: Gavel,
+      href: "/shop",
+      label: "Do'kon",
+      icon: ShoppingBag,
       roles: ["admin", "teacher", "student"],
     },
     {
@@ -102,8 +103,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         {/* Logo + Close button */}
         <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
           <Link href="/dashboard" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-red-700 rounded-xl flex items-center justify-center shadow-md">
-              <span className="text-white font-bold text-2xl">L</span>
+            <div className="w-10 h-10 flex items-center justify-center">
+              <img src="/logo.png" alt="Lexford Logo" className="w-full h-full object-contain drop-shadow-sm" />
             </div>
             <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">Lexford</span>
           </Link>

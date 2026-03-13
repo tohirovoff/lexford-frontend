@@ -59,8 +59,8 @@ export default function Header({ onMenuClick }: HeaderProps) {
 
           {/* Logo */}
           <Link href="/dashboard" className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-gradient-to-br from-red-600 to-red-700 rounded-xl flex items-center justify-center shadow-lg">
-              <span className="text-white font-extrabold text-2xl">L</span>
+            <div className="w-10 h-10 flex items-center justify-center">
+              <img src="/logo.png" alt="Lexford Logo" className="w-full h-full object-contain drop-shadow-sm" />
             </div>
             <span className="text-2xl font-extrabold text-gray-900 dark:text-gray-100 hidden md:block">Lexford</span>
           </Link>

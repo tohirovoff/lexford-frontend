@@ -64,11 +64,15 @@ export default function ProfilePage() {
 
       const result = await updateUserMutation({ id: user.id, formData }).unwrap()
       
-      // Update local storage/state with new data
-      dispatch(updateUser(result.data || result))
+      // Update local storage/state with new data (backend returns user object directly without .data wrapper)
+      dispatch(updateUser(result))
       
       setIsEditing(false)
       setImagePreview(null)
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""
+      }
       toast?.success("Profil muvaffaqiyatli yangilandi!")
     } catch (err: any) {
       console.error("Update error:", err)
@@ -222,7 +226,13 @@ export default function ProfilePage() {
               </button>
               <button
                 type="button"
-                onClick={() => setIsEditing(false)}
+                onClick={() => {
+                  setIsEditing(false)
+                  setImagePreview(null)
+                  if (fileInputRef.current) {
+                    fileInputRef.current.value = ""
+                  }
+                }}
                 className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 flex items-center gap-2"
               >
                 <X className="w-4 h-4" />
@@ -233,18 +243,8 @@ export default function ProfilePage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center">
-            <TrendingUp className="w-6 h-6 text-green-600" />
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Davomat ko'rsatkichi</p>
-            <p className="text-2xl font-bold text-gray-900">92%</p>
-          </div>
-        </div>
-
-        {user?.role === "student" && (
+      {user?.role === "student" && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center">
               <Coins className="w-6 h-6 text-red-600" />
@@ -254,9 +254,7 @@ export default function ProfilePage() {
               <p className="text-2xl font-bold text-gray-900">{user?.coins || 0}</p>
             </div>
           </div>
-        )}
 
-        {user?.role === "student" && (
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center">
               <AlertTriangle className="w-6 h-6 text-yellow-600" />
@@ -266,8 +264,8 @@ export default function ProfilePage() {
               <p className="text-2xl font-bold text-gray-900">{userPenalties.length}</p>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {user?.role === "student" && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

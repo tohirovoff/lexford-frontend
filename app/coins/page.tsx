@@ -81,6 +81,16 @@ export default function CoinsPage() {
       return
     }
 
+    if (Number(amount) > 50) {
+      toast?.error("Eng ko'pi bilan 50 ta tanga berish mumkin!")
+      return
+    }
+
+    if (Number(amount) < 1) {
+      toast?.error("Kamida 1 ta tanga kiritish kerak")
+      return
+    }
+
     try {
       const finalAmount = transactionType === "penalty" ? -Math.abs(Number(amount)) : Math.abs(Number(amount))
       
@@ -223,11 +233,18 @@ export default function CoinsPage() {
                     <Label>Miqdor (tanga)</Label>
                     <Input 
                       type="number" 
-                      placeholder="Masalan: 50" 
+                      placeholder="1 dan 50 gacha" 
                       value={amount}
-                      onChange={(e) => setAmount(e.target.value)}
+                      onChange={(e) => {
+                        const val = e.target.value
+                        if (val === "" || Number(val) <= 50) {
+                          setAmount(val)
+                        }
+                      }}
                       min="1"
+                      max="50"
                     />
+                    <p className="text-xs text-gray-500">Eng ko'pi bilan 50 ta tanga</p>
                   </div>
 
                   <div className="space-y-2">

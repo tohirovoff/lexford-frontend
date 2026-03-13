@@ -20,7 +20,7 @@ import {
   TrendingUp,
   ClipboardCheck,
   Coins,
-  Gavel,
+  ShoppingBag,
   ArrowRight,
 } from "lucide-react"
 import Link from "next/link"
@@ -233,7 +233,7 @@ export default function Dashboard() {
               </>
             )}
             <QuickActionCard href="/coins" icon={Coins} label="Tangalar" color="green" />
-            <QuickActionCard href="/auctions" icon={Gavel} label="Auksionlar" color="yellow" />
+            <QuickActionCard href="/shop" icon={ShoppingBag} label="Do'kon" color="yellow" />
           </div>
         </div>
       </div>

@@ -91,8 +91,8 @@ export default function LoginPage() {
       <div className="w-full max-w-md py-8">
         {/* Logo va sarlavha */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-red-600 rounded-2xl mb-4 shadow-lg">
-            <span className="text-white font-bold text-3xl">L</span>
+          <div className="inline-flex items-center justify-center w-24 h-24 mb-2">
+            <img src="/logo.png" alt="Lexford Logo" className="w-full h-full object-contain drop-shadow-md" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900">Lexford</h1>
           <p className="text-gray-500 mt-1">Maktab boshqaruvi tizimi</p>
