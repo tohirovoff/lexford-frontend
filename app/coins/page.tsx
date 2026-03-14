@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useSelector } from "react-redux"
-import { useGetUserTransactionsQuery, useCreateTransactionMutation } from "@/lib/api/coinsApi"
+import { useGetUserTransactionsQuery, useCreateTransactionMutation, useCreatePenaltyMutation } from "@/lib/api/coinsApi"
 import { useGetAllClassesQuery } from "@/lib/api/classesApi"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -58,7 +58,9 @@ export default function CoinsPage() {
   const students = selectedClass?.students || []
 
   // Mutation
-  const [createTransaction, { isLoading: isSubmitting }] = useCreateTransactionMutation()
+  const [createTransaction, { isLoading: isSubmittingTransaction }] = useCreateTransactionMutation()
+  const [createPenalty, { isLoading: isSubmittingPenalty }] = useCreatePenaltyMutation()
+  const isSubmitting = isSubmittingTransaction || isSubmittingPenalty
 
   // Stats calculation
   const stats = (rawTransactions || []).reduce(
@@ -92,12 +94,15 @@ export default function CoinsPage() {
     }
 
     try {
+      // Backendda `createPenalty` qilish uchun `auction_id` majburiy (foreign key).
+      // Bu erda esa oddiy jarima yozyapmiz (auksiondan tashqari), shuning uchun `transaction` jadvaliga
+      // manfiy qiymat bilan `type="penalty"` qilib saqlaymiz.
       const finalAmount = transactionType === "penalty" ? -Math.abs(Number(amount)) : Math.abs(Number(amount))
       
       const payload = {
         user_id: Number(selectedStudentId),
         amount: finalAmount,
-        type: transactionType,
+        type: transactionType, // "reward" yoki "penalty"
         reason: reason,
         created_by: Number(user?.id)
       }

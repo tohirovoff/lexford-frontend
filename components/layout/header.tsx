@@ -51,7 +51,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
           {/* Hamburger - faqat mobil */}
           <button
             onClick={onMenuClick}
-            className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors lg:hidden"
+            className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors xl:hidden"
             aria-label="Open sidebar"
           >
             <Menu className="w-7 h-7 text-gray-700 dark:text-gray-300" />

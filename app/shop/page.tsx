@@ -43,7 +43,8 @@ import {
   History,
   CheckCircle,
   Clock,
-  AlertCircle
+  AlertCircle,
+  Loader2
 } from "lucide-react"
 import { toast } from "sonner"
 import { cn, getImageUrl } from "@/lib/utils"
@@ -521,7 +522,7 @@ export default function Shop() {
                       )}
                     >
                       {isBuying ? (
-                         <LoadingSpinner size="sm" />
+                         <Loader2 className="h-6 w-6 animate-spin mx-auto text-white" />
                        ) : isOutOfStock ? (
                          "Sotuvda yo'q" 
                        ) : canAfford ? (
@@ -777,7 +778,7 @@ export default function Shop() {
                   disabled={isCreating || isUpdating}
                   className="rounded-2xl px-12 h-12 bg-red-600 hover:bg-red-700 text-white font-bold shadow-xl shadow-red-500/20"
                 >
-                  {isCreating || isUpdating ? <LoadingSpinner size="sm" /> : editingItem ? "Yangilash" : "Qo'shish"}
+                  {isCreating || isUpdating ? <Loader2 className="h-5 w-5 animate-spin mx-auto" /> : editingItem ? "Yangilash" : "Qo'shish"}
                 </Button>
               </DialogFooter>
             </form>
@@ -791,6 +792,8 @@ export default function Shop() {
         if (!open) setTimeout(() => setPurchaseItem(null), 300)
       }}>
         <DialogContent className="sm:max-w-md rounded-[2.5rem] p-0 overflow-hidden border-none shadow-3xl bg-white/95 backdrop-blur-xl">
+          <DialogTitle className="sr-only">Xaridni tasdiqlash</DialogTitle>
+          <DialogDescription className="sr-only">Rostdan ham ushbu maxsulotni xarid qilasizmi?</DialogDescription>
           {purchaseItem && (
             <div className="flex flex-col animate-in fade-in zoom-in-95 duration-500">
               <div className="relative h-56 bg-gradient-to-br from-gray-100 to-gray-200 w-full flex items-center justify-center overflow-hidden">
@@ -850,7 +853,7 @@ export default function Shop() {
                     disabled={isBuying}
                     className="flex-1 rounded-2xl h-14 bg-red-600 hover:bg-red-700 text-white font-bold shadow-xl shadow-red-500/25 transition-all"
                   >
-                    {isBuying ? <LoadingSpinner size="sm" /> : "Xaridni tasdiqlash"}
+                    {isBuying ? <Loader2 className="h-6 w-6 animate-spin mx-auto" /> : "Xaridni tasdiqlash"}
                   </Button>
                 </div>
               </div>

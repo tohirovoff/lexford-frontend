@@ -157,16 +157,16 @@ export default function UsersListPage() {
   if (isLoading) return <LoadingSpinner fullScreen />
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pt-4 md:pt-6">
-      <div className="flex items-center justify-between">
-        <div>
-           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Foydalanuvchilar</h1>
-           <p className="text-gray-500 dark:text-gray-400">Tizimdagi barcha foydalanuvchilar ro'yxati</p>
+    <div className="space-y-6 max-w-7xl mx-auto pt-4 md:pt-6 px-4 md:px-0">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+           <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 tracking-tight">Foydalanuvchilar</h1>
+           <p className="text-gray-500 dark:text-gray-400 font-medium">Tizimdagi barcha foydalanuvchilar ro'yxati</p>
         </div>
         {isAdmin && (
           <Dialog open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-red-600 hover:bg-red-700 text-white rounded-xl shadow-md">
+              <Button className="bg-red-600 hover:bg-red-700 text-white rounded-2xl shadow-lg transition-all hover:scale-105 active:scale-95 h-12 px-6">
                 <Plus className="w-5 h-5 mr-2" />
                 Foydalanuvchi qo'shish
               </Button>
@@ -282,47 +282,55 @@ export default function UsersListPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="border-l-4 border-l-gray-500">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="border-l-4 border-l-gray-500 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <Users className="h-8 w-8 text-gray-500" />
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-gray-50 rounded-2xl">
+                <Users className="h-6 w-6 text-gray-500" />
+              </div>
               <div>
-                <p className="text-2xl font-bold">{stats.total}</p>
-                <p className="text-sm text-gray-500">Jami</p>
+                <p className="text-sm text-gray-500 font-medium">Jami</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card className="border-l-4 border-l-red-500">
+        <Card className="border-l-4 border-l-red-500 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <UserCog className="h-8 w-8 text-red-500" />
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-red-50 rounded-2xl">
+                <UserCog className="h-6 w-6 text-red-500" />
+              </div>
               <div>
-                <p className="text-2xl font-bold">{stats.admins}</p>
-                <p className="text-sm text-gray-500">Adminlar</p>
+                <p className="text-sm text-gray-500 font-medium">Adminlar</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.admins}</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card className="border-l-4 border-l-blue-500">
+        <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <GraduationCap className="h-8 w-8 text-blue-500" />
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-blue-50 rounded-2xl">
+                <GraduationCap className="h-6 w-6 text-blue-500" />
+              </div>
               <div>
-                <p className="text-2xl font-bold">{stats.teachers}</p>
-                <p className="text-sm text-gray-500">O'qituvchilar</p>
+                <p className="text-sm text-gray-500 font-medium">O'qituvchilar</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.teachers}</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card className="border-l-4 border-l-green-500">
+        <Card className="border-l-4 border-l-green-500 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <Users className="h-8 w-8 text-green-500" />
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-green-50 rounded-2xl">
+                <Users className="h-6 w-6 text-green-500" />
+              </div>
               <div>
-                <p className="text-2xl font-bold">{stats.students}</p>
-                <p className="text-sm text-gray-500">O'quvchilar</p>
+                <p className="text-sm text-gray-500 font-medium">O'quvchilar</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.students}</p>
               </div>
             </div>
           </CardContent>
@@ -358,10 +366,11 @@ export default function UsersListPage() {
       </Card>
 
       {/* Users Table */}
-      <Card>
+      <Card className="overflow-hidden border-none shadow-lg rounded-2xl bg-white/50 backdrop-blur-sm">
         <CardContent className="p-0">
-          <Table>
-            <TableHeader>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader className="bg-gray-50/50">
               <TableRow>
                 <TableHead>Foydalanuvchi</TableHead>
                 <TableHead>Username</TableHead>
@@ -427,7 +436,8 @@ export default function UsersListPage() {
                 </TableRow>
               )}
             </TableBody>
-          </Table>
+            </Table>
+          </div>
         </CardContent>
       </Card>
 

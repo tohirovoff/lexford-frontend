@@ -30,11 +30,11 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
             <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
           )}
 
-          <div className={`flex-1 flex flex-col ${!isAuthPage ? "lg:ml-72" : ""}`}>
+          <div className={`flex-1 flex flex-col ${!isAuthPage ? "xl:ml-72 pt-16" : ""}`}>
             {/* Header */}
             {!isAuthPage && <Header onMenuClick={() => setSidebarOpen(true)} />}
 
-            <main className={`flex-1 ${!isAuthPage ? "p-6 md:p-10 overflow-y-auto" : "flex flex-col"}`}>{children}</main>
+            <main className={`flex-1 ${!isAuthPage ? "p-4 md:p-8 lg:p-10 overflow-y-auto" : "flex flex-col"}`}>{children}</main>
           </div>
         </div>
 

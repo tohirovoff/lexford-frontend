@@ -22,6 +22,7 @@ import {
   Coins,
   ShoppingBag,
   ArrowRight,
+  Calendar as CalendarIcon
 } from "lucide-react"
 import Link from "next/link"
 
@@ -53,42 +54,46 @@ export default function Dashboard() {
 
   const recentTransactions = Array.isArray(transactionsData) ? transactionsData.slice(0, 5) : []
 
-  const studentsCount = Array.isArray(users) ? users.filter((u: any) => u.role === "student").length : 0
-  const teachersCount = Array.isArray(users) ? users.filter((u: any) => u.role === "teacher").length : 0
+  let studentsCount = Array.isArray(users) ? users.filter((u: any) => u.role === "student").length : 0
+  let teachersCount = Array.isArray(users) ? users.filter((u: any) => u.role === "teacher").length : 0
   const classesCount = Array.isArray(classes) ? classes.length : 0
+
+  // Fallback: Agar users bo'sh bo'lsa (masalan, o'qituvchi uchun 403 qilsa), 
+  // o'quvchilar sonini sinflar ichidagi studentlar orqali hisoblaymiz.
+  if (studentsCount === 0 && classes.length > 0) {
+    studentsCount = classes.reduce((acc: number, c: any) => acc + (c.students?.length || 0), 0)
+    // O'qituvchilarni sinf rahbarlaridan sanaymiz (taxminiy, uniq qilib)
+    const uniqueTeachers = new Set()
+    classes.forEach((c: any) => { if (c.teacher?.id) uniqueTeachers.add(c.teacher.id) })
+    teachersCount = uniqueTeachers.size || 1
+  }
 
   const isLoading = loadingUsers || loadingClasses || loadingLeaderboard || loadingTransactions
 
   if (isLoading) {
     return (
-      <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
-        {/* Welcome Header Skeleton */}
-        <div className="bg-white/40 dark:bg-gray-900/40 rounded-xl p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6 border border-gray-100/50 backdrop-blur-sm">
+      <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
+        <div className="bg-white/40 dark:bg-gray-900/40 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6 border border-gray-100/50 backdrop-blur-sm">
           <div className="space-y-3 flex-1">
             <Skeleton className="h-10 w-[280px] md:w-[400px]" />
             <Skeleton className="h-5 w-[140px]" />
           </div>
           <Skeleton className="h-16 w-16 rounded-full" />
         </div>
-
-        {/* Stats Grid Skeleton */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-32 rounded-xl shadow-sm border border-gray-100/50" />
+            <Skeleton key={i} className="h-32 rounded-2xl shadow-sm border border-gray-100/50" />
           ))}
         </div>
-
-        {/* Content Grid Skeleton */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Leaderboard Skeleton */}
-          <div className="bg-white/40 dark:bg-gray-900/40 rounded-xl border border-gray-100/50 p-6 lg:p-8 space-y-6">
+          <div className="bg-white/40 dark:bg-gray-900/40 rounded-2xl border border-gray-100/50 p-6 lg:p-8 space-y-6">
             <div className="flex items-center justify-between">
               <Skeleton className="h-8 w-40" />
               <Skeleton className="h-8 w-8 rounded-lg" />
             </div>
             <div className="space-y-4">
               {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="flex items-center gap-5 p-4 rounded-lg border border-gray-50/50">
+                <div key={i} className="flex items-center gap-5 p-4 rounded-xl border border-gray-50/50 text-ellipsis">
                    <Skeleton className="h-12 w-12 rounded-lg" />
                    <div className="flex-1 space-y-2">
                      <Skeleton className="h-5 w-3/4" />
@@ -99,13 +104,11 @@ export default function Dashboard() {
               ))}
             </div>
           </div>
-
-          {/* Quick Actions Skeleton */}
-          <div className="bg-white/40 dark:bg-gray-900/40 rounded-xl border border-gray-100/50 p-6 lg:p-8 space-y-6">
+          <div className="bg-white/40 dark:bg-gray-900/40 rounded-2xl border border-gray-100/50 p-6 lg:p-8 space-y-6">
             <Skeleton className="h-8 w-48" />
             <div className="grid grid-cols-2 gap-5">
               {[1, 2, 3, 4].map((i) => (
-                <Skeleton key={i} className="h-32 rounded-xl" />
+                <Skeleton key={i} className="h-32 rounded-2xl" />
               ))}
             </div>
           </div>
@@ -115,14 +118,15 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8">
+    <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto space-y-6 md:space-y-8">
       {/* Welcome Header */}
-      <div className="bg-white rounded-xl shadow-sm p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6 border border-gray-100">
-        <div>
-          <h1 className="text-3xl md:text-4xl font-semibold text-gray-900">
-            Xush kelibsiz, {user?.fullname || user?.username}!
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-md p-6 md:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 border border-gray-100 dark:border-gray-800 transition-all hover:shadow-lg">
+        <div className="space-y-1">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-gray-900 dark:text-gray-100 tracking-tight">
+            Xush kelibsiz, <span className="text-red-600">{user?.fullname || user?.username}</span>!
           </h1>
-          <p className="text-gray-600 mt-2 text-sm font-medium">
+          <p className="text-gray-500 dark:text-gray-400 text-sm md:text-base font-medium flex items-center gap-2">
+            <CalendarIcon className="w-4 h-4" />
             {(() => {
               const d = new Date()
               const months = ["yanvar", "fevral", "mart", "aprel", "may", "iyun", "iyul", "avgust", "sentyabr", "oktyabr", "noyabr", "dekabr"]
@@ -164,9 +168,9 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Leaderboard */}
-        <div className="bg-white rounded-xl shadow-sm border p-6 lg:p-8">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6 lg:p-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-semibold text-gray-900">Reyting jadvali</h2>
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">Reyting jadvali</h2>
             <Award className="w-8 h-8 text-yellow-600" />
           </div>
 
@@ -184,23 +188,23 @@ export default function Dashboard() {
               {leaderboard.map((item: any, index: number) => (
                 <div
                   key={item.user_id || index}
-                  className="flex items-center gap-5 p-4 rounded-lg hover:bg-gray-50 transition-all duration-300 border border-gray-100 shadow-sm hover:shadow-md"
+                  className="flex items-center gap-4 md:gap-5 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all duration-300 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md"
                 >
                   <div
-                    className={`w-12 h-12 rounded-lg flex items-center justify-center font-semibold text-lg flex-shrink-0 shadow-sm
+                    className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center font-bold text-base md:text-lg flex-shrink-0 shadow-sm
                       ${index === 0 ? "bg-yellow-500 text-white ring-2 ring-yellow-300" : ""}
                       ${index === 1 ? "bg-gray-300 text-gray-800" : ""}
                       ${index === 2 ? "bg-orange-500 text-white" : ""}
-                      ${index > 2 ? "bg-gray-200 text-gray-700" : ""}`}
+                      ${index > 2 ? "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300" : ""}`}
                   >
                     {index + 1}
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-base text-gray-900 truncate">
+                    <p className="font-bold text-sm md:text-base text-gray-900 dark:text-gray-100 truncate">
                       {item.fullname || item.username || "Noma'lum"}
                     </p>
-                    <p className="text-sm text-gray-600 mt-1">
+                    <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mt-0.5">
                       {item.class_name || "Sinf yo'q"}
                     </p>
                   </div>
@@ -217,16 +221,16 @@ export default function Dashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-xl shadow-sm border p-6 lg:p-8">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-6">Tezkor harakatlar</h2>
+        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6 lg:p-8">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Tezkor harakatlar</h2>
 
-          <div className="grid grid-cols-2 gap-5">
+          <div className="grid grid-cols-2 gap-4 md:gap-5">
             {(isAdmin || isTeacher) && (
               <>
                 <QuickActionCard
                   href="/attendance"
                   icon={ClipboardCheck}
-                  label="Davomat belgilash"
+                  label="Davomat"
                   color="red"
                 />
                 <QuickActionCard href="/users" icon={Users} label="Foydalanuvchilar" color="blue" />
@@ -240,12 +244,12 @@ export default function Dashboard() {
 
       {/* Recent Transactions */}
       {(isStudent) && recentTransactions.length > 0 && (
-        <div className="bg-white rounded-xl shadow-sm border p-6 lg:p-8">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6 lg:p-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-semibold text-gray-900">So'nggi harakatlar</h2>
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">So'nggi harakatlar</h2>
             <Link
               href="/coins"
-              className="text-red-600 hover:text-red-700 text-sm font-semibold flex items-center gap-2 hover:underline"
+              className="text-red-600 hover:text-red-700 text-sm font-bold flex items-center gap-2 transition-colors"
             >
               Hammasini ko'rish <ArrowRight className="w-4 h-4" />
             </Link>
@@ -255,18 +259,20 @@ export default function Dashboard() {
             {recentTransactions.map((tx: any) => (
               <div
                 key={tx.id}
-                className="flex items-center justify-between p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-all duration-300 border border-gray-100 shadow-sm hover:shadow-sm"
+                className="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-gray-800/30 hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-all duration-300 border border-gray-100 dark:border-gray-800 shadow-sm"
               >
                 <div className="flex items-center gap-4">
                   <div
-                    className={`w-12 h-12 rounded-lg flex items-center justify-center shadow-sm flex-shrink-0
-                      ${tx.amount > 0 ? "bg-green-100" : "bg-red-100"}`}
+                    className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center shadow-sm flex-shrink-0
+                      ${tx.amount > 0 ? "bg-green-100 dark:bg-green-900/30" : "bg-red-100 dark:bg-red-900/30"}`}
                   >
-                    <Coins className={`w-6 h-6 ${tx.amount > 0 ? "text-green-600" : "text-red-600"}`} />
+                    <Coins className={`w-5 h-5 md:w-6 md:h-6 ${tx.amount > 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`} />
                   </div>
                   <div>
-                    <p className="font-semibold text-sm text-gray-900">{tx.reason || tx.description}</p>
-                    <p className="text-xs text-gray-600 mt-1">
+                    <p className="font-bold text-sm text-gray-900 dark:text-gray-100 truncate max-w-[150px] md:max-w-none">
+                      {tx.reason || tx.description}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                       {new Date(tx.created_at).toLocaleString("uz-UZ", {
                         dateStyle: "medium",
                         timeStyle: "short",
@@ -274,7 +280,7 @@ export default function Dashboard() {
                     </p>
                   </div>
                 </div>
-                <span className={`font-semibold text-base ${tx.amount > 0 ? "text-green-600" : "text-red-600"}`}>
+                <span className={`font-bold text-sm md:text-base ${tx.amount > 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
                   {tx.amount > 0 ? "+" : ""}
                   {tx.amount}
                 </span>
