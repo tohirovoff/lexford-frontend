@@ -30,17 +30,21 @@ export default function CoinDisplay({
   }
 
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
-      <div className="flex items-center gap-1">
-        <div className={`${sizeClasses[size]} rounded-lg bg-yellow-100 flex items-center justify-center shadow-sm`}>
-          <Coins
-            className={`w-${size === "sm" ? "4" : size === "md" ? "5" : size === "lg" ? "6" : "8"} h-${size === "sm" ? "4" : size === "md" ? "5" : size === "lg" ? "6" : "8"} text-yellow-600`}
-          />
-        </div>
-        <div>
-          <p className={`${textSizes[size]} font-semibold text-gray-900`}>{coins.toLocaleString()}</p>
-          {showLabel && <p className="text-xs text-gray-600">{label}</p>}
-        </div>
+    <div className={`inline-flex items-center gap-3 p-1.5 ${showLabel ? "pr-4" : "pr-3"} rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/10 border border-amber-100/50 dark:border-amber-900/30 shadow-sm hover:shadow-md transition-all duration-300 group ${className}`}>
+      <div className={`${sizeClasses[size]} rounded-xl bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center shadow-lg group-hover:rotate-12 transition-transform duration-300`}>
+        <Coins
+          className={`${size === "sm" ? "w-4 h-4" : size === "md" ? "w-5 h-5" : size === "lg" ? "w-6 h-6" : "w-8 h-8"} text-white drop-shadow-sm`}
+        />
+      </div>
+      <div>
+        <p className={`${textSizes[size]} font-black text-gray-900 dark:text-gray-100 leading-none tracking-tight`}>
+          {coins.toLocaleString()}
+        </p>
+        {showLabel && (
+          <p className="text-[10px] uppercase font-bold text-amber-600 dark:text-amber-500 mt-0.5 tracking-widest leading-none">
+            {label}
+          </p>
+        )}
       </div>
     </div>
   )

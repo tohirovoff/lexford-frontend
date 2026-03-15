@@ -1,10 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { useSelector } from "react-redux"
-import { useGetUserTransactionsQuery, useCreateTransactionMutation, useCreatePenaltyMutation } from "@/lib/api/coinsApi"
-import { useGetAllClassesQuery } from "@/lib/api/classesApi"
-import { useGetUserQuery } from "@/lib/api/usersApi"
+import { useSelector, useDispatch } from "react-redux"
+import { useGetUserTransactionsQuery, useCreateTransactionMutation, useCreatePenaltyMutation, coinsApi } from "@/lib/api/coinsApi"
+import { useGetAllClassesQuery, classesApi } from "@/lib/api/classesApi"
+import { useGetUserQuery, usersApi } from "@/lib/api/usersApi"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -20,6 +20,7 @@ import { Coins, TrendingUp, TrendingDown, History, ArrowUpCircle, ArrowDownCircl
 import { toast } from "sonner"
 
 export default function CoinsPage() {
+  const dispatch = useDispatch()
   const { user: sessionUser } = useSelector((state: any) => state.auth)
   const isTeacherOrAdmin = sessionUser?.role === "teacher" || sessionUser?.role === "admin"
 
@@ -113,6 +114,11 @@ export default function CoinsPage() {
       }
 
       await createTransaction(payload).unwrap()
+      
+      // Boshqa API'larni refresh qilish
+      dispatch(usersApi.util.invalidateTags(['Users', { type: 'Users', id: Number(selectedStudentId) }]))
+      dispatch(classesApi.util.invalidateTags(['Classes']))
+      dispatch(coinsApi.util.invalidateTags(['Transactions', 'Balance']))
 
       toast?.success(`Muvaffaqiyatli: ${amount} tanga ${transactionType === 'reward' ? 'berildi' : 'jarima qilindi'}`)
       

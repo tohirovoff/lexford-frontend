@@ -141,7 +141,7 @@ export default function Dashboard() {
               coins={userProfile?.coins || 0}
               size="lg"
               showLabel={true}
-              label="Tangalar"
+              label="Coins"
               className="shadow-sm hover:scale-105 transition-transform duration-300"
             />
           </div>
@@ -160,7 +160,7 @@ export default function Dashboard() {
       {/* Student Personal Stats */}
       {isStudent && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <StatCard icon={Coins} label="Sizning tangalaringiz" value={userProfile?.coins || 0} color="red" isCoin />
+          <StatCard icon={Coins} label="Sizning tangalaringiz" value={userProfile?.coins || 0} color="yellow" isCoin />
           <StatCard icon={Award} label="Sinf" value={user?.class_name || "—"} color="blue" isText />
           <StatCard icon={TrendingUp} label="Baholar" value={user?.grade || "—"} color="green" isText />
         </div>

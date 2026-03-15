@@ -85,14 +85,13 @@ export default function SettingsPage() {
     }
     try {
       await changePassword({
-        userId: user.id,
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword
       }).unwrap()
       toast.success("Parol muvaffaqiyatli o'zgartirildi")
       setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" })
-    } catch (err) {
-      toast.error("Parolni o'zgartirishda xatolik (Eski parol noto'g'ri bo'lishi mumkin)")
+    } catch (err: any) {
+      toast.error(err?.data?.message || "Parolni o'zgartirishda xatolik yuz berdi")
     }
   }
 

@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { logout } from "@/lib/store"
 import CoinDisplay from "@/components/ui/coin-display"
 import { Menu, UserCircle, LogOut, ChevronDown } from "lucide-react"
+import NotificationBell from "./notification-bell"
 import { getImageUrl } from "@/lib/utils"
 import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
@@ -71,9 +72,12 @@ export default function Header({ onMenuClick }: HeaderProps) {
           {/* Coin Display - faqat student uchun */}
           {user?.role === "student" && (
             <div className="hidden sm:block">
-              <CoinDisplay coins={user?.coins || 0} size="lg" showLabel />
+              <CoinDisplay coins={user?.coins || 0} size="md" showLabel={false} />
             </div>
           )}
+
+          {/* Notifications */}
+          {user && <NotificationBell />}
 
           {/* User Dropdown */}
           {user ? (
