@@ -14,6 +14,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogFooter, 
+  DialogHeader, 
+  DialogTitle 
+} from "@/components/ui/dialog"
 import LoadingSpinner from "@/components/ui/loading-spinner"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Calendar, Check, X, Clock, CheckCircle2, XCircle, AlertCircle, Save, UserCircle } from "lucide-react"
@@ -72,20 +80,21 @@ export default function AttendanceMarkingPage() {
     setAttendanceMap(newMap)
   }
 
-  const [successMessage, setSuccessMessage] = useState<string | null>(null)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [isResultModalOpen, setIsResultModalOpen] = useState(false)
+  const [resultData, setResultData] = useState<{
+    success: boolean;
+    title: string;
+    description: string;
+    stats?: any
+  } | null>(null)
 
   const handleSubmit = async () => {
     if (!selectedClassId) return
-    setSuccessMessage(null)
-    setErrorMessage(null)
-
     // Separate IDs by status
     const presentIds: number[] = []
     const lateIds: number[] = []
 
     Object.entries(attendanceMap).forEach(([studentId, status]) => {
-      // Use number if possible, otherwise keep as string
       const parsedId = parseInt(studentId)
       const id = isNaN(parsedId) ? studentId : parsedId
       
@@ -94,7 +103,12 @@ export default function AttendanceMarkingPage() {
     })
 
     if (presentIds.length === 0 && lateIds.length === 0 && Object.keys(attendanceMap).length === 0) {
-      setErrorMessage("Iltimos, kamida bitta o'quvchi davomatini belgilang")
+      setResultData({
+        success: false,
+        title: "Eslatma",
+        description: "Iltimos, kamida bitta o'quvchi davomatini belgilang"
+      })
+      setIsResultModalOpen(true)
       return
     }
 
@@ -119,36 +133,36 @@ export default function AttendanceMarkingPage() {
       setAttendanceMap({})
       
       const stats = result?.stats
-      if (stats) {
-        setSuccessMessage(
-          `Davomat saqlandi! Keldi: ${stats.present_count}, Kechikdi: ${stats.late_count}, Kelmadi: ${stats.absent_count}`
-        )
-      } else {
-        setSuccessMessage("Davomat muvaffaqiyatli saqlandi")
-      }
+      setResultData({
+        success: true,
+        title: "Muvaffaqiyatli!",
+        description: stats 
+          ? `Davomat muvaffaqiyatli saqlandi. Kelganlar: ${stats.present_count}, Kechikkanlar: ${stats.late_count}, Kelmaganlar: ${stats.absent_count}`
+          : "Davomat muvaffaqiyatli saqlandi.",
+        stats: stats
+      })
+      setIsResultModalOpen(true)
       
-      setTimeout(() => setSuccessMessage(null), 5000)
     } catch (err: any) {
       console.error("Attendance marking error caught:", err)
-      console.log("Error data:", err.data)
       
-      // Handle different error message formats
       let errorMsg = ""
       if (err.data) {
-        // If message is an array (validation errors), join them
         if (Array.isArray(err.data.message)) {
           errorMsg = err.data.message.join(", ")
         } else if (typeof err.data.message === 'string') {
           errorMsg = err.data.message
         } else if (err.data.error) {
           errorMsg = err.data.error
-        } else {
-          errorMsg = JSON.stringify(err.data)
         }
       }
       
-      const statusInfo = err.status ? ` (Status: ${err.status})` : ""
-      setErrorMessage(errorMsg || `Davomatni saqlashda xatolik yuz berdi${statusInfo}`)
+      setResultData({
+        success: false,
+        title: "Xatolik yuz berdi",
+        description: errorMsg || "Davomatni saqlashda kutilmagan xatolik yuz berdi"
+      })
+      setIsResultModalOpen(true)
     }
   }
 
@@ -234,21 +248,6 @@ export default function AttendanceMarkingPage() {
           {today}
         </Badge>
       </div>
-
-      {/* Messages */}
-      {successMessage && (
-        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg flex items-center gap-2">
-          <CheckCircle2 className="h-5 w-5" />
-          {successMessage}
-        </div>
-      )}
-      
-      {errorMessage && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center gap-2">
-          <AlertCircle className="h-5 w-5" />
-          {errorMessage}
-        </div>
-      )}
 
       {/* Class Selection */}
       <Card className="border-t-4 border-t-red-600 shadow-sm overflow-hidden">
@@ -650,6 +649,59 @@ export default function AttendanceMarkingPage() {
           </Card>
         )
       )}
+      {/* Result Modal */}
+      <Dialog open={isResultModalOpen} onOpenChange={setIsResultModalOpen}>
+        <DialogContent className="sm:max-w-md rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl bg-white/95 backdrop-blur-xl">
+          <div className="p-8 text-center space-y-6">
+            <div className={`mx-auto w-20 h-20 rounded-full flex items-center justify-center ${
+              resultData?.success ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
+            }`}>
+              {resultData?.success ? (
+                <CheckCircle2 className="w-10 h-10" />
+              ) : (
+                <AlertCircle className="w-10 h-10" />
+              )}
+            </div>
+            
+            <div className="space-y-2">
+              <DialogTitle className="text-2xl font-black text-gray-900">
+                {resultData?.title}
+              </DialogTitle>
+              <DialogDescription className="text-gray-500 font-medium">
+                {resultData?.description}
+              </DialogDescription>
+            </div>
+
+            {resultData?.success && resultData.stats && (
+              <div className="grid grid-cols-3 gap-2 py-4 bg-gray-50 rounded-2xl border border-gray-100">
+                <div className="space-y-1">
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Keldi</p>
+                  <p className="text-xl font-black text-green-600">{resultData.stats.present_count}</p>
+                </div>
+                <div className="space-y-1 border-x border-gray-200">
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Kechikdi</p>
+                  <p className="text-xl font-black text-amber-500">{resultData.stats.late_count}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Kelmadi</p>
+                  <p className="text-xl font-black text-red-500">{resultData.stats.absent_count}</p>
+                </div>
+              </div>
+            )}
+
+            <DialogFooter className="sm:justify-center">
+              <Button 
+                onClick={() => setIsResultModalOpen(false)}
+                className={`w-full h-12 rounded-2xl font-bold shadow-lg transition-all ${
+                  resultData?.success ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'
+                }`}
+              >
+                Tushunarli
+              </Button>
+            </DialogFooter>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

@@ -407,7 +407,19 @@ export default function Shop() {
              const isOutOfStock = item.stock !== null && item.stock <= 0
              
              return (
-              <Card key={item.id} className="group relative border-none bg-white dark:bg-gray-900 shadow-lg hover:shadow-2xl transition-all duration-500 rounded-[2rem] overflow-hidden flex flex-col h-full hover:-translate-y-2 border border-gray-100/50">
+              <Card key={item.id} className={cn(
+                "group relative border-none bg-white dark:bg-gray-900 shadow-lg hover:shadow-2xl transition-all duration-500 rounded-[2rem] overflow-hidden flex flex-col h-full hover:-translate-y-2 border border-gray-100/50",
+                isOutOfStock && "opacity-60 grayscale-[0.6] cursor-not-allowed"
+              )}>
+                {/* Out of Stock Overlay */}
+                {isOutOfStock && (
+                  <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/10 backdrop-blur-[1px] pointer-events-none">
+                    <div className="bg-gray-900/90 text-white px-6 py-3 rounded-2xl font-black text-xl tracking-widest border-2 border-white/20 shadow-2xl rotate-[-5deg] animate-in zoom-in duration-300">
+                      MAHSULOT TUGADI
+                    </div>
+                  </div>
+                )}
+
                 {/* Badges Overlay */}
                 <div className="absolute top-4 right-4 z-20 flex flex-col gap-2">
                   {!item.is_active && isAdminOrTeacher && (

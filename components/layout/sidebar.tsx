@@ -15,6 +15,7 @@ import {
   LogOut,
   X,
   ShoppingBag,
+  Calendar,
 } from "lucide-react"
 
 interface SidebarProps {
@@ -51,6 +52,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       label: "Davomat",
       icon: ClipboardCheck,
       roles: ["admin", "teacher"],
+    },
+    {
+      href: "/schedule",
+      label: "Dars jadvali",
+      icon: Calendar,
+      roles: ["admin", "teacher", "student"],
     },
     {
       href: "/coins",

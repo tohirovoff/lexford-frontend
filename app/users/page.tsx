@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import LoadingSpinner from "@/components/ui/loading-spinner"
-import { Search, Trash2, Eye, Users, GraduationCap, UserCog, Calendar as CalendarIcon, CheckCircle2, XCircle, Clock, Plus, Loader2 } from "lucide-react"
+import { Search, Trash2, Eye, Users, GraduationCap, UserCog, Calendar as CalendarIcon, CheckCircle2, XCircle, Clock, Plus, Loader2, ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react"
 import { getImageUrl, getProfileImageUrl } from "@/lib/utils"
 import { useGetStudentStatsQuery } from "@/lib/api/attendanceApi"
 import { Calendar } from "@/components/ui/calendar"
@@ -27,6 +27,10 @@ export default function UsersListPage() {
   const [deleteConfirm, setDeleteConfirm] = useState<any>(null)
   const [selectedClass, setSelectedClass] = useState<string>("")
   const [updateSuccess, setUpdateSuccess] = useState(false)
+  const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' | null }>({
+    key: 'fullname',
+    direction: 'asc'
+  })
   
   const { user: currentUser } = useSelector((state: any) => state.auth)
   const isAdmin = currentUser?.role === "admin"
@@ -52,14 +56,64 @@ export default function UsersListPage() {
 
   const filteredUsers = useMemo(() => {
     if (!users) return []
-    return users.filter((user: any) => {
+    
+    // 1. Filter
+    let result = users.filter((user: any) => {
       const matchesSearch =
         user.fullname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.username?.toLowerCase().includes(searchTerm.toLowerCase())
       const matchesRole = roleFilter === "all" || user.role === roleFilter
       return matchesSearch && matchesRole
     })
-  }, [users, searchTerm, roleFilter])
+
+    // 2. Sort
+    if (sortConfig.key && sortConfig.direction) {
+      result = [...result].sort((a, b) => {
+        let aValue: any;
+        let bValue: any;
+
+        if (sortConfig.key === 'coins') {
+          const valA = Number(a.coins || a.coinBalance || 0)
+          const valB = Number(b.coins || b.coinBalance || 0)
+          return sortConfig.direction === 'asc' ? valA - valB : valB - valA
+        }
+
+        if (sortConfig.key === 'class_name') {
+          aValue = a.class?.name || a.class_name || (a.role === 'student' ? 'Z' : '')
+          bValue = b.class?.name || b.class_name || (b.role === 'student' ? 'Z' : '')
+        } else {
+          aValue = a[sortConfig.key] || ""
+          bValue = b[sortConfig.key] || ""
+        }
+
+        const strA = String(aValue).toLowerCase()
+        const strB = String(bValue).toLowerCase()
+        
+        if (strA < strB) return sortConfig.direction === 'asc' ? -1 : 1
+        if (strA > strB) return sortConfig.direction === 'asc' ? 1 : -1
+        return 0
+      })
+    }
+
+    return result
+  }, [users, searchTerm, roleFilter, sortConfig])
+
+  const requestSort = (key: string) => {
+    let direction: 'asc' | 'desc' | null = 'asc'
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc'
+    } else if (sortConfig.key === key && sortConfig.direction === 'desc') {
+      direction = null
+    }
+    setSortConfig({ key, direction })
+  }
+
+  const SortIcon = ({ column }: { column: string }) => {
+    if (sortConfig.key !== column) return <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
+    if (sortConfig.direction === 'asc') return <ChevronUp className="ml-2 h-4 w-4" />
+    if (sortConfig.direction === 'desc') return <ChevronDown className="ml-2 h-4 w-4" />
+    return <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
+  }
 
   const handleDelete = async (userId: number) => {
     try {
@@ -372,12 +426,47 @@ export default function UsersListPage() {
             <Table>
               <TableHeader className="bg-gray-50/50">
               <TableRow>
-                <TableHead>Foydalanuvchi</TableHead>
-                <TableHead>Username</TableHead>
-                <TableHead>Rol</TableHead>
-                <TableHead>Sinf</TableHead>
-                <TableHead>Tangalar</TableHead>
-                <TableHead className="text-right">Amallar</TableHead>
+                <TableHead>
+                  <button 
+                    onClick={() => requestSort('fullname')} 
+                    className="flex items-center hover:text-red-600 transition-colors font-bold uppercase text-[11px] tracking-wider"
+                  >
+                    Foydalanuvchi <SortIcon column="fullname" />
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button 
+                    onClick={() => requestSort('username')} 
+                    className="flex items-center hover:text-red-600 transition-colors font-bold uppercase text-[11px] tracking-wider"
+                  >
+                    Username <SortIcon column="username" />
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button 
+                    onClick={() => requestSort('role')} 
+                    className="flex items-center hover:text-red-600 transition-colors font-bold uppercase text-[11px] tracking-wider"
+                  >
+                    Rol <SortIcon column="role" />
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button 
+                    onClick={() => requestSort('class_name')} 
+                    className="flex items-center hover:text-red-600 transition-colors font-bold uppercase text-[11px] tracking-wider"
+                  >
+                    Sinf <SortIcon column="class_name" />
+                  </button>
+                </TableHead>
+                <TableHead>
+                  <button 
+                    onClick={() => requestSort('coins')} 
+                    className="flex items-center hover:text-red-600 transition-colors font-bold uppercase text-[11px] tracking-wider"
+                  >
+                    Tangalar <SortIcon column="coins" />
+                  </button>
+                </TableHead>
+                <TableHead className="text-right font-bold uppercase text-[11px] tracking-wider">Amallar</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

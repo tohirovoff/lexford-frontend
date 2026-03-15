@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { useUpdateUserMutation } from "@/lib/api/usersApi"
+import { useUpdateUserMutation, useGetUserQuery } from "@/lib/api/usersApi"
 import { useGetUserTransactionsQuery, useGetAllPenaltiesQuery } from "@/lib/api/coinsApi"
 import { updateUser } from "@/lib/store"
 import LoadingSpinner from "@/components/ui/loading-spinner"
@@ -22,7 +22,12 @@ const profileSchema = z.object({
 
 export default function ProfilePage() {
   const dispatch = useDispatch()
-  const { user } = useSelector((state: any) => state.auth)
+  const { user: sessionUser } = useSelector((state: any) => state.auth)
+  
+  // Fresh user data for balance and profile
+  const { data: userProfileResponse } = useGetUserQuery(sessionUser?.id, { skip: !sessionUser?.id })
+  const user = userProfileResponse?.data || sessionUser
+
   const [isEditing, setIsEditing] = useState(false)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)

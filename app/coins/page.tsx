@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useSelector } from "react-redux"
 import { useGetUserTransactionsQuery, useCreateTransactionMutation, useCreatePenaltyMutation } from "@/lib/api/coinsApi"
 import { useGetAllClassesQuery } from "@/lib/api/classesApi"
+import { useGetUserQuery } from "@/lib/api/usersApi"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -19,8 +20,12 @@ import { Coins, TrendingUp, TrendingDown, History, ArrowUpCircle, ArrowDownCircl
 import { toast } from "sonner"
 
 export default function CoinsPage() {
-  const { user } = useSelector((state: any) => state.auth)
-  const isTeacherOrAdmin = user?.role === "teacher" || user?.role === "admin"
+  const { user: sessionUser } = useSelector((state: any) => state.auth)
+  const isTeacherOrAdmin = sessionUser?.role === "teacher" || sessionUser?.role === "admin"
+
+  // Fresh user data for balance display
+  const { data: userProfileResponse } = useGetUserQuery(sessionUser?.id, { skip: !sessionUser?.id })
+  const user = userProfileResponse?.data || sessionUser
 
   // State for Give Coins form
   const [selectedClassId, setSelectedClassId] = useState<string>("")
@@ -144,10 +149,10 @@ export default function CoinsPage() {
                <div className="bg-white p-3 rounded-full shadow-sm">
                  <Coins className="h-8 w-8 text-yellow-500" />
                </div>
-               <div>
-                 <p className="text-sm font-medium text-amber-800">Joriy Balans</p>
-                 <p className="text-2xl font-bold text-gray-900">{user?.coinBalance || 0} <span className="text-sm font-normal text-gray-500">tanga</span></p>
-               </div>
+                <div>
+                  <p className="text-sm font-medium text-amber-800">Joriy Balans</p>
+                  <p className="text-2xl font-bold text-gray-900">{user?.coins || 0} <span className="text-sm font-normal text-gray-500">tanga</span></p>
+                </div>
             </CardContent>
           </Card>
         )}
@@ -232,6 +237,12 @@ export default function CoinsPage() {
                         ))}
                       </SelectContent>
                     </Select>
+                    {selectedStudentId && (
+                      <p className="text-[10px] md:text-xs font-semibold text-indigo-600 mt-1.5 flex items-center gap-1 bg-indigo-50 px-2 py-1 rounded-md w-fit border border-indigo-100/50">
+                        <CheckCircle2 className="h-3 w-3" />
+                        Joriy balansi: {students.find((s: any) => (s._id || s.id).toString() === selectedStudentId)?.coins || 0} tanga
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
