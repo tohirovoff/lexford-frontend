@@ -73,7 +73,7 @@ export default function Dashboard() {
   if (isLoading) {
     return (
       <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
-        <div className="bg-white/40 dark:bg-gray-900/40 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6 border border-gray-100/50 backdrop-blur-sm">
+      <div className="bg-card/40 dark:bg-card/40 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6 border border-border/50 backdrop-blur-sm">
           <div className="space-y-3 flex-1">
             <Skeleton className="h-10 w-[280px] md:w-[400px]" />
             <Skeleton className="h-5 w-[140px]" />
@@ -82,7 +82,7 @@ export default function Dashboard() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-32 rounded-2xl shadow-sm border border-gray-100/50" />
+            <Skeleton key={i} className="h-32 rounded-2xl shadow-sm border border-border/50" />
           ))}
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -120,7 +120,7 @@ export default function Dashboard() {
   return (
     <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto space-y-6 md:space-y-8">
       {/* Welcome Header */}
-      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-md p-6 md:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 border border-gray-100 dark:border-gray-800 transition-all hover:shadow-lg">
+      <div className="bg-card dark:bg-card rounded-2xl shadow-md p-6 md:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 border border-border dark:border-border transition-all hover:shadow-lg">
         <div className="space-y-1">
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-gray-900 dark:text-gray-100 tracking-tight">
             Xush kelibsiz, <span className="text-red-600">{user?.fullname || user?.username}</span>!
@@ -168,7 +168,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Leaderboard */}
-        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6 lg:p-8">
+        <div className="bg-card dark:bg-card rounded-2xl shadow-sm border border-border dark:border-border p-6 lg:p-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">Reyting jadvali</h2>
             <Award className="w-8 h-8 text-yellow-600" />
@@ -188,7 +188,7 @@ export default function Dashboard() {
               {leaderboard.map((item: any, index: number) => (
                 <div
                   key={item.user_id || index}
-                  className="flex items-center gap-4 md:gap-5 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all duration-300 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md"
+                  className="flex items-center gap-4 md:gap-5 p-4 rounded-xl hover:bg-accent dark:hover:bg-accent transition-all duration-300 border border-border dark:border-border shadow-sm hover:shadow-md"
                 >
                   <div
                     className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center font-bold text-base md:text-lg flex-shrink-0 shadow-sm
@@ -221,7 +221,7 @@ export default function Dashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6 lg:p-8">
+        <div className="bg-card dark:bg-card rounded-2xl shadow-sm border border-border dark:border-border p-6 lg:p-8">
           <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Tezkor harakatlar</h2>
 
           <div className="grid grid-cols-2 gap-4 md:gap-5">
@@ -243,8 +243,8 @@ export default function Dashboard() {
       </div>
 
       {/* Recent Transactions */}
-      {(isStudent) && recentTransactions.length > 0 && (
-        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6 lg:p-8">
+      {isStudent && recentTransactions.length > 0 && (
+        <div className="bg-card dark:bg-card rounded-2xl shadow-sm border border-border dark:border-border p-6 lg:p-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">So'nggi harakatlar</h2>
             <Link
@@ -259,7 +259,7 @@ export default function Dashboard() {
             {recentTransactions.map((tx: any) => (
               <div
                 key={tx.id}
-                className="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-gray-800/30 hover:bg-gray-100 dark:hover:bg-gray-800/50 transition-all duration-300 border border-gray-100 dark:border-gray-800 shadow-sm"
+                className="flex items-center justify-between p-4 rounded-xl bg-accent/50 dark:bg-accent/50 hover:bg-accent dark:hover:bg-accent transition-all duration-300 border border-border dark:border-border shadow-sm"
               >
                 <div className="flex items-center gap-4">
                   <div

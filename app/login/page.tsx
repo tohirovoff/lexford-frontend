@@ -87,23 +87,26 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen w-full bg-gradient-to-br from-red-50 to-white p-4 overflow-x-hidden">
+    <div className="flex flex-col items-center justify-center min-h-screen w-full bg-background dark:bg-background p-4 overflow-x-hidden relative">
+      {/* Background Decor */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-[100px] -mr-48 -mt-48 transition-colors duration-500" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-[100px] -ml-48 -mb-48 transition-colors duration-500" />
       <div className="w-full max-w-md py-8">
         {/* Logo va sarlavha */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-24 h-24 mb-2">
             <img src="/logo.png" alt="Lexford Logo" className="w-full h-full object-contain drop-shadow-md" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Lexford</h1>
-          <p className="text-gray-500 mt-1">Maktab boshqaruvi tizimi</p>
+          <h1 className="text-3xl font-extrabold text-foreground dark:text-foreground tracking-tight">Lexford</h1>
+          <p className="text-muted-foreground mt-1 font-medium">Maktab boshqaruvi tizimi</p>
         </div>
 
         {/* Login kartasi */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-1">
+        <div className="bg-card dark:bg-card rounded-3xl shadow-2xl p-8 md:p-10 border border-border dark:border-border relative z-10">
+          <h2 className="text-2xl font-bold text-foreground dark:text-foreground mb-1 tracking-tight">
             Tizimga kirish
           </h2>
-          <p className="text-gray-500 text-sm mb-6">
+          <p className="text-muted-foreground text-sm mb-8 font-medium">
             Hisobingizga kirish uchun ma'lumotlarni kiriting
           </p>
 
@@ -125,16 +128,16 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" autoComplete="off">
             {/* Username */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-semibold text-foreground/80 mb-2 px-1">
                 Foydalanuvchi nomi
               </label>
               <input
                 type="text"
                 autoComplete="off"
                 {...register("username")}
-                className={`w-full px-4 py-3 rounded-lg border ${
-                  errors.username ? "border-red-500" : "border-gray-300"
-                } focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all`}
+                className={`w-full px-4 py-3.5 rounded-xl border bg-background/50 dark:bg-background/50 ${
+                  errors.username ? "border-red-500" : "border-border"
+                } focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium`}
                 placeholder="Foydalanuvchi nomini kiriting"
               />
               {errors.username && (
@@ -146,7 +149,7 @@ export default function LoginPage() {
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-semibold text-foreground/80 mb-2 px-1">
                 Parol
               </label>
               <div className="relative">
@@ -154,9 +157,9 @@ export default function LoginPage() {
                   type={showPassword ? "text" : "password"}
                   autoComplete="new-password"
                   {...register("password")}
-                  className={`w-full px-4 py-3 rounded-lg border pr-11 ${
-                    errors.password ? "border-red-500" : "border-gray-300"
-                  } focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all`}
+                  className={`w-full px-4 py-3.5 rounded-xl border bg-background/50 dark:bg-background/50 pr-11 ${
+                    errors.password ? "border-red-500" : "border-border"
+                  } focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium`}
                   placeholder="Parolni kiriting"
                 />
                 <button
@@ -182,9 +185,9 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 px-4 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg
-                         transition-all duration-200 flex items-center justify-center gap-2
-                         disabled:opacity-70 disabled:cursor-not-allowed shadow-[0_4px_12px_rgba(220,38,38,0.25)] hover:shadow-[0_4px_20px_rgba(220,38,38,0.4)]"
+              className="w-full py-4 px-6 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl
+                         transition-all duration-300 flex items-center justify-center gap-2
+                         disabled:opacity-70 disabled:cursor-not-allowed shadow-[0_4px_12px_rgba(220,38,38,0.25)] hover:shadow-xl hover:-translate-y-0.5"
             >
               {isLoading ? (
                 <>

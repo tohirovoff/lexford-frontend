@@ -103,12 +103,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 shadow-2xl
+        className={`fixed inset-y-0 left-0 z-50 w-72 bg-card dark:bg-card border-r border-border dark:border-border shadow-2xl
           transform transition-all duration-300 ease-in-out xl:translate-x-0
           ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         {/* Logo + Close button */}
-        <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+        <div className="p-6 border-b border-border dark:border-border flex items-center justify-between">
           <Link href="/dashboard" className="flex items-center gap-3">
             <div className="w-10 h-10 flex items-center justify-center">
               <img src="/logo.png" alt="Lexford Logo" className="w-full h-full object-contain drop-shadow-sm" />
@@ -136,8 +136,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   className={`flex items-center gap-4 px-5 py-4 rounded-2xl text-base transition-all duration-200
                     ${
                       isActive(item.href)
-                        ? "bg-gradient-to-r from-red-50 to-red-100 dark:from-red-950 dark:to-red-900 text-red-700 dark:text-red-400 font-semibold shadow-sm"
-                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
+                        ? "bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary font-semibold shadow-sm"
+                        : "text-muted-foreground hover:bg-accent dark:hover:bg-accent hover:text-foreground dark:hover:text-foreground"
                     }`}
                 >
                   <item.icon className="w-6 h-6" />
@@ -149,7 +149,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         </nav>
 
         {/* Bottom section: Role badge + Logout */}
-        <div className="p-6 border-t border-gray-100 dark:border-gray-800 mt-auto">
+        <div className="p-6 border-t border-border dark:border-border mt-auto">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div

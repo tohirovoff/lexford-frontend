@@ -3,7 +3,8 @@
 import { useDispatch, useSelector } from "react-redux"
 import { logout } from "@/lib/store"
 import CoinDisplay from "@/components/ui/coin-display"
-import { Menu, UserCircle, LogOut, ChevronDown } from "lucide-react"
+import { Menu, UserCircle, LogOut, ChevronDown, Sun, Moon } from "lucide-react"
+import { useTheme } from "next-themes"
 import NotificationBell from "./notification-bell"
 import { getImageUrl } from "@/lib/utils"
 import { useState, useRef, useEffect } from "react"
@@ -16,6 +17,12 @@ interface HeaderProps {
 export default function Header({ onMenuClick }: HeaderProps) {
   const dispatch = useDispatch()
   const { user } = useSelector((state: any) => state.auth)
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const [userDropdownOpen, setUserDropdownOpen] = useState(false)
   const userRef = useRef<HTMLDivElement>(null)
@@ -45,7 +52,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 z-40 shadow-sm backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90">
+    <header className="fixed top-0 left-0 right-0 h-16 bg-card/80 dark:bg-card/80 border-b border-border dark:border-border z-40 shadow-sm backdrop-blur-md">
       <div className="flex items-center justify-between h-full px-4 md:px-8 max-w-screen-2xl mx-auto">
         {/* Left: Logo + Hamburger (mobil uchun) */}
         <div className="flex items-center gap-5">
@@ -75,6 +82,19 @@ export default function Header({ onMenuClick }: HeaderProps) {
               <CoinDisplay coins={user?.coins || 0} size="md" showLabel={false} />
             </div>
           )}
+
+          {/* Theme Toggle */}
+          <button
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="p-2.5 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 border border-gray-100 dark:border-gray-700"
+            aria-label="Toggle theme"
+          >
+            {mounted && theme === "dark" ? (
+              <Sun className="w-5 h-5 text-yellow-500" />
+            ) : (
+              <Moon className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            )}
+          </button>
 
           {/* Notifications */}
           {user && <NotificationBell />}

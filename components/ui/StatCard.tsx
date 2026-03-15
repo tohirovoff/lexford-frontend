@@ -22,14 +22,14 @@ export default function StatCard({
   isText = false,
 }: StatCardProps) {
   const colorClasses = {
-    red: "bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400 border-red-100 dark:border-red-900/30",
-    blue: "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 border-blue-100 dark:border-blue-900/30",
-    green: "bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400 border-green-100 dark:border-green-900/30",
-    yellow: "bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400 border-amber-100 dark:border-amber-900/30",
+    red: "bg-red-50 hover:bg-red-100 text-red-700 border-red-100 dark:bg-red-900/10 dark:hover:bg-red-900/20 dark:text-red-400 dark:border-red-900/30",
+    blue: "bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-100 dark:bg-blue-900/10 dark:hover:bg-blue-900/20 dark:text-blue-400 dark:border-blue-900/30",
+    green: "bg-green-50 hover:bg-green-100 text-green-700 border-green-100 dark:bg-green-900/10 dark:hover:bg-green-900/20 dark:text-green-400 dark:border-green-900/30",
+    yellow: "bg-amber-50 hover:bg-amber-100 text-amber-700 border-amber-100 dark:bg-amber-900/10 dark:hover:bg-amber-900/20 dark:text-amber-400 dark:border-amber-900/30",
   }
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm p-5 flex items-center gap-5 border border-gray-100 dark:border-gray-800 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group">
+    <div className="bg-card dark:bg-card rounded-2xl shadow-sm p-5 flex items-center gap-5 border border-border dark:border-border hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group">
       <div className={`w-14 h-14 rounded-xl flex items-center justify-center shadow-sm border ${colorClasses[color]} group-hover:scale-110 transition-transform duration-300`}>
         <Icon className="w-7 h-7" />
       </div>

@@ -20,8 +20,8 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
     <Provider store={store}>
       <ThemeProvider
         attribute="class"
-        defaultTheme="light"
-        enableSystem={false}
+        defaultTheme="system"
+        enableSystem={true}
         disableTransitionOnChange
       >
         <div className="flex min-h-screen">
