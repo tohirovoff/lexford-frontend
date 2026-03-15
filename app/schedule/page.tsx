@@ -152,7 +152,7 @@ export default function SchedulePage() {
             </div>
          </div>
          <div className="text-right text-[10px] font-bold text-gray-400">
-            2024-2025 o'quv yili
+            2025-2026 o'quv yili
          </div>
       </div>
 
