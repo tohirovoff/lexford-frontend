@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { useGetAllUsersQuery, useDeleteUserMutation, useUpdateUserMutation, useCreateUserMutation, useCreateManyUsersMutation } from "@/lib/api/usersApi"
+import { useGetAllUsersQuery, useDeleteUserMutation, useUpdateUserMutation, useUpdateStudentClassMutation, useCreateUserMutation, useCreateManyUsersMutation } from "@/lib/api/usersApi"
 import { useGetAllClassesQuery } from "@/lib/api/classesApi"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -100,6 +100,7 @@ export default function UsersListPage() {
   const classes = Array.isArray(classesResponse) ? classesResponse : classesResponse?.data || []
   const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation()
   const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation()
+  const [updateStudentClass, { isLoading: isStatusUpdating }] = useUpdateStudentClassMutation()
   const [createUser, { isLoading: isCreating }] = useCreateUserMutation()
   const [createManyUsers, { isLoading: isBulkCreating }] = useCreateManyUsersMutation()
 
@@ -176,15 +177,17 @@ export default function UsersListPage() {
   const handleClassAssignment = async () => {
     if (!selectedUser || !selectedClass) return
     try {
-      await updateUser({ id: selectedUser.id, classId: selectedClass }).unwrap()
+      await updateStudentClass({ id: selectedUser.id, class_id: selectedClass }).unwrap()
+      toast.success("Sinf muvaffaqiyatli o'zgartirildi")
       setUpdateSuccess(true)
       setTimeout(() => {
         setUpdateSuccess(false)
         setSelectedUser(null)
         setSelectedClass("")
       }, 2000)
-    } catch (err) {
+    } catch (err: any) {
       console.error("Update error:", err)
+      toast.error(err?.data?.message || "Sinfni o'zgartirishda xatolik yuz berdi")
     }
   }
 
@@ -770,9 +773,44 @@ export default function UsersListPage() {
                   <p className="font-medium text-amber-600">{selectedUser.coinBalance || 0}</p>
                 </div>
                 {selectedUser.role === "student" && (
-                  <div className="col-span-2">
-                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Davomat kalendari</p>
-                     <AttendanceCalendar studentId={selectedUser.id} />
+                  <div className="col-span-2 space-y-4">
+                     {isAdmin && (
+                       <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 space-y-3">
+                         <Label className="text-[10px] font-black uppercase text-gray-500 tracking-wider">Sinfni o'zgartirish (Admin)</Label>
+                         <div className="flex gap-2">
+                           <Select value={selectedClass} onValueChange={setSelectedClass}>
+                             <SelectTrigger className="bg-white rounded-xl h-11">
+                               <SelectValue placeholder="Sinfni tanlang" />
+                             </SelectTrigger>
+                             <SelectContent className="z-[130]">
+                               <SelectItem value="none">Sinf yo'q</SelectItem>
+                               {classes.map((cls: any) => (
+                                 <SelectItem key={cls.id || cls._id} value={String(cls.id || cls._id)}>
+                                   {cls.name}
+                                 </SelectItem>
+                               ))}
+                             </SelectContent>
+                           </Select>
+                           <Button 
+                             onClick={handleClassAssignment} 
+                             disabled={isStatusUpdating || selectedClass === (selectedUser.class_id ? String(selectedUser.class_id) : "none")}
+                             className="bg-red-600 hover:bg-red-700 h-11 px-6 rounded-xl font-bold"
+                           >
+                             {isStatusUpdating ? <Loader2 className="w-4 h-4 animate-spin" /> : "Saqlash"}
+                           </Button>
+                         </div>
+                         {updateSuccess && (
+                           <p className="text-xs text-green-600 font-bold flex items-center gap-1">
+                             <CheckCircle2 className="w-3 h-3" /> Muvaffaqiyatli saqlandi!
+                           </p>
+                         )}
+                       </div>
+                     )}
+                     
+                     <div className="pt-2">
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Davomat kalendari</p>
+                        <AttendanceCalendar studentId={selectedUser.id} />
+                     </div>
                   </div>
                 )}
               </div>
