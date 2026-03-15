@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { useGetAllUsersQuery, useDeleteUserMutation, useUpdateUserMutation, useCreateUserMutation } from "@/lib/api/usersApi"
+import { useGetAllUsersQuery, useDeleteUserMutation, useUpdateUserMutation, useCreateUserMutation, useCreateManyUsersMutation } from "@/lib/api/usersApi"
 import { useGetAllClassesQuery } from "@/lib/api/classesApi"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -13,12 +13,55 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import LoadingSpinner from "@/components/ui/loading-spinner"
-import { Search, Trash2, Eye, Users, GraduationCap, UserCog, Calendar as CalendarIcon, CheckCircle2, XCircle, Clock, Plus, Loader2, ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react"
+import { Search, Trash2, Eye, Users, GraduationCap, UserCog, Calendar as CalendarIcon, CheckCircle2, XCircle, Clock, Plus, Loader2, ChevronUp, ChevronDown, ChevronsUpDown, Copy, PlusCircle, Save } from "lucide-react"
 import { getImageUrl, getProfileImageUrl } from "@/lib/utils"
 import { useGetStudentStatsQuery } from "@/lib/api/attendanceApi"
 import { Calendar } from "@/components/ui/calendar"
 import { useSelector } from "react-redux"
 import { toast } from "sonner"
+
+function AttendanceCalendar({ studentId }: { studentId: number }) {
+  const { data: stats, isLoading } = useGetStudentStatsQuery(studentId, { skip: !studentId })
+  
+  if (isLoading) return <div className="p-4 flex justify-center"><LoadingSpinner size="sm" /></div>
+  if (!stats) return <p className="text-xs text-center text-gray-400 py-4">Ma'lumot topilmadi</p>
+
+  const presentDays = (stats.recent_attendances || []).map((d: string) => new Date(d))
+  const lateDays = (stats.recent_late_days || []).map((d: string) => new Date(d))
+  const absentDays = (stats.recent_absent_days || []).map((d: string) => new Date(d))
+  
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap gap-3 mb-2">
+        <div className="flex items-center gap-1.5 text-[10px] font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full border border-green-100">
+          <div className="w-1.5 h-1.5 rounded-full bg-green-500" /> Kelgan
+        </div>
+        <div className="flex items-center gap-1.5 text-[10px] font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded-full border border-amber-100">
+          <div className="w-1.5 h-1.5 rounded-full bg-amber-500" /> Kechikkan
+        </div>
+        <div className="flex items-center gap-1.5 text-[10px] font-medium text-red-600 bg-red-50 px-2 py-1 rounded-full border border-red-100">
+          <div className="w-1.5 h-1.5 rounded-full bg-red-500" /> Kelmagan
+        </div>
+      </div>
+      
+      <div className="border rounded-xl p-3 bg-white shadow-sm overflow-hidden flex justify-center pointer-events-none">
+        <Calendar
+          modifiers={{
+            present: presentDays,
+            late: lateDays,
+            absent: absentDays,
+          }}
+          modifiersClassNames={{
+            present: "bg-green-100! text-green-700! font-bold rounded-full",
+            late: "bg-amber-100! text-amber-700! font-bold rounded-full",
+            absent: "bg-red-100! text-red-700! font-bold rounded-full",
+          }}
+          className="p-0 border-0"
+        />
+      </div>
+    </div>
+  )
+}
 
 export default function UsersListPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -36,6 +79,7 @@ export default function UsersListPage() {
   const isAdmin = currentUser?.role === "admin"
 
   const [isAddUserOpen, setIsAddUserOpen] = useState(false)
+  const [isBulkAddOpen, setIsBulkAddOpen] = useState(false)
   const [newUser, setNewUser] = useState({
     fullname: "",
     username: "",
@@ -45,6 +89,10 @@ export default function UsersListPage() {
     class_name: "",
     grade: "",
   })
+  
+  const [bulkUsers, setBulkUsers] = useState<any[]>([
+    { fullname: "", username: "", password: "", role: "student", class_id: "", class_name: "", grade: "" }
+  ])
 
   const { data: usersResponse, isLoading, error } = useGetAllUsersQuery(undefined)
   const users = Array.isArray(usersResponse) ? usersResponse : usersResponse?.data || []
@@ -53,6 +101,7 @@ export default function UsersListPage() {
   const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation()
   const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation()
   const [createUser, { isLoading: isCreating }] = useCreateUserMutation()
+  const [createManyUsers, { isLoading: isBulkCreating }] = useCreateManyUsersMutation()
 
   const filteredUsers = useMemo(() => {
     if (!users) return []
@@ -165,10 +214,6 @@ export default function UsersListPage() {
         if (newUser.grade) {
           payload.grade = String(newUser.grade)
         }
-      } else {
-        // Teacher yoki Admin uchun
-        payload.class_id = null;
-        payload.class_name = null;
       }
 
       await createUser(payload).unwrap()
@@ -178,6 +223,50 @@ export default function UsersListPage() {
     } catch (err: any) {
       console.error(err)
       toast.error(err?.data?.message || err?.data?.error || "Xatolik yuz berdi")
+    }
+  }
+
+  const handleBulkCreate = async () => {
+    const validUsers = bulkUsers.filter(u => u.fullname && u.username && u.password)
+    if (validUsers.length === 0) {
+      toast.error("Iltimos, kamida bitta foydalanuvchi ma'lumotlarini to'liq to'ldiring")
+      return
+    }
+
+    try {
+      const payload = validUsers.map(u => ({
+        fullname: u.fullname,
+        username: u.username,
+        password: u.password,
+        role: u.role,
+        class_id: u.role === 'student' && u.class_id && u.class_id !== "none" ? parseInt(u.class_id) : null,
+        class_name: u.role === 'student' ? u.class_name : null,
+        grade: u.role === 'student' ? u.grade : null,
+      }))
+
+      await createManyUsers(payload).unwrap()
+      toast.success(`${payload.length} ta foydalanuvchi muvaffaqiyatli qo'shildi`)
+      setIsBulkAddOpen(false)
+      setBulkUsers([{ fullname: "", username: "", password: "", role: "student", class_id: "", class_name: "", grade: "" }])
+    } catch (err: any) {
+      console.error(err)
+      toast.error(err?.data?.message || "Ommaviy qo'shishda xatolik yuz berdi")
+    }
+  }
+
+  const addBulkRow = () => {
+    setBulkUsers([...bulkUsers, { fullname: "", username: "", password: "", role: "student", class_id: "", class_name: "", grade: "" }])
+  }
+
+  const updateBulkUser = (index: number, field: string, value: string) => {
+    const newBulk = [...bulkUsers]
+    newBulk[index][field] = value
+    setBulkUsers(newBulk)
+  }
+
+  const removeBulkRow = (index: number) => {
+    if (bulkUsers.length > 1) {
+      setBulkUsers(bulkUsers.filter((_, i) => i !== index))
     }
   }
 
@@ -218,120 +307,239 @@ export default function UsersListPage() {
            <p className="text-gray-500 dark:text-gray-400 font-medium">Tizimdagi barcha foydalanuvchilar ro'yxati</p>
         </div>
         {isAdmin && (
-          <Dialog open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
-            <DialogTrigger asChild>
-              <Button className="bg-red-600 hover:bg-red-700 text-white rounded-2xl shadow-lg transition-all hover:scale-105 active:scale-95 h-12 px-6">
-                <Plus className="w-5 h-5 mr-2" />
-                Foydalanuvchi qo'shish
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Yangi foydalanuvchi qo'shish</DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleCreateUser} className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="fullname">To'liq ism</Label>
-                  <Input
-                    id="fullname"
-                    placeholder="Falonchiyev Pistonchi"
-                    value={newUser.fullname}
-                    onChange={(e) => setNewUser({ ...newUser, fullname: e.target.value })}
-                  />
+          <div className="flex gap-2">
+            <Dialog open={isBulkAddOpen} onOpenChange={setIsBulkAddOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="border-red-600 text-red-600 hover:bg-red-50 rounded-2xl h-12 px-6 font-bold shadow-sm transition-all hover:scale-105">
+                  <PlusCircle className="w-5 h-5 mr-2" />
+                  Ommaviy qo'shish
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[900px] max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Bir vaqtda bir nechta foydalanuvchi qo'shish</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="w-[200px]">To'liq ism</TableHead>
+                          <TableHead className="w-[150px]">Username</TableHead>
+                          <TableHead className="w-[150px]">Parol</TableHead>
+                          <TableHead className="w-[130px]">Rol</TableHead>
+                          <TableHead className="w-[150px]">Sinf (Baza)</TableHead>
+                          <TableHead className="w-[150px]">Sinf Nomi</TableHead>
+                          <TableHead className="w-[50px]"></TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {bulkUsers.map((user, index) => (
+                          <TableRow key={index}>
+                            <TableCell>
+                              <Input 
+                                placeholder="Ism Familiya"
+                                value={user.fullname}
+                                onChange={(e) => updateBulkUser(index, 'fullname', e.target.value)}
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Input 
+                                placeholder="username"
+                                value={user.username}
+                                onChange={(e) => updateBulkUser(index, 'username', e.target.value)}
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Input 
+                                placeholder="parol"
+                                value={user.password}
+                                onChange={(e) => updateBulkUser(index, 'password', e.target.value)}
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Select
+                                value={user.role}
+                                onValueChange={(val) => updateBulkUser(index, 'role', val)}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent className="z-[120]">
+                                  <SelectItem value="student">O'quvchi</SelectItem>
+                                  <SelectItem value="teacher">O'qituvchi</SelectItem>
+                                  <SelectItem value="admin">Admin</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </TableCell>
+                            <TableCell>
+                              {user.role === 'student' ? (
+                                <Select
+                                  value={user.class_id}
+                                  onValueChange={(val) => updateBulkUser(index, 'class_id', val)}
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Sinf" />
+                                  </SelectTrigger>
+                                  <SelectContent className="z-[120]">
+                                    <SelectItem value="none">Yo'q</SelectItem>
+                                    {classes.map((cls: any) => (
+                                      <SelectItem key={cls.id || cls._id} value={String(cls.id || cls._id)}>
+                                        {cls.name}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              ) : "—"}
+                            </TableCell>
+                            <TableCell>
+                              {user.role === 'student' ? (
+                                <Input 
+                                  placeholder="Masalan: 6-A"
+                                  value={user.class_name}
+                                  onChange={(e) => updateBulkUser(index, 'class_name', e.target.value)}
+                                />
+                              ) : "—"}
+                            </TableCell>
+                            <TableCell>
+                              <Button variant="ghost" size="icon" onClick={() => removeBulkRow(index)} className="text-gray-400 hover:text-red-500">
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                  <Button variant="outline" onClick={addBulkRow} className="w-full dashed border-2 border-dashed h-12 mt-2">
+                    <Plus className="w-4 h-4 mr-2" /> Qator qo'shish
+                  </Button>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="username">Username</Label>
-                  <Input
-                    id="username"
-                    placeholder="username123"
-                    value={newUser.username}
-                    onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Parol</Label>
-                  <Input
-                    id="password"
-                    type="text"
-                    placeholder="Parol kiriting"
-                    value={newUser.password}
-                    onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Roli</Label>
-                  <Select
-                    value={newUser.role}
-                    onValueChange={(val) => setNewUser({ ...newUser, role: val })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Rolni tanlang" />
-                    </SelectTrigger>
-                    <SelectContent className="z-[110]">
-                      <SelectItem value="admin">Admin</SelectItem>
-                      <SelectItem value="teacher">O'qituvchi</SelectItem>
-                      <SelectItem value="student">O'quvchi</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                {newUser.role === "student" && (
-                  <>
-                    <div className="space-y-2">
-                      <Label>Sinf (Ixtiyoriy)</Label>
-                      <Select
-                        value={newUser.class_id}
-                        onValueChange={(val) => setNewUser({ ...newUser, class_id: val })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Sinfni tanlang" />
-                        </SelectTrigger>
-                        <SelectContent className="z-[110]">
-                          <SelectItem value="none">Sinfga qo'shmaslik</SelectItem>
-                          {classes.map((cls: any) => (
-                            <SelectItem key={cls.id || cls._id} value={String(cls.id || cls._id)}>
-                              {cls.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="class_name">Sinf nomi (Masalan: 6-A)</Label>
-                      <Input
-                        id="class_name"
-                        placeholder="Sinf nomini kiriting"
-                        value={newUser.class_name}
-                        onChange={(e) => setNewUser({ ...newUser, class_name: e.target.value })}
-                      />
-                    </div>
-                    {newUser.class_id === "none" && (
-                      <div className="space-y-2 animate-in fade-in zoom-in duration-200">
-                        <Label htmlFor="grade">Daraja (Grade) - Ixtiyoriy</Label>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setIsBulkAddOpen(false)}>Bekor qilish</Button>
+                  <Button onClick={handleBulkCreate} disabled={isBulkCreating} className="bg-red-600 hover:bg-red-700">
+                    {isBulkCreating ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
+                    Barchasini saqlash
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            <Dialog open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-red-600 hover:bg-red-700 text-white rounded-2xl shadow-lg transition-all hover:scale-105 active:scale-95 h-12 px-6">
+                  <Plus className="w-5 h-5 mr-2" />
+                  Foydalanuvchi qo'shish
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Yangi foydalanuvchi qo'shish</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleCreateUser} className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="fullname">To'liq ism</Label>
+                    <Input
+                      id="fullname"
+                      placeholder="Falonchiyev Pistonchi"
+                      value={newUser.fullname}
+                      onChange={(e) => setNewUser({ ...newUser, fullname: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="username">Username</Label>
+                    <Input
+                      id="username"
+                      placeholder="username123"
+                      value={newUser.username}
+                      onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Parol</Label>
+                    <Input
+                      id="password"
+                      type="text"
+                      placeholder="Parol kiriting"
+                      value={newUser.password}
+                      onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Roli</Label>
+                    <Select
+                      value={newUser.role}
+                      onValueChange={(val) => setNewUser({ ...newUser, role: val })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Rolni tanlang" />
+                      </SelectTrigger>
+                      <SelectContent className="z-[110]">
+                        <SelectItem value="admin">Admin</SelectItem>
+                        <SelectItem value="teacher">O'qituvchi</SelectItem>
+                        <SelectItem value="student">O'quvchi</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  {newUser.role === "student" && (
+                    <>
+                      <div className="space-y-2">
+                        <Label>Sinf (Ixtiyoriy)</Label>
+                        <Select
+                          value={newUser.class_id}
+                          onValueChange={(val) => setNewUser({ ...newUser, class_id: val })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Sinfni tanlang" />
+                          </SelectTrigger>
+                          <SelectContent className="z-[110]">
+                            <SelectItem value="none">Sinfga qo'shmaslik</SelectItem>
+                            {classes.map((cls: any) => (
+                              <SelectItem key={cls.id || cls._id} value={String(cls.id || cls._id)}>
+                                {cls.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="class_name">Sinf nomi (Masalan: 6-A)</Label>
                         <Input
-                          id="grade"
-                          placeholder="Sinf darajasi (masalan: 10)"
-                          value={newUser.grade}
-                          onChange={(e) => setNewUser({ ...newUser, grade: e.target.value })}
+                          id="class_name"
+                          placeholder="Sinf nomini kiriting"
+                          value={newUser.class_name}
+                          onChange={(e) => setNewUser({ ...newUser, class_name: e.target.value })}
                         />
                       </div>
-                    )}
-                  </>
-                )}
-
-                <Button type="submit" disabled={isCreating} className="w-full bg-red-600 hover:bg-red-700">
-                  {isCreating ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Qo'shilmoqda...
+                      {newUser.class_id === "none" && (
+                        <div className="space-y-2 animate-in fade-in zoom-in duration-200">
+                          <Label htmlFor="grade">Daraja (Grade) - Ixtiyoriy</Label>
+                          <Input
+                            id="grade"
+                            placeholder="Sinf darajasi (masalan: 10)"
+                            value={newUser.grade}
+                            onChange={(e) => setNewUser({ ...newUser, grade: e.target.value })}
+                          />
+                        </div>
+                      )}
                     </>
-                  ) : (
-                    "Qo'shish"
                   )}
-                </Button>
-              </form>
-            </DialogContent>
-          </Dialog>
+
+                  <Button type="submit" disabled={isCreating} className="w-full bg-red-600 hover:bg-red-700">
+                    {isCreating ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Qo'shilmoqda...
+                      </>
+                    ) : (
+                      "Qo'shish"
+                    )}
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
         )}
       </div>
 
@@ -590,49 +798,6 @@ export default function UsersListPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
-  )
-}
-
-function AttendanceCalendar({ studentId }: { studentId: number }) {
-  const { data: stats, isLoading } = useGetStudentStatsQuery(studentId, { skip: !studentId })
-  
-  if (isLoading) return <div className="p-4 flex justify-center"><LoadingSpinner size="sm" /></div>
-  if (!stats) return <p className="text-xs text-center text-gray-400 py-4">Ma'lumot topilmadi</p>
-
-  const presentDays = (stats.recent_attendances || []).map((d: string) => new Date(d))
-  const lateDays = (stats.recent_late_days || []).map((d: string) => new Date(d))
-  const absentDays = (stats.recent_absent_days || []).map((d: string) => new Date(d))
-  
-  return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap gap-3 mb-2">
-        <div className="flex items-center gap-1.5 text-[10px] font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full border border-green-100">
-          <div className="w-1.5 h-1.5 rounded-full bg-green-500" /> Kelgan
-        </div>
-        <div className="flex items-center gap-1.5 text-[10px] font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded-full border border-amber-100">
-          <div className="w-1.5 h-1.5 rounded-full bg-amber-500" /> Kechikkan
-        </div>
-        <div className="flex items-center gap-1.5 text-[10px] font-medium text-red-600 bg-red-50 px-2 py-1 rounded-full border border-red-100">
-          <div className="w-1.5 h-1.5 rounded-full bg-red-500" /> Kelmagan
-        </div>
-      </div>
-      
-      <div className="border rounded-xl p-3 bg-white shadow-sm overflow-hidden flex justify-center pointer-events-none">
-        <Calendar
-          modifiers={{
-            present: presentDays,
-            late: lateDays,
-            absent: absentDays,
-          }}
-          modifiersClassNames={{
-            present: "bg-green-100! text-green-700! font-bold rounded-full",
-            late: "bg-amber-100! text-amber-700! font-bold rounded-full",
-            absent: "bg-red-100! text-red-700! font-bold rounded-full",
-          }}
-          className="p-0 border-0"
-        />
-      </div>
     </div>
   )
 }
