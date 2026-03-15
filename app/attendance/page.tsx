@@ -240,11 +240,11 @@ export default function AttendanceMarkingPage() {
     <div className="space-y-6 max-w-6xl mx-auto pt-4 md:pt-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Davomat</h1>
-          <p className="text-gray-500">O'quvchilar davomatini boshqarish</p>
+          <h1 className="text-2xl font-bold text-foreground">Davomat</h1>
+          <p className="text-muted-foreground">O'quvchilar davomatini boshqarish</p>
         </div>
-        <Badge variant="outline" className="text-sm py-1.5 px-3 bg-white shadow-sm self-start md:self-auto">
-          <Calendar className="h-4 w-4 mr-2 text-red-600" />
+        <Badge variant="outline" className="text-sm py-1.5 px-3 bg-card shadow-sm self-start md:self-auto border-border">
+          <Calendar className="h-4 w-4 mr-2 text-primary" />
           {today}
         </Badge>
       </div>
@@ -254,11 +254,11 @@ export default function AttendanceMarkingPage() {
         <CardContent className="p-6">
           {classes.length === 0 && !classesLoading ? (
             <div className="flex flex-col items-center justify-center py-4 text-center">
-              <div className="w-12 h-12 bg-amber-50 rounded-full flex items-center justify-center mb-3">
-                <AlertCircle className="h-6 w-6 text-amber-600" />
+              <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-950/30 rounded-full flex items-center justify-center mb-3">
+                <AlertCircle className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
               </div>
-              <h3 className="font-semibold text-gray-900">Sizga sinf biriktirilmagan</h3>
-              <p className="text-sm text-gray-500 max-w-xs">
+              <h3 className="font-semibold text-foreground">Sizga sinf biriktirilmagan</h3>
+              <p className="text-sm text-muted-foreground max-w-xs">
                 Siz hozircha hech qanday sinfga rahbar qilib tayinlanmagansiz. 
                 Iltimos, adminstratorga murojaat qiling.
               </p>
@@ -282,8 +282,8 @@ export default function AttendanceMarkingPage() {
               </div>
               
               {selectedClassId && (
-                <div className="text-sm text-gray-500 pb-1">
-                  O'quvchilar soni: <span className="font-semibold text-gray-900">{students.length}</span> nafar
+                <div className="text-sm text-muted-foreground pb-1">
+                  O'quvchilar soni: <span className="font-semibold text-foreground">{students.length}</span> nafar
                 </div>
               )}
             </div>
@@ -327,7 +327,7 @@ export default function AttendanceMarkingPage() {
                  </CardContent>
                </Card>
 
-               <Card className="shadow-sm bg-gray-50/50">
+               <Card className="shadow-sm bg-muted/20">
                  <CardHeader className="pb-3">
                     <CardTitle className="text-lg">Joriy statistika</CardTitle>
                  </CardHeader>
@@ -345,7 +345,7 @@ export default function AttendanceMarkingPage() {
                         <span className="flex items-center text-amber-700"><Clock className="w-4 h-4 mr-2"/> Kechikdi</span>
                         <Badge className="bg-amber-100 text-amber-700">{stats.late}</Badge>
                       </div>
-                      <div className="pt-2 mt-2 border-t border-gray-200 flex justify-between items-center font-medium">
+                      <div className="pt-2 mt-2 border-t border-border flex justify-between items-center font-medium">
                         <span>Jami</span>
                         <span>{stats.total}</span>
                       </div>
@@ -355,17 +355,17 @@ export default function AttendanceMarkingPage() {
             </div>
 
             {/* Students List */}
-            <Card className="shadow-sm border-0 ring-1 ring-gray-200">
+            <Card className="shadow-sm border-0 ring-1 ring-border">
               <CardContent className="p-0">
                 {students.length === 0 ? (
-                  <div className="p-12 text-center text-gray-500 bg-gray-50 rounded-lg m-2">
-                    <AlertCircle className="w-10 h-10 mx-auto mb-3 text-gray-400 opacity-50" />
+                  <div className="p-12 text-center text-muted-foreground bg-muted/20 rounded-lg m-2">
+                    <AlertCircle className="w-10 h-10 mx-auto mb-3 text-muted-foreground opacity-50" />
                     <p>Ushbu sinfda o'quvchilar ro'yxati bo'sh</p>
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
                   <Table>
-                    <TableHeader className="bg-gray-50/80">
+                    <TableHeader className="bg-muted/50 font-bold uppercase text-[11px] tracking-wider text-muted-foreground">
                       <TableRow>
                         <TableHead className="w-[300px]">O'quvchi</TableHead>
                         <TableHead className="text-center w-[150px]">Status</TableHead>
@@ -388,8 +388,8 @@ export default function AttendanceMarkingPage() {
                                 </AvatarFallback>
                               </Avatar>
                               <div>
-                                <p className="font-semibold text-gray-900">{student.fullname || "Ismsiz"}</p>
-                                <p className="text-xs text-gray-500">@{student.username || "username"}</p>
+                                <p className="font-semibold text-foreground">{student.fullname || "Ismsiz"}</p>
+                                <p className="text-xs text-muted-foreground">@{student.username || "username"}</p>
                               </div>
                             </div>
                           </TableCell>

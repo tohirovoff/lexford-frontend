@@ -100,7 +100,7 @@ export default function ClassListPage() {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pt-4 md:pt-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Sinflar</h1>
+        <h1 className="text-2xl font-bold text-foreground">Sinflar</h1>
         
         {isAdmin && (
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -205,7 +205,7 @@ export default function ClassListPage() {
       <Card>
         <CardContent className="p-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Sinf nomi yoki o'qituvchi bo'yicha qidirish..."
               value={searchTerm}
@@ -237,7 +237,7 @@ export default function ClassListPage() {
             )}
             <CardHeader className="pb-2">
               <div className="flex items-start justify-between">
-                <CardTitle className="text-lg pr-8">{cls.name}</CardTitle>
+                <CardTitle className="text-lg pr-8 text-foreground">{cls.name}</CardTitle>
                 <Badge variant="outline" className="bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800">
                   {cls.grade || "Sinf"}
                 </Badge>
@@ -245,13 +245,13 @@ export default function ClassListPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                <div className="flex items-center gap-2 text-muted-foreground">
                   <GraduationCap className="h-4 w-4" />
                   <span className="text-sm">
                     {cls.teacher?.fullname || (typeof cls.teacher === 'string' ? "O'qituvchi tayinlanmagan" : (cls.teacher?.username || "O'qituvchi yo'q"))}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                <div className="flex items-center gap-2 text-muted-foreground">
                   <Users className="h-4 w-4" />
                   <span className="text-sm">
                     {cls.studentCount || cls.students?.length || 0} o'quvchi
@@ -309,7 +309,7 @@ export default function ClassListPage() {
           </Card>
         ))}
         {filteredClasses.length === 0 && (
-          <div className="col-span-full text-center py-12 text-gray-500">
+          <div className="col-span-full text-center py-12 text-muted-foreground">
             Hozircha sinflar yo'q
           </div>
         )}
@@ -354,8 +354,8 @@ export default function ClassListPage() {
                   <AvatarFallback className="bg-red-100 text-red-700">{student.fullname?.charAt(0) || "S"}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
-                  <p className="font-medium">{student.fullname || student.username}</p>
-                  <p className="text-sm text-gray-500">@{student.username}</p>
+                  <p className="font-semibold text-foreground">{student.fullname || student.username}</p>
+                  <p className="text-sm text-muted-foreground">@{student.username}</p>
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-amber-600">{student.coinBalance || student.coins || 0}</p>

@@ -306,8 +306,8 @@ export default function UsersListPage() {
     <div className="space-y-6 max-w-7xl mx-auto pt-4 md:pt-6 px-4 md:px-0">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
-           <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 tracking-tight">Foydalanuvchilar</h1>
-           <p className="text-gray-500 dark:text-gray-400 font-medium">Tizimdagi barcha foydalanuvchilar ro'yxati</p>
+           <h1 className="text-3xl font-extrabold text-foreground tracking-tight">Foydalanuvchilar</h1>
+           <p className="text-muted-foreground font-medium">Tizimdagi barcha foydalanuvchilar ro'yxati</p>
         </div>
         {isAdmin && (
           <div className="flex gap-2">
@@ -548,54 +548,54 @@ export default function UsersListPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="border-l-4 border-l-gray-500 shadow-sm hover:shadow-md transition-shadow">
+        <Card className="border-l-4 border-l-indigo-500 dark:border-l-indigo-400 shadow-sm hover:shadow-md transition-shadow bg-card/50">
           <CardContent className="p-4">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-gray-50 rounded-2xl">
-                <Users className="h-6 w-6 text-gray-500" />
+              <div className="p-3 bg-indigo-50 dark:bg-indigo-950/30 rounded-2xl">
+                <Users className="h-6 w-6 text-indigo-500 dark:text-indigo-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-500 font-medium">Jami</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                <p className="text-sm text-muted-foreground font-medium">Jami</p>
+                <p className="text-2xl font-bold text-foreground">{stats.total}</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card className="border-l-4 border-l-red-500 shadow-sm hover:shadow-md transition-shadow">
+        <Card className="border-l-4 border-l-red-500 dark:border-l-red-400 shadow-sm hover:shadow-md transition-shadow bg-card/50">
           <CardContent className="p-4">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-red-50 rounded-2xl">
-                <UserCog className="h-6 w-6 text-red-500" />
+              <div className="p-3 bg-red-50 dark:bg-red-950/30 rounded-2xl">
+                <UserCog className="h-6 w-6 text-red-500 dark:text-red-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-500 font-medium">Adminlar</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.admins}</p>
+                <p className="text-sm text-muted-foreground font-medium">Adminlar</p>
+                <p className="text-2xl font-bold text-foreground">{stats.admins}</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card className="border-l-4 border-l-blue-500 shadow-sm hover:shadow-md transition-shadow">
+        <Card className="border-l-4 border-l-blue-500 dark:border-l-blue-400 shadow-sm hover:shadow-md transition-shadow bg-card/50">
           <CardContent className="p-4">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-blue-50 rounded-2xl">
-                <GraduationCap className="h-6 w-6 text-blue-500" />
+              <div className="p-3 bg-blue-50 dark:bg-blue-950/30 rounded-2xl">
+                <GraduationCap className="h-6 w-6 text-blue-500 dark:text-blue-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-500 font-medium">O'qituvchilar</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.teachers}</p>
+                <p className="text-sm text-muted-foreground font-medium">O'qituvchilar</p>
+                <p className="text-2xl font-bold text-foreground">{stats.teachers}</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card className="border-l-4 border-l-green-500 shadow-sm hover:shadow-md transition-shadow">
+        <Card className="border-l-4 border-l-green-500 dark:border-l-green-400 shadow-sm hover:shadow-md transition-shadow bg-card/50">
           <CardContent className="p-4">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-green-50 rounded-2xl">
-                <Users className="h-6 w-6 text-green-500" />
+              <div className="p-3 bg-green-50 dark:bg-green-950/30 rounded-2xl">
+                <Users className="h-6 w-6 text-green-500 dark:text-green-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-500 font-medium">O'quvchilar</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.students}</p>
+                <p className="text-sm text-muted-foreground font-medium">O'quvchilar</p>
+                <p className="text-2xl font-bold text-foreground">{stats.students}</p>
               </div>
             </div>
           </CardContent>
@@ -607,12 +607,12 @@ export default function UsersListPage() {
         <CardContent className="p-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Qidirish..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 bg-background/50"
               />
             </div>
             <Select value={roleFilter} onValueChange={setRoleFilter}>
@@ -631,11 +631,11 @@ export default function UsersListPage() {
       </Card>
 
       {/* Users Table */}
-      <Card className="overflow-hidden border-none shadow-lg rounded-2xl bg-white/50 backdrop-blur-sm">
+      <Card className="overflow-hidden border border-border/50 shadow-lg rounded-2xl bg-card/30 backdrop-blur-sm">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-gray-50/50">
+              <TableHeader className="bg-muted/30">
               <TableRow>
                 <TableHead>
                   <button 
@@ -691,17 +691,17 @@ export default function UsersListPage() {
                           {user.fullname?.charAt(0) || "U"}
                         </AvatarFallback>
                       </Avatar>
-                      <span className="font-medium">{user.fullname}</span>
+                      <span className="font-semibold text-foreground">{user.fullname}</span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-gray-500">@{user.username}</TableCell>
+                  <TableCell className="text-muted-foreground font-medium">@{user.username}</TableCell>
                   <TableCell>
                     <Badge variant="outline" className={getRoleBadgeClass(user.role)}>
                       {user.role}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm text-gray-600 font-medium">
+                    <span className="text-sm text-foreground/70 font-semibold">
                        {user.class?.name || user.class_name || (user.role === 'student' ? "Sinf yo'q" : '—')}
                     </span>
                   </TableCell>

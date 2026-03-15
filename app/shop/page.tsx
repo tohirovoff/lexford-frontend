@@ -354,14 +354,14 @@ export default function Shop() {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-200">
+      <div className="flex border-b border-border">
         <button
           onClick={() => setActiveTab("products")}
           className={cn(
             "px-8 py-4 font-bold text-lg transition-all border-b-2",
             activeTab === "products" 
-              ? "border-red-600 text-red-600" 
-              : "border-transparent text-gray-500 hover:text-gray-700"
+              ? "border-primary text-primary" 
+              : "border-transparent text-muted-foreground hover:text-foreground"
           )}
         >
           Mahsulotlar
@@ -371,8 +371,8 @@ export default function Shop() {
           className={cn(
             "px-8 py-4 font-bold text-lg transition-all border-b-2 flex items-center gap-2",
             activeTab === "purchases" 
-              ? "border-red-600 text-red-600" 
-              : "border-transparent text-gray-500 hover:text-gray-700"
+              ? "border-primary text-primary" 
+              : "border-transparent text-muted-foreground hover:text-foreground"
           )}
         >
           <History className="w-5 h-5" />
@@ -388,16 +388,16 @@ export default function Shop() {
         isLoading ? (
           <div className="flex flex-col justify-center items-center py-32 space-y-4">
             <LoadingSpinner size="xl" />
-            <p className="text-gray-500 font-medium animate-pulse">Do'kon rastalari tayyorlanmoqda...</p>
+            <p className="text-muted-foreground font-medium animate-pulse">Do'kon rastalari tayyorlanmoqda...</p>
           </div>
         ) : items.length === 0 ? (
-        <Card className="border-dashed border-2 bg-gray-50/50 py-32 text-center">
+        <Card className="border-dashed border-2 bg-muted/10 py-32 text-center border-border">
             <CardContent className="flex flex-col items-center gap-4">
-               <div className="p-6 bg-gray-100 rounded-full text-gray-400">
+               <div className="p-6 bg-muted rounded-full text-muted-foreground/30">
                   <Package className="w-16 h-16" />
                </div>
-               <h3 className="text-2xl font-bold text-gray-900">Hozircha bo'sh</h3>
-               <p className="text-gray-500 max-w-sm mx-auto">Tez orada yangi mahsulotlar qo'shiladi. Bizni kuzatishda davom eting!</p>
+               <h3 className="text-2xl font-bold text-foreground">Hozircha bo'sh</h3>
+               <p className="text-muted-foreground max-w-sm mx-auto">Tez orada yangi mahsulotlar qo'shiladi. Bizni kuzatishda davom eting!</p>
             </CardContent>
         </Card>
       ) : (
@@ -408,7 +408,7 @@ export default function Shop() {
              
              return (
               <Card key={item.id} className={cn(
-                "group relative border-none bg-white dark:bg-gray-900 shadow-lg hover:shadow-2xl transition-all duration-500 rounded-[2rem] overflow-hidden flex flex-col h-full hover:-translate-y-2 border border-gray-100/50",
+                "group relative border-none bg-card shadow-lg hover:shadow-2xl transition-all duration-500 rounded-[2rem] overflow-hidden flex flex-col h-full hover:-translate-y-2 border border-border/50",
                 isOutOfStock && "opacity-60 grayscale-[0.6] cursor-not-allowed"
               )}>
                 {/* Out of Stock Overlay */}
@@ -440,7 +440,7 @@ export default function Shop() {
                 </div>
 
                 {/* Image Section */}
-                <div className="relative h-64 overflow-hidden bg-gray-100">
+                <div className="relative h-64 overflow-hidden bg-muted">
                   {item.image_url ? (
                      <img 
                        src={getImageUrl(item.image_url) ?? undefined} 
@@ -456,7 +456,7 @@ export default function Shop() {
                      />
                   ) : null}
                   <div className={cn(
-                    "w-full h-full flex items-center justify-center text-gray-300 bg-gradient-to-br from-gray-50 to-gray-200 image-fallback",
+                    "w-full h-full flex items-center justify-center text-muted-foreground/30 bg-gradient-to-br from-muted/50 to-muted image-fallback",
                     item.image_url ? "absolute inset-0 hidden" : ""
                   )}>
                     <ShoppingBag className="w-20 h-20 opacity-20" />
@@ -487,17 +487,17 @@ export default function Shop() {
                     </div>
                     
                     <div className="text-right">
-                       <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Qoldiq</p>
+                       <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Qoldiq</p>
                        <p className={cn(
                          "text-sm font-bold",
-                         item.stock === null ? "text-green-600" : item.stock <= 5 ? "text-orange-500" : "text-gray-700"
+                         item.stock === null ? "text-green-600" : item.stock <= 5 ? "text-orange-500" : "text-foreground/80"
                        )}>
                          {item.stock === null ? "Cheksiz" : `${item.stock} ta`}
                        </p>
                     </div>
                   </div>
                   
-                  <p className="text-gray-500 dark:text-gray-400 text-sm line-clamp-2 leading-relaxed h-10">
+                  <p className="text-muted-foreground text-sm line-clamp-2 leading-relaxed h-10">
                     {item.description || "Tavsif yo'q"}
                   </p>
                 </CardContent>
@@ -557,36 +557,36 @@ export default function Shop() {
               <p className="text-gray-500 font-medium">Hozircha hech qanday xaridlar mavjud emas.</p>
             </Card>
           ) : (
-            <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
+            <div className="bg-card rounded-3xl shadow-xl overflow-hidden border border-border">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-gray-50 border-b border-gray-100">
-                    <th className="px-6 py-4 font-bold text-gray-600">Mahsulot</th>
-                    {isAdminOrTeacher && <th className="px-6 py-4 font-bold text-gray-600">O'quvchi</th>}
-                    <th className="px-6 py-4 font-bold text-gray-600 text-center">Narxi</th>
-                    <th className="px-6 py-4 font-bold text-gray-600 text-center">Sana</th>
-                    <th className="px-6 py-4 font-bold text-gray-600 text-center">Holati</th>
-                    {isAdminOrTeacher && <th className="px-6 py-4 font-bold text-gray-600 text-right">Amallar</th>}
+                  <tr className="bg-muted border-b border-border">
+                    <th className="px-6 py-4 font-bold text-muted-foreground uppercase text-[11px] tracking-widest">Mahsulot</th>
+                    {isAdminOrTeacher && <th className="px-6 py-4 font-bold text-muted-foreground uppercase text-[11px] tracking-widest">O'quvchi</th>}
+                    <th className="px-6 py-4 font-bold text-muted-foreground uppercase text-[11px] tracking-widest text-center">Narxi</th>
+                    <th className="px-6 py-4 font-bold text-muted-foreground uppercase text-[11px] tracking-widest text-center">Sana</th>
+                    <th className="px-6 py-4 font-bold text-muted-foreground uppercase text-[11px] tracking-widest text-center">Holati</th>
+                    {isAdminOrTeacher && <th className="px-6 py-4 font-bold text-muted-foreground uppercase text-[11px] tracking-widest text-right">Amallar</th>}
                   </tr>
                 </thead>
                 <tbody>
                   {purchases.map((purchase: any) => (
-                    <tr key={purchase.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                    <tr key={purchase.id} className="border-b border-border hover:bg-muted/30 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-4">
                           <div className="w-12 h-12 rounded-xl overflow-hidden bg-gray-100">
                              <img src={getImageUrl(purchase.item?.image_url) || "/placeholder.png"} className="w-full h-full object-cover" />
                           </div>
                           <div>
-                            <p className="font-bold text-gray-900">{purchase.item?.name}</p>
-                            <p className="text-xs text-gray-400">{purchase.item?.item_type}</p>
+                            <p className="font-bold text-foreground">{purchase.item?.name}</p>
+                            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">{purchase.item?.item_type}</p>
                           </div>
                         </div>
                       </td>
                       {isAdminOrTeacher && (
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2">
-                            <span className="font-medium text-gray-700">{purchase.user?.fullname}</span>
+                            <span className="font-semibold text-foreground/80">{purchase.user?.fullname}</span>
                           </div>
                         </td>
                       )}
@@ -803,12 +803,12 @@ export default function Shop() {
         setIsPurchaseModalOpen(open)
         if (!open) setTimeout(() => setPurchaseItem(null), 300)
       }}>
-        <DialogContent className="sm:max-w-md rounded-[2.5rem] p-0 overflow-hidden border-none shadow-3xl bg-white/95 backdrop-blur-xl">
+        <DialogContent className="sm:max-w-md rounded-[2.5rem] p-0 overflow-hidden border-none shadow-3xl bg-card/95 backdrop-blur-xl">
           <DialogTitle className="sr-only">Xaridni tasdiqlash</DialogTitle>
           <DialogDescription className="sr-only">Rostdan ham ushbu maxsulotni xarid qilasizmi?</DialogDescription>
           {purchaseItem && (
             <div className="flex flex-col animate-in fade-in zoom-in-95 duration-500">
-              <div className="relative h-56 bg-gradient-to-br from-gray-100 to-gray-200 w-full flex items-center justify-center overflow-hidden">
+              <div className="relative h-56 bg-gradient-to-br from-muted to-muted/50 w-full flex items-center justify-center overflow-hidden">
                 {purchaseItem.image_url ? (
                   <img 
                     src={getImageUrl(purchaseItem.image_url) ?? undefined} 
@@ -816,9 +816,9 @@ export default function Shop() {
                     className="w-full h-full object-cover transition-transform duration-1000 scale-105" 
                   />
                 ) : (
-                   <ShoppingBag className="w-20 h-20 text-gray-400 opacity-20" />
+                   <ShoppingBag className="w-20 h-20 text-muted-foreground opacity-20" />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/60 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6">
                    <h3 className="text-2xl font-black text-white leading-tight drop-shadow-lg">{purchaseItem.name}</h3>
                    <div className="flex items-center gap-2 mt-3">
@@ -830,22 +830,22 @@ export default function Shop() {
                 </div>
               </div>
               
-              <div className="p-8 space-y-8 bg-white/60">
+              <div className="p-8 space-y-8 bg-card/60">
                 <div className="space-y-4">
-                  <p className="text-gray-500 font-medium text-center text-lg">Bu mahsulotni haqiqatan ham xarid qilasizmi?</p>
+                  <p className="text-muted-foreground font-medium text-center text-lg">Bu mahsulotni haqiqatan ham xarid qilasizmi?</p>
                   
-                  <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-3xl p-5 flex items-start gap-4 border border-red-100/50 shadow-inner">
-                    <div className="bg-white p-3 rounded-full shadow-md">
+                  <div className="bg-gradient-to-br from-red-500/10 to-orange-500/10 rounded-3xl p-5 flex items-start gap-4 border border-red-500/20 shadow-inner">
+                    <div className="bg-card p-3 rounded-full shadow-md">
                       <Coins className="w-6 h-6 text-red-500" />
                     </div>
                     <div className="space-y-1">
                       <p className="text-xs text-red-500/80 font-black uppercase tracking-widest">Xarid tafsiloti</p>
-                      <p className="text-sm font-medium text-red-950">
+                      <p className="text-sm font-medium text-foreground">
                         Hisobingizdan <strong className="font-black text-red-600">{purchaseItem.price_coins} tanga</strong> yechib olinadi.
                       </p>
-                      <div className="pt-2 mt-2 border-t border-red-200/50">
-                        <p className="text-xs font-bold text-gray-500">
-                          Xariddan keyingi qoldiq: <span className="text-red-600 font-black">{(userProfile?.coins || 0) - purchaseItem.price_coins} 🪙</span>
+                      <div className="pt-2 mt-2 border-t border-red-500/20">
+                        <p className="text-xs font-bold text-muted-foreground">
+                          Xariddan keyingi qoldiq: <span className="text-red-500 font-black">{(userProfile?.coins || 0) - purchaseItem.price_coins} 🪙</span>
                         </p>
                       </div>
                     </div>
@@ -856,7 +856,7 @@ export default function Shop() {
                   <Button 
                     variant="ghost" 
                     onClick={() => setIsPurchaseModalOpen(false)}
-                    className="flex-1 rounded-2xl h-14 font-bold text-gray-500 bg-gray-100 hover:bg-gray-200"
+                    className="flex-1 rounded-2xl h-14 font-bold text-muted-foreground bg-muted hover:bg-muted/80"
                   >
                     Bekor qilish
                   </Button>
