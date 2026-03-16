@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useSelector, useDispatch } from "react-redux"
-import { useGetUserTransactionsQuery, useCreateTransactionMutation, useCreatePenaltyMutation, coinsApi } from "@/lib/api/coinsApi"
+import { useGetUserTransactionsQuery, useCreateTransactionMutation, useCreatePenaltyMutation, useCreateManyTransactionsMutation, coinsApi } from "@/lib/api/coinsApi"
 import { useGetAllClassesQuery, classesApi } from "@/lib/api/classesApi"
 import { useGetUserQuery, usersApi } from "@/lib/api/usersApi"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -16,6 +16,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import LoadingSpinner from "@/components/ui/loading-spinner"
 import CoinDisplay from "@/components/ui/coin-display"
+import { Checkbox } from "@/components/ui/checkbox"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { Coins, TrendingUp, TrendingDown, History, ArrowUpCircle, ArrowDownCircle, Gift, AlertCircle, CheckCircle2, User } from "lucide-react"
 import { toast } from "sonner"
 
@@ -30,7 +32,7 @@ export default function CoinsPage() {
 
   // State for Give Coins form
   const [selectedClassId, setSelectedClassId] = useState<string>("")
-  const [selectedStudentId, setSelectedStudentId] = useState<string>("")
+  const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([])
   const [amount, setAmount] = useState<string>("")
   const [reason, setReason] = useState<string>("")
   const [transactionType, setTransactionType] = useState<"reward" | "penalty">("reward")
@@ -66,7 +68,8 @@ export default function CoinsPage() {
   // Mutation
   const [createTransaction, { isLoading: isSubmittingTransaction }] = useCreateTransactionMutation()
   const [createPenalty, { isLoading: isSubmittingPenalty }] = useCreatePenaltyMutation()
-  const isSubmitting = isSubmittingTransaction || isSubmittingPenalty
+  const [createManyTransactions, { isLoading: isSubmittingMany }] = useCreateManyTransactionsMutation()
+  const isSubmitting = isSubmittingTransaction || isSubmittingPenalty || isSubmittingMany
 
   // Stats calculation
   const stats = (rawTransactions || []).reduce(
@@ -84,13 +87,13 @@ export default function CoinsPage() {
     setSuccessMessage(null)
     setErrorMessage(null)
 
-    if (!selectedStudentId || !amount || !reason) {
+    if (selectedStudentIds.length === 0 || !amount || !reason) {
       toast?.error("Barcha maydonlarni to'ldiring")
       return
     }
 
-    if (Number(amount) > 50) {
-      toast?.error("Eng ko'pi bilan 50 ta tanga berish mumkin!")
+    if (Number(amount) > 10) {
+      toast?.error("Eng ko'pi bilan 10 ta tanga berish mumkin!")
       return
     }
 
@@ -100,38 +103,47 @@ export default function CoinsPage() {
     }
 
     try {
-      // Backendda `createPenalty` qilish uchun `auction_id` majburiy (foreign key).
-      // Bu erda esa oddiy jarima yozyapmiz (auksiondan tashqari), shuning uchun `transaction` jadvaliga
-      // manfiy qiymat bilan `type="penalty"` qilib saqlaymiz.
       const finalAmount = transactionType === "penalty" ? -Math.abs(Number(amount)) : Math.abs(Number(amount))
       
-      const payload = {
-        user_id: Number(selectedStudentId),
+      const payloads = selectedStudentIds.map(studentId => ({
+        user_id: Number(studentId),
         amount: finalAmount,
-        type: transactionType, // "reward" yoki "penalty"
+        type: transactionType,
         reason: reason,
         created_by: Number(user?.id)
-      }
+      }))
 
-      await createTransaction(payload).unwrap()
+      await createManyTransactions(payloads).unwrap()
       
       // Boshqa API'larni refresh qilish
-      dispatch(usersApi.util.invalidateTags(['Users', { type: 'Users', id: Number(selectedStudentId) }]))
+      selectedStudentIds.forEach(studentId => {
+        dispatch(usersApi.util.invalidateTags([{ type: 'Users', id: Number(studentId) }]))
+      })
+      dispatch(usersApi.util.invalidateTags(['Users']))
       dispatch(classesApi.util.invalidateTags(['Classes']))
       dispatch(coinsApi.util.invalidateTags(['Transactions', 'Balance']))
 
-      toast?.success(`Muvaffaqiyatli: ${amount} tanga ${transactionType === 'reward' ? 'berildi' : 'jarima qilindi'}`)
+      toast?.success(`Muvaffaqiyatli: ${amount} tangadan ${selectedStudentIds.length} o'quvchiga ${transactionType === 'reward' ? 'berildi' : 'jarima qilindi'}`)
       
       // Reset form
       setAmount("")
       setReason("")
-      // Don't reset student to allow quick multiple actions
+      setSelectedStudentIds([])
+      // setSelectedClassId("") // Keep class to allow quick reuse
       
       setTimeout(() => setSuccessMessage(null), 3000)
     } catch (err: any) {
       console.error("Transaction failed", err)
       const msg = err.data?.message || err.data?.error || "Xatolik yuz berdi"
       toast?.error(msg)
+    }
+  }
+
+  const handleSelectAll = () => {
+    if (selectedStudentIds.length === students.length) {
+      setSelectedStudentIds([])
+    } else {
+      setSelectedStudentIds(students.map((s: any) => (s._id || s.id).toString()))
     }
   }
 
@@ -230,24 +242,61 @@ export default function CoinsPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>O'quvchi</Label>
-                    <Select value={selectedStudentId} onValueChange={setSelectedStudentId} disabled={!selectedClassId}>
-                      <SelectTrigger>
-                        <SelectValue placeholder={selectedClassId ? "O'quvchini tanlang" : "Avval sinfni tanlang"} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {students.map((student: any) => (
-                          <SelectItem key={student._id || student.id} value={(student._id || student.id).toString()}>
-                            {student.fullname}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {selectedStudentId && (
-                      <p className="text-[10px] md:text-xs font-semibold text-indigo-600 mt-1.5 flex items-center gap-1 bg-indigo-50 px-2 py-1 rounded-md w-fit border border-indigo-100/50">
-                        <CheckCircle2 className="h-3 w-3" />
-                        Joriy balansi: {students.find((s: any) => (s._id || s.id).toString() === selectedStudentId)?.coins || 0} tanga
-                      </p>
+                    <div className="flex items-center justify-between">
+                      <Label>O'quvchilar</Label>
+                      {selectedClassId && students.length > 0 && (
+                        <Button 
+                          type="button" 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={handleSelectAll}
+                          className="h-7 text-[10px] font-bold uppercase tracking-tight"
+                        >
+                          {selectedStudentIds.length === students.length ? "Barchasini bekor qilish" : "Barchasini tanlash"}
+                        </Button>
+                      )}
+                    </div>
+                    
+                    {!selectedClassId ? (
+                      <div className="border border-dashed rounded-lg p-6 text-center text-gray-400 text-sm italic">
+                        Avval sinfni tanlang
+                      </div>
+                    ) : students.length === 0 ? (
+                      <div className="border border-dashed rounded-lg p-6 text-center text-gray-400 text-sm italic">
+                        Ushbu sinfda o'quvchilar topilmadi
+                      </div>
+                    ) : (
+                      <ScrollArea className="h-[200px] w-full border rounded-lg p-3 bg-gray-50/50">
+                        <div className="space-y-2">
+                          {students.map((student: any) => {
+                            const studentId = (student._id || student.id).toString()
+                            return (
+                              <div key={studentId} className="flex items-center space-x-2 p-1.5 hover:bg-white rounded-md transition-colors border border-transparent hover:border-gray-100">
+                                <Checkbox
+                                  id={`student-${studentId}`}
+                                  checked={selectedStudentIds.includes(studentId)}
+                                  onCheckedChange={(checked) => {
+                                    if (checked) {
+                                      setSelectedStudentIds((prev) => [...prev, studentId])
+                                    } else {
+                                      setSelectedStudentIds((prev) => prev.filter((id) => id !== studentId))
+                                    }
+                                  }}
+                                />
+                                <Label
+                                  htmlFor={`student-${studentId}`}
+                                  className="text-sm font-medium leading-none cursor-pointer flex-1 flex justify-between items-center"
+                                >
+                                  <span>{student.fullname}</span>
+                                  <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">
+                                    {student.coins || 0}
+                                  </span>
+                                </Label>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </ScrollArea>
                     )}
                   </div>
 
@@ -255,18 +304,18 @@ export default function CoinsPage() {
                     <Label>Miqdor (tanga)</Label>
                     <Input 
                       type="number" 
-                      placeholder="1 dan 50 gacha" 
+                      placeholder="1 dan 10 gacha" 
                       value={amount}
                       onChange={(e) => {
                         const val = e.target.value
-                        if (val === "" || Number(val) <= 50) {
+                        if (val === "" || Number(val) <= 10) {
                           setAmount(val)
                         }
                       }}
                       min="1"
-                      max="50"
+                      max="10"
                     />
-                    <p className="text-xs text-gray-500">Eng ko'pi bilan 50 ta tanga</p>
+                    <p className="text-xs text-gray-500">Eng ko'pi bilan 10 ta tanga</p>
                   </div>
 
                   <div className="space-y-2">
