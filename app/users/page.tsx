@@ -670,15 +670,15 @@ export default function UsersListPage() {
                   </button>
                 </TableHead>
                 <TableHead>
-                  <button 
-                    onClick={() => requestSort('coins')} 
-                    className="flex items-center hover:text-red-600 transition-colors font-bold uppercase text-[11px] tracking-wider"
-                  >
-                    Tangalar <SortIcon column="coins" />
-                  </button>
-                </TableHead>
-                <TableHead className="text-right font-bold uppercase text-[11px] tracking-wider">Amallar</TableHead>
-              </TableRow>
+                   <button 
+                     onClick={() => requestSort('coins')} 
+                     className="flex items-center hover:text-red-600 transition-colors font-bold uppercase text-[11px] tracking-wider"
+                   >
+                     Tangalar <SortIcon column="coins" />
+                   </button>
+                 </TableHead>
+                 <TableHead className="text-right font-bold uppercase text-[11px] tracking-wider">Amallar</TableHead>
+               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredUsers.map((user: any) => (
