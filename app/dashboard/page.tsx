@@ -62,8 +62,11 @@ export default function Dashboard() {
   const { data: weeklyChangeData } = useGetWeeklyChangeQuery(user?.id, { skip: !user?.id })
   
   // Haftalik top 10 (admin/teacher uchun)
-  const { data: weeklyTopGainers } = useGetWeeklyTopGainersQuery(undefined, { skip: !isAdmin && !isTeacher })
-  const topGainers = Array.isArray(weeklyTopGainers) ? weeklyTopGainers : weeklyTopGainers?.data || []
+  const { data: weeklyTopGainersResponse } = useGetWeeklyTopGainersQuery(undefined, { skip: !isAdmin && !isTeacher })
+  const topGainers = weeklyTopGainersResponse?.data || (Array.isArray(weeklyTopGainersResponse) ? weeklyTopGainersResponse : [])
+  const weeklyPeriodStart = weeklyTopGainersResponse?.period_start
+  const weeklyPeriodEnd = weeklyTopGainersResponse?.period_end
+  const isCurrentWeek = weeklyTopGainersResponse?.is_current_week
 
   let studentsCount = Array.isArray(users) ? users.filter((u: any) => u.role === "student").length : 0
   let teachersCount = Array.isArray(users) ? users.filter((u: any) => u.role === "teacher").length : 0
@@ -218,7 +221,16 @@ export default function Dashboard() {
                     {weeklyChangeData.percentage_change > 0 ? '+' : ''}{weeklyChangeData.percentage_change}%
                   </span>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">O'tgan 7 kun ichida</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {weeklyChangeData.is_current_week ? "Joriy hafta" : "O'tgan hafta"}
+                  {weeklyChangeData.period_start && weeklyChangeData.period_end && (
+                    <span className="ml-1">
+                      ({new Date(weeklyChangeData.period_start).toLocaleDateString("uz-UZ", { day: 'numeric', month: 'short' })}
+                      {" — "}
+                      {new Date(weeklyChangeData.period_end).toLocaleDateString("uz-UZ", { day: 'numeric', month: 'short' })})
+                    </span>
+                  )}
+                </p>
               </div>
             </div>
           )}
@@ -311,7 +323,16 @@ export default function Dashboard() {
               </div>
               <div>
                 <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">Haftalik TOP 10</h2>
-                <p className="text-sm text-muted-foreground">Shu hafta eng ko'p tanga olgan o'quvchilar</p>
+                <p className="text-sm text-muted-foreground">
+                  {isCurrentWeek ? "Joriy hafta" : "O'tgan hafta"}
+                  {weeklyPeriodStart && weeklyPeriodEnd && (
+                    <span className="ml-1">
+                      ({new Date(weeklyPeriodStart).toLocaleDateString("uz-UZ", { day: 'numeric', month: 'short' })}
+                      {" — "}
+                      {new Date(weeklyPeriodEnd).toLocaleDateString("uz-UZ", { day: 'numeric', month: 'short' })})
+                    </span>
+                  )}
+                </p>
               </div>
             </div>
           </div>
