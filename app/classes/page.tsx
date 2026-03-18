@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { useGetAllClassesQuery, useGetClassLeaderboardQuery, useCreateClassMutation, useDeleteClassMutation } from "@/lib/api/classesApi"
+import { useGetAllClassesQuery, useGetClassLeaderboardQuery, useCreateClassMutation, useDeleteClassMutation, useUpdateClassMutation } from "@/lib/api/classesApi"
 import { useGetAllUsersQuery } from "@/lib/api/usersApi"
 import { useSelector } from "react-redux"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -13,7 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import LoadingSpinner from "@/components/ui/loading-spinner"
-import { Search, Users, GraduationCap, Trophy, Medal, CheckCircle2, XCircle, AlertCircle, Clock, Plus, Loader2 } from "lucide-react"
+import { Search, Users, GraduationCap, Trophy, Medal, CheckCircle2, XCircle, AlertCircle, Clock, Plus, Loader2, Pencil } from "lucide-react"
 import { getImageUrl, getProfileImageUrl } from "@/lib/utils"
 import { toast } from "sonner"
 
@@ -21,6 +21,9 @@ export default function ClassListPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedClass, setSelectedClass] = useState<any>(null)
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [editingClass, setEditingClass] = useState<any>(null)
+  const [editTeacherId, setEditTeacherId] = useState<string>("")
   const [newClass, setNewClass] = useState({ name: "", grade: "", teacher_id: "" })
 
   const user = useSelector((state: any) => state.auth.user)
@@ -48,6 +51,7 @@ export default function ClassListPage() {
     skip: !(selectedClass?.id || selectedClass?._id),
   })
   const [deleteClass, { isLoading: isDeletingClass }] = useDeleteClassMutation()
+  const [updateClass, { isLoading: isUpdating }] = useUpdateClassMutation()
 
   const handleDeleteClass = async (e: React.MouseEvent, id: any) => {
     e.stopPropagation()
@@ -58,6 +62,33 @@ export default function ClassListPage() {
       } catch (err: any) {
         toast.error(err?.data?.message || "Sinfni o'chirishda xatolik yuz berdi")
       }
+    }
+  }
+
+  const handleEditTeacher = (e: React.MouseEvent, cls: any) => {
+    e.stopPropagation()
+    setEditingClass(cls)
+    setEditTeacherId(String(cls.teacher_id || cls.teacher?.id || ""))
+    setIsEditDialogOpen(true)
+  }
+
+  const handleUpdateTeacher = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editTeacherId) {
+      toast.error("O'qituvchini tanlang")
+      return
+    }
+    try {
+      await updateClass({
+        id: editingClass.id || editingClass._id,
+        teacher_id: Number(editTeacherId),
+      }).unwrap()
+      toast.success("Sinf rahbari muvaffaqiyatli o'zgartirildi")
+      setIsEditDialogOpen(false)
+      setEditingClass(null)
+      setEditTeacherId("")
+    } catch (err: any) {
+      toast.error(err?.data?.message || "Sinf rahbarini o'zgartirishda xatolik yuz berdi")
     }
   }
 
@@ -225,15 +256,27 @@ export default function ClassListPage() {
             onClick={() => setSelectedClass(cls)}
           >
             {isAdmin && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-2 right-2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={(e) => handleDeleteClass(e, cls.id || cls._id)}
-                disabled={isDeletingClass}
-              >
-                <XCircle className="h-5 w-5" />
-              </Button>
+              <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-gray-400 hover:text-red-600 h-8 w-8"
+                  onClick={(e) => handleEditTeacher(e, cls)}
+                  disabled={isUpdating}
+                  title="Sinf rahbarini o'zgartirish"
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-gray-400 hover:text-red-500 h-8 w-8"
+                  onClick={(e) => handleDeleteClass(e, cls.id || cls._id)}
+                  disabled={isDeletingClass}
+                >
+                  <XCircle className="h-5 w-5" />
+                </Button>
+              </div>
             )}
             <CardHeader className="pb-2">
               <div className="flex items-start justify-between">
@@ -369,6 +412,89 @@ export default function ClassListPage() {
               </p>
             )}
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Teacher Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Pencil className="h-5 w-5 text-red-600" />
+              Sinf rahbarini o'zgartirish
+            </DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleUpdateTeacher} className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label className="text-sm text-muted-foreground">Sinf</Label>
+              <div className="p-3 rounded-lg bg-red-50/50 border border-red-100">
+                <p className="font-semibold text-foreground">{editingClass?.name}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Hozirgi rahbar: {editingClass?.teacher?.fullname || "Tayinlanmagan"}</p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Yangi sinf rahbari</Label>
+              <Select
+                value={editTeacherId}
+                onValueChange={(value) => setEditTeacherId(value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={
+                    isLoadingUsers ? "Yuklanmoqda..." :
+                    isErrorUsers ? "Xatolik yuz berdi" :
+                    teachers.length === 0 ? "O'qituvchilar topilmadi" :
+                    "O'qituvchini tanlang"
+                  } />
+                </SelectTrigger>
+                <SelectContent>
+                  {isLoadingUsers ? (
+                    <div className="flex items-center justify-center p-4">
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      <span className="text-sm">Yuklanmoqda...</span>
+                    </div>
+                  ) : isErrorUsers ? (
+                    <div className="p-4 text-center text-sm text-red-500">
+                      Ro'yxatni yuklashda xatolik
+                    </div>
+                  ) : teachers.length > 0 ? (
+                    teachers.map((teacher: any) => (
+                      <SelectItem key={teacher.id || teacher._id} value={String(teacher.id || teacher._id)}>
+                        {teacher.fullname || teacher.username}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <div className="p-4 text-center text-sm text-gray-500">
+                      O'qituvchilar topilmadi
+                    </div>
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
+            <DialogFooter className="pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsEditDialogOpen(false)}
+                disabled={isUpdating}
+              >
+                Bekor qilish
+              </Button>
+              <Button
+                type="submit"
+                className="bg-red-600 hover:bg-red-700 text-white"
+                disabled={isUpdating}
+              >
+                {isUpdating ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Saqlanmoqda...
+                  </>
+                ) : (
+                  "Saqlash"
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </div>

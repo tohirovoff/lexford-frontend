@@ -18,7 +18,7 @@ import LoadingSpinner from "@/components/ui/loading-spinner"
 import CoinDisplay from "@/components/ui/coin-display"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Coins, TrendingUp, TrendingDown, History, ArrowUpCircle, ArrowDownCircle, Gift, AlertCircle, CheckCircle2, User } from "lucide-react"
+import { Coins, TrendingUp, TrendingDown, History, ArrowUpCircle, ArrowDownCircle, Gift, AlertCircle, CheckCircle2, User, ArrowRight } from "lucide-react"
 import { toast } from "sonner"
 
 export default function CoinsPage() {
@@ -180,10 +180,10 @@ export default function CoinsPage() {
         {/* Left Column: Give Coins (Teacher/Admin) or Stats (Student) */}
         <div className="lg:col-span-1 space-y-6">
           {isTeacherOrAdmin ? (
-            <Card className="border-t-4 border-t-indigo-500 shadow-md">
+            <Card className="border-t-4 border-t-red-500 shadow-md">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Gift className="h-5 w-5 text-indigo-600" />
+                  <Gift className="h-5 w-5 text-red-600" />
                   Tanga berish / Jarima
                 </CardTitle>
                 <CardDescription>O'quvchilarni rag'batlantirish yoki jazolash</CardDescription>
@@ -397,32 +397,82 @@ export default function CoinsPage() {
                  <div className="divide-y divide-gray-100">
                    {filteredTransactions.map((tx: any) => {
                      const isPositive = Number(tx.amount) > 0
-                     const isSelf = tx.user_id === user?.id
+                     const giverName = tx.giver?.fullname || tx.giver?.username || "Tizim"
+                     const receiverName = tx.receiver?.fullname || tx.receiver?.username || "Noma'lum"
+                     const isGiverSelf = tx.created_by === user?.id
+                     const isReceiverSelf = tx.user_id === user?.id
+                     
+                     // Tranzaksiya turini aniqlash
+                     const typeLabel = tx.type === 'reward' ? "Mukofot" 
+                       : tx.type === 'penalty' ? "Jarima" 
+                       : tx.type === 'attendance' ? "Davomat" 
+                       : tx.type === 'purchase' ? "Xarid"
+                       : tx.type === 'auction_spent' ? "Auksion"
+                       : tx.type === 'bid_block' ? "Stavka"
+                       : tx.type === 'bid_refund' ? "Qaytarildi"
+                       : tx.type
+                     
+                     const typeBgColor = tx.type === 'reward' ? "bg-green-100 text-green-700 border-green-200" 
+                       : tx.type === 'penalty' ? "bg-red-100 text-red-700 border-red-200" 
+                       : tx.type === 'attendance' ? "bg-blue-100 text-blue-700 border-blue-200" 
+                       : tx.type === 'purchase' ? "bg-purple-100 text-purple-700 border-purple-200"
+                       : tx.type === 'bid_refund' ? "bg-emerald-100 text-emerald-700 border-emerald-200"
+                       : "bg-gray-100 text-gray-700 border-gray-200"
                      
                      return (
-                       <div key={tx._id || tx.id} className="p-4 hover:bg-gray-50 transition-colors flex items-center justify-between gap-4">
-                         <div className="flex items-center gap-4">
-                           <div className={`p-2 rounded-full ${isPositive ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
-                              {isPositive ? <ArrowUpCircle className="h-5 w-5" /> : <ArrowDownCircle className="h-5 w-5" />}
-                           </div>
-                           <div>
-                             <p className="font-medium text-gray-900">{tx.reason || tx.description || "Izohsiz"}</p>
-                             <div className="flex items-center gap-2 mt-0.5">
-                               <Badge variant="secondary" className="text-[10px] h-5">
-                                 {tx.type === 'reward' ? "Mukofot" : tx.type === 'penalty' ? "Jarima" : tx.type === 'attendance' ? "Davomat" : tx.type}
-                               </Badge>
-                               <span className="text-[10px] font-medium text-gray-400 italic">
-                                  {isSelf ? "Olingan" : `Yuborilgan (@${tx.receiver?.username || 'user'})`}
-                               </span>
-                               <span className="text-xs text-gray-500">
-                                 {new Date(tx.createdAt || tx.created_at).toLocaleDateString("uz-UZ", { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                               </span>
+                       <div key={tx._id || tx.id} className="p-4 hover:bg-gray-50/80 transition-colors">
+                         <div className="flex items-center justify-between gap-4">
+                           <div className="flex items-center gap-3 flex-1 min-w-0">
+                             {/* Tranzaksiya yo'nalishi ikoni */}
+                             <div className={`p-2 rounded-full shrink-0 ${isPositive ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+                                {isPositive ? <ArrowUpCircle className="h-5 w-5" /> : <ArrowDownCircle className="h-5 w-5" />}
+                             </div>
+                             
+                             <div className="flex-1 min-w-0">
+                               {/* Sabab */}
+                               <p className="font-medium text-gray-900 truncate">{tx.reason || tx.description || "Izohsiz"}</p>
+                               
+                               {/* Kim → Kimga */}
+                               <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                                 {/* Beruvchi */}
+                                 <div className="flex items-center gap-1 bg-red-50 dark:bg-red-950/50 px-2 py-0.5 rounded-full border border-red-100 dark:border-red-800">
+                                   <User className="h-3 w-3 text-red-500" />
+                                   <span className="text-[11px] font-semibold text-red-700 dark:text-red-400">
+                                     {isGiverSelf ? "Siz" : giverName}
+                                   </span>
+                                 </div>
+                                 
+                                 <ArrowRight className="h-3 w-3 text-gray-400 shrink-0" />
+                                 
+                                 {/* Oluvchi */}
+                                 <div className="flex items-center gap-1 bg-amber-50 dark:bg-amber-950/50 px-2 py-0.5 rounded-full border border-amber-100 dark:border-amber-800">
+                                   <User className="h-3 w-3 text-amber-500" />
+                                   <span className="text-[11px] font-semibold text-amber-700 dark:text-amber-400">
+                                     {isReceiverSelf ? "Siz" : receiverName}
+                                   </span>
+                                 </div>
+                               </div>
+
+                               {/* Tur va sana */}
+                               <div className="flex items-center gap-2 mt-1.5">
+                                 <Badge variant="outline" className={`text-[10px] h-5 border ${typeBgColor}`}>
+                                   {typeLabel}
+                                 </Badge>
+                                 <span className="text-xs text-gray-500">
+                                   {new Date(tx.createdAt || tx.created_at).toLocaleDateString("uz-UZ", { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                 </span>
+                               </div>
                              </div>
                            </div>
+                           
+                           {/* Miqdor */}
+                           <div className={`text-right shrink-0 px-3 py-1.5 rounded-lg ${isPositive ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+                             <span className={`text-lg font-bold ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
+                               {isPositive ? "+" : ""}{tx.amount}
+                             </span>
+                             <p className="text-[10px] text-gray-500">tanga</p>
+                           </div>
                          </div>
-                         <span className={`font-bold whitespace-nowrap ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                           {isPositive ? "+" : ""}{tx.amount}
-                         </span>
                        </div>
                      )
                    })}
