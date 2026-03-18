@@ -7,7 +7,7 @@ import {
   useGetUserQuery,
 } from "@/lib/api/usersApi"
 import { useGetAllClassesQuery } from "@/lib/api/classesApi"
-import { useGetUserTransactionsQuery } from "@/lib/api/coinsApi"
+import { useGetUserTransactionsQuery, useGetWeeklyChangeQuery, useGetWeeklyTopGainersQuery } from "@/lib/api/coinsApi"
 import LoadingSpinner from "@/components/ui/loading-spinner"
 import { Skeleton } from "@/components/ui/skeleton"
 import CoinDisplay from "@/components/ui/coin-display"
@@ -18,11 +18,15 @@ import {
   GraduationCap,
   Award,
   TrendingUp,
+  TrendingDown,
   ClipboardCheck,
   Coins,
   ShoppingBag,
   ArrowRight,
-  Calendar as CalendarIcon
+  Calendar as CalendarIcon,
+  Flame,
+  ArrowUpRight,
+  ArrowDownRight
 } from "lucide-react"
 import Link from "next/link"
 
@@ -53,6 +57,13 @@ export default function Dashboard() {
   const transactionsData = Array.isArray(transactionsResponse) ? transactionsResponse : transactionsResponse?.data || []
 
   const recentTransactions = Array.isArray(transactionsData) ? transactionsData.slice(0, 5) : []
+
+  // Haftalik o'zgarish (student uchun)
+  const { data: weeklyChangeData } = useGetWeeklyChangeQuery(user?.id, { skip: !user?.id })
+  
+  // Haftalik top 10 (admin/teacher uchun)
+  const { data: weeklyTopGainers } = useGetWeeklyTopGainersQuery(undefined, { skip: !isAdmin && !isTeacher })
+  const topGainers = Array.isArray(weeklyTopGainers) ? weeklyTopGainers : weeklyTopGainers?.data || []
 
   let studentsCount = Array.isArray(users) ? users.filter((u: any) => u.role === "student").length : 0
   let teachersCount = Array.isArray(users) ? users.filter((u: any) => u.role === "teacher").length : 0
@@ -159,11 +170,59 @@ export default function Dashboard() {
 
       {/* Student Personal Stats */}
       {isStudent && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <StatCard icon={Coins} label="Sizning tangalaringiz" value={userProfile?.coins || 0} color="yellow" isCoin />
-          <StatCard icon={Award} label="Sinf" value={user?.class_name || "—"} color="blue" isText />
-          <StatCard icon={TrendingUp} label="Baholar" value={user?.grade || "—"} color="green" isText />
-        </div>
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <StatCard icon={Coins} label="Sizning tangalaringiz" value={userProfile?.coins || 0} color="yellow" isCoin />
+            <StatCard icon={Award} label="Sinf" value={user?.class_name || "—"} color="blue" isText />
+            <StatCard icon={TrendingUp} label="Baholar" value={user?.grade || "—"} color="green" isText />
+          </div>
+
+          {/* Haftalik O'zgarish Karti */}
+          {weeklyChangeData && (
+            <div className={`rounded-2xl shadow-sm border p-5 md:p-6 flex items-center gap-5 transition-all ${
+              weeklyChangeData.weekly_change > 0
+                ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 dark:from-green-950/30 dark:to-emerald-950/30 dark:border-green-800'
+                : weeklyChangeData.weekly_change < 0
+                  ? 'bg-gradient-to-r from-red-50 to-orange-50 border-red-200 dark:from-red-950/30 dark:to-orange-950/30 dark:border-red-800'
+                  : 'bg-gradient-to-r from-gray-50 to-slate-50 border-gray-200 dark:from-gray-900/30 dark:to-slate-900/30 dark:border-gray-700'
+            }`}>
+              <div className={`p-3 rounded-xl shadow-sm ${
+                weeklyChangeData.weekly_change > 0
+                  ? 'bg-green-100 text-green-600 dark:bg-green-900/50 dark:text-green-400'
+                  : weeklyChangeData.weekly_change < 0
+                    ? 'bg-red-100 text-red-600 dark:bg-red-900/50 dark:text-red-400'
+                    : 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400'
+              }`}>
+                {weeklyChangeData.weekly_change > 0
+                  ? <ArrowUpRight className="h-7 w-7" />
+                  : weeklyChangeData.weekly_change < 0
+                    ? <ArrowDownRight className="h-7 w-7" />
+                    : <TrendingUp className="h-7 w-7" />
+                }
+              </div>
+              <div className="flex-1">
+                <p className="text-sm text-muted-foreground font-medium">Haftalik o'zgarish</p>
+                <div className="flex items-baseline gap-2 mt-0.5">
+                  <span className={`text-2xl font-extrabold ${
+                    weeklyChangeData.weekly_change > 0 ? 'text-green-700 dark:text-green-400' 
+                    : weeklyChangeData.weekly_change < 0 ? 'text-red-700 dark:text-red-400' 
+                    : 'text-gray-700 dark:text-gray-300'
+                  }`}>
+                    {weeklyChangeData.weekly_change > 0 ? '+' : ''}{weeklyChangeData.weekly_change} tanga
+                  </span>
+                  <span className={`text-sm font-bold px-2 py-0.5 rounded-full ${
+                    weeklyChangeData.percentage_change > 0 ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-400'
+                    : weeklyChangeData.percentage_change < 0 ? 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-400'
+                    : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'
+                  }`}>
+                    {weeklyChangeData.percentage_change > 0 ? '+' : ''}{weeklyChangeData.percentage_change}%
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">O'tgan 7 kun ichida</p>
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -241,6 +300,70 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* Haftalik TOP 10 — Admin/Teacher uchun */}
+      {(isAdmin || isTeacher) && topGainers.length > 0 && (
+        <div className="bg-card dark:bg-card rounded-2xl shadow-sm border border-border dark:border-border p-6 lg:p-8">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-xl">
+                <Flame className="w-6 h-6 text-red-600 dark:text-red-400" />
+              </div>
+              <div>
+                <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">Haftalik TOP 10</h2>
+                <p className="text-sm text-muted-foreground">Shu hafta eng ko'p tanga olgan o'quvchilar</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {topGainers.map((student: any, index: number) => (
+              <div
+                key={student.user_id || index}
+                className="flex items-center gap-4 p-4 rounded-xl hover:bg-accent dark:hover:bg-accent transition-all duration-300 border border-border dark:border-border shadow-sm hover:shadow-md"
+              >
+                {/* Rank */}
+                <div
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-base flex-shrink-0 shadow-sm
+                    ${index === 0 ? "bg-yellow-500 text-white ring-2 ring-yellow-300" : ""}
+                    ${index === 1 ? "bg-gray-300 text-gray-800" : ""}
+                    ${index === 2 ? "bg-orange-500 text-white" : ""}
+                    ${index > 2 ? "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300" : ""}`}
+                >
+                  {index + 1}
+                </div>
+
+                {/* Info */}
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-sm md:text-base text-gray-900 dark:text-gray-100 truncate">
+                    {student.fullname || student.username || "Noma'lum"}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Hozirgi balans: {student.current_coins} tanga
+                  </p>
+                </div>
+
+                {/* Weekly Earned */}
+                <div className="text-right flex-shrink-0">
+                  <div className="flex items-center gap-1 justify-end">
+                    <ArrowUpRight className="h-4 w-4 text-green-600" />
+                    <span className="font-bold text-green-600 dark:text-green-400">
+                      +{student.weekly_earned}
+                    </span>
+                  </div>
+                  <span className={`text-xs font-semibold px-1.5 py-0.5 rounded-full ${
+                    student.percentage_change > 0 
+                      ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-400' 
+                      : 'bg-gray-100 text-gray-600'
+                  }`}>
+                    {student.percentage_change > 0 ? '+' : ''}{student.percentage_change}%
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Recent Transactions */}
       {isStudent && recentTransactions.length > 0 && (
