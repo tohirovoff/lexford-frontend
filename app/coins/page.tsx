@@ -92,7 +92,7 @@ export default function CoinsPage() {
       return
     }
 
-    if (Number(amount) > 10) {
+    if (transactionType === "reward" && Number(amount) > 10) {
       toast?.error("Eng ko'pi bilan 10 ta tanga berish mumkin!")
       return
     }
@@ -304,18 +304,20 @@ export default function CoinsPage() {
                     <Label>Miqdor (tanga)</Label>
                     <Input 
                       type="number" 
-                      placeholder="1 dan 10 gacha" 
+                      placeholder={transactionType === "reward" ? "1 dan 10 gacha" : "Miqdorni kiriting"} 
                       value={amount}
                       onChange={(e) => {
                         const val = e.target.value
-                        if (val === "" || Number(val) <= 10) {
+                        if (val === "" || transactionType === "penalty" || Number(val) <= 10) {
                           setAmount(val)
                         }
                       }}
                       min="1"
-                      max="10"
+                      max={transactionType === "reward" ? "10" : undefined}
                     />
-                    <p className="text-xs text-gray-500">Eng ko'pi bilan 10 ta tanga</p>
+                    <p className="text-xs text-gray-500">
+                      {transactionType === "reward" ? "Eng ko'pi bilan 10 ta tanga" : "Jarima miqdorida cheklov yo'q"}
+                    </p>
                   </div>
 
                   <div className="space-y-2">
