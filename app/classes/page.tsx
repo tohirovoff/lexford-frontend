@@ -129,7 +129,7 @@ export default function ClassListPage() {
   if (isLoading) return <LoadingSpinner fullScreen />
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pt-4 md:pt-6">
+    <div className="space-y-6 max-w-7xl mx-auto pt-4 md:pt-6 px-4 md:px-0">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-foreground">Sinflar</h1>
         
@@ -238,10 +238,11 @@ export default function ClassListPage() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Sinf nomi yoki o'qituvchi bo'yicha qidirish..."
+              placeholder="Qidirish..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
+              title="Sinf nomi yoki o'qituvchi bo'yicha qidirish"
             />
           </div>
         </CardContent>

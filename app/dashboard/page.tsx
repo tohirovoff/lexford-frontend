@@ -255,14 +255,14 @@ export default function Dashboard() {
               <p className="text-lg font-medium">Hozircha reyting bo'sh</p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               {leaderboard.map((item: any, index: number) => (
                 <div
                   key={item.user_id || index}
-                  className="flex items-center gap-4 md:gap-5 p-4 rounded-xl hover:bg-accent dark:hover:bg-accent transition-all duration-300 border border-border dark:border-border shadow-sm hover:shadow-md"
+                  className="flex items-center gap-3 md:gap-5 p-3 md:p-4 rounded-xl hover:bg-accent dark:hover:bg-accent transition-all duration-300 border border-border dark:border-border shadow-sm hover:shadow-md"
                 >
                   <div
-                    className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center font-bold text-base md:text-lg flex-shrink-0 shadow-sm
+                    className={`w-8 h-8 md:w-12 md:h-12 rounded-xl flex items-center justify-center font-bold text-sm md:text-lg flex-shrink-0 shadow-sm
                       ${index === 0 ? "bg-yellow-500 text-white ring-2 ring-yellow-300" : ""}
                       ${index === 1 ? "bg-gray-300 text-gray-800" : ""}
                       ${index === 2 ? "bg-orange-500 text-white" : ""}
@@ -272,7 +272,7 @@ export default function Dashboard() {
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold text-sm md:text-base text-gray-900 dark:text-gray-100 truncate">
+                    <p className="font-bold text-sm md:text-base text-gray-900 dark:text-gray-100 break-words">
                       {item.fullname || item.username || "Noma'lum"}
                     </p>
                     <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 mt-0.5">
@@ -341,11 +341,11 @@ export default function Dashboard() {
             {topGainers.map((student: any, index: number) => (
               <div
                 key={student.user_id || index}
-                className="flex items-center gap-4 p-4 rounded-xl hover:bg-accent dark:hover:bg-accent transition-all duration-300 border border-border dark:border-border shadow-sm hover:shadow-md"
+                className="flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-xl hover:bg-accent dark:hover:bg-accent transition-all duration-300 border border-border dark:border-border shadow-sm hover:shadow-md"
               >
                 {/* Rank */}
                 <div
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-base flex-shrink-0 shadow-sm
+                  className={`w-8 h-8 md:w-10 md:h-10 rounded-xl flex items-center justify-center font-bold text-sm md:text-base flex-shrink-0 shadow-sm
                     ${index === 0 ? "bg-yellow-500 text-white ring-2 ring-yellow-300" : ""}
                     ${index === 1 ? "bg-gray-300 text-gray-800" : ""}
                     ${index === 2 ? "bg-orange-500 text-white" : ""}
@@ -356,7 +356,7 @@ export default function Dashboard() {
 
                 {/* Info */}
                 <div className="flex-1 min-w-0">
-                  <p className="font-bold text-sm md:text-base text-gray-900 dark:text-gray-100 truncate">
+                  <p className="font-bold text-sm md:text-base text-gray-900 dark:text-gray-100 break-words">
                     {student.fullname || student.username || "Noma'lum"}
                   </p>
                   <p className="text-xs text-muted-foreground mt-0.5">
@@ -403,17 +403,17 @@ export default function Dashboard() {
             {recentTransactions.map((tx: any) => (
               <div
                 key={tx.id}
-                className="flex items-center justify-between p-4 rounded-xl bg-accent/50 dark:bg-accent/50 hover:bg-accent dark:hover:bg-accent transition-all duration-300 border border-border dark:border-border shadow-sm"
+                className="flex items-center justify-between p-3 md:p-4 rounded-xl bg-accent/50 dark:bg-accent/50 hover:bg-accent dark:hover:bg-accent transition-all duration-300 border border-border dark:border-border shadow-sm"
               >
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 md:gap-4 min-w-0 flex-1">
                   <div
-                    className={`w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center shadow-sm flex-shrink-0
+                    className={`w-9 h-9 md:w-12 md:h-12 rounded-xl flex items-center justify-center shadow-sm flex-shrink-0
                       ${tx.amount > 0 ? "bg-green-100 dark:bg-green-900/30" : "bg-red-100 dark:bg-red-900/30"}`}
                   >
-                    <Coins className={`w-5 h-5 md:w-6 md:h-6 ${tx.amount > 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`} />
+                    <Coins className={`w-4 h-4 md:w-6 md:h-6 ${tx.amount > 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`} />
                   </div>
-                  <div>
-                    <p className="font-bold text-sm text-gray-900 dark:text-gray-100 truncate max-w-[150px] md:max-w-none">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-bold text-sm text-gray-900 dark:text-gray-100 break-words">
                       {tx.reason || tx.description}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
@@ -424,7 +424,7 @@ export default function Dashboard() {
                     </p>
                   </div>
                 </div>
-                <span className={`font-bold text-sm md:text-base ${tx.amount > 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
+                <span className={`font-bold text-sm md:text-base flex-shrink-0 ml-2 ${tx.amount > 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
                   {tx.amount > 0 ? "+" : ""}
                   {tx.amount}
                 </span>

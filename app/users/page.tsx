@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import LoadingSpinner from "@/components/ui/loading-spinner"
-import { Search, Trash2, Eye, Users, GraduationCap, UserCog, Calendar as CalendarIcon, CheckCircle2, XCircle, Clock, Plus, Loader2, ChevronUp, ChevronDown, ChevronsUpDown, Copy, PlusCircle, Save } from "lucide-react"
+import { Search, Trash2, Eye, Users, GraduationCap, UserCog, Calendar as CalendarIcon, CheckCircle2, XCircle, Clock, Plus, Loader2, ChevronUp, ChevronDown, ChevronsUpDown, Copy, PlusCircle, Save, Coins } from "lucide-react"
 import { getImageUrl, getProfileImageUrl } from "@/lib/utils"
 import { useGetStudentStatsQuery } from "@/lib/api/attendanceApi"
 import { Calendar } from "@/components/ui/calendar"
@@ -306,21 +306,21 @@ export default function UsersListPage() {
     <div className="space-y-6 max-w-7xl mx-auto pt-4 md:pt-6 px-4 md:px-0">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
-           <h1 className="text-3xl font-extrabold text-foreground tracking-tight">Foydalanuvchilar</h1>
-           <p className="text-muted-foreground font-medium">Tizimdagi barcha foydalanuvchilar ro'yxati</p>
+           <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">Foydalanuvchilar</h1>
+           <p className="text-muted-foreground font-medium text-sm sm:text-base">Tizimdagi barcha foydalanuvchilar ro'yxati</p>
         </div>
         {isAdmin && (
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <Dialog open={isBulkAddOpen} onOpenChange={setIsBulkAddOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline" className="border-red-600 text-red-600 hover:bg-red-50 rounded-2xl h-12 px-6 font-bold shadow-sm transition-all hover:scale-105">
-                  <PlusCircle className="w-5 h-5 mr-2" />
-                  Ommaviy qo'shish
+                <Button variant="outline" className="border-red-600 text-red-600 hover:bg-red-50 rounded-2xl h-10 sm:h-12 px-4 sm:px-6 font-bold shadow-sm transition-all hover:scale-105 text-sm sm:text-base">
+                  <PlusCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                  Ommaviy
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[900px] max-h-[80vh] overflow-y-auto">
+              <DialogContent className="sm:max-w-[900px] w-[95vw] max-w-full max-h-[85vh] overflow-y-auto rounded-2xl sm:rounded-3xl p-4 sm:p-6">
                 <DialogHeader>
-                  <DialogTitle>Bir vaqtda bir nechta foydalanuvchi qo'shish</DialogTitle>
+                  <DialogTitle className="text-xl sm:text-2xl font-bold">Ommaviy qo'shish</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
                   <div className="overflow-x-auto">
@@ -430,14 +430,14 @@ export default function UsersListPage() {
 
             <Dialog open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-red-600 hover:bg-red-700 text-white rounded-2xl shadow-lg transition-all hover:scale-105 active:scale-95 h-12 px-6">
-                  <Plus className="w-5 h-5 mr-2" />
-                  Foydalanuvchi qo'shish
+                <Button className="bg-red-600 hover:bg-red-700 text-white rounded-2xl shadow-lg transition-all hover:scale-105 active:scale-95 h-10 sm:h-12 px-4 sm:px-6 text-sm sm:text-base">
+                  <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                  Qo'shish
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
+              <DialogContent className="sm:max-w-[425px] w-[95vw] max-w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 rounded-2xl sm:rounded-3xl">
                 <DialogHeader>
-                  <DialogTitle>Yangi foydalanuvchi qo'shish</DialogTitle>
+                  <DialogTitle className="text-xl sm:text-2xl font-bold">Yangi foydalanuvchi</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleCreateUser} className="space-y-4 py-4">
                   <div className="space-y-2">
@@ -603,23 +603,23 @@ export default function UsersListPage() {
       </div>
 
       {/* Filters */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col md:flex-row gap-4">
+      <Card className="rounded-2xl border border-border/50 shadow-sm bg-card/30 backdrop-blur-sm">
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Qidirish..."
+                placeholder="Ism yoki username bo'yicha qidirish..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-background/50"
+                className="pl-10 bg-background/50 h-11 sm:h-10 rounded-xl"
               />
             </div>
             <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="w-full md:w-48">
+              <SelectTrigger className="w-full sm:w-48 h-11 sm:h-10 rounded-xl bg-background/50">
                 <SelectValue placeholder="Rol bo'yicha filtrlash" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="rounded-xl">
                 <SelectItem value="all">Barcha rollar</SelectItem>
                 <SelectItem value="admin">Admin</SelectItem>
                 <SelectItem value="teacher">O'qituvchi</SelectItem>
@@ -630,8 +630,109 @@ export default function UsersListPage() {
         </CardContent>
       </Card>
 
-      {/* Users Table */}
-      <Card className="overflow-hidden border border-border/50 shadow-lg rounded-2xl bg-card/30 backdrop-blur-sm">
+      {/* Mobile Sort Controls */}
+      <div className="flex gap-2 overflow-x-auto pb-1 md:hidden">
+        {[
+          { key: 'fullname', label: 'Ism' },
+          { key: 'role', label: 'Rol' },
+          { key: 'coins', label: 'Tanga' },
+          { key: 'class_name', label: 'Sinf' },
+        ].map((item) => (
+          <button
+            key={item.key}
+            onClick={() => requestSort(item.key)}
+            className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap border ${
+              sortConfig.key === item.key 
+                ? 'bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800' 
+                : 'bg-card text-muted-foreground border-border hover:bg-accent'
+            }`}
+          >
+            {item.label}
+            {sortConfig.key === item.key && sortConfig.direction === 'asc' && <ChevronUp className="w-3 h-3" />}
+            {sortConfig.key === item.key && sortConfig.direction === 'desc' && <ChevronDown className="w-3 h-3" />}
+          </button>
+        ))}
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="space-y-3 md:hidden">
+        {filteredUsers.length === 0 ? (
+          <Card className="py-8">
+            <CardContent className="text-center text-muted-foreground">
+              Foydalanuvchilar topilmadi
+            </CardContent>
+          </Card>
+        ) : (
+          filteredUsers.map((user: any) => (
+            <Card 
+              key={user.id} 
+              className="overflow-hidden border border-border/50 shadow-sm hover:shadow-md transition-shadow rounded-2xl bg-card/80"
+            >
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  {/* Avatar */}
+                  <Avatar className="h-11 w-11 flex-shrink-0">
+                    <AvatarImage src={getProfileImageUrl(user.profile_picture)} />
+                    <AvatarFallback className="bg-red-100 text-red-700 font-bold">
+                      {user.fullname?.charAt(0) || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+
+                  {/* Main Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <h3 className="font-bold text-foreground text-sm break-words leading-tight">{user.fullname}</h3>
+                      <Badge variant="outline" className={`${getRoleBadgeClass(user.role)} text-[10px] px-2 py-0.5 flex-shrink-0`}>
+                        {user.role}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5">@{user.username}</p>
+
+                    {/* Details Row */}
+                    <div className="flex items-center gap-3 mt-2.5">
+                      {/* Class */}
+                      <div className="flex items-center gap-1.5 text-xs">
+                        <GraduationCap className="w-3.5 h-3.5 text-muted-foreground" />
+                        <span className="text-foreground/70 font-medium">
+                          {user.class?.name || user.class_name || (user.role === 'student' ? "Yo'q" : '—')}
+                        </span>
+                      </div>
+                      {/* Coins */}
+                      <div className="flex items-center gap-1 bg-amber-50 dark:bg-amber-950/30 px-2 py-0.5 rounded-full border border-amber-100 dark:border-amber-800">
+                        <Coins className="w-3.5 h-3.5 text-amber-500" />
+                        <span className="font-bold text-amber-600 text-xs">{user.coins || user.coinBalance || 0}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex justify-end gap-1 mt-3 pt-3 border-t border-border/50">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => handleUserDetailsOpen(user)}
+                    className="h-8 px-3 text-xs font-semibold text-muted-foreground hover:text-foreground gap-1.5"
+                  >
+                    <Eye className="h-3.5 w-3.5" /> Batafsil
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 px-3 text-xs font-semibold text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30 gap-1.5"
+                    onClick={() => setDeleteConfirm(user)}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" /> O'chirish
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
+
+      {/* Desktop Table View */}
+      <Card className="overflow-hidden border border-border/50 shadow-lg rounded-2xl bg-card/30 backdrop-blur-sm hidden md:block">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
@@ -743,22 +844,22 @@ export default function UsersListPage() {
 
       {/* User Details Dialog */}
       <Dialog open={!!selectedUser} onOpenChange={() => setSelectedUser(null)}>
-        <DialogContent>
+        <DialogContent className="max-h-[90vh] overflow-y-auto p-4 sm:p-6 w-[95vw] max-w-full sm:max-w-md rounded-2xl sm:rounded-3xl">
           <DialogHeader>
-            <DialogTitle>Foydalanuvchi ma'lumotlari</DialogTitle>
+            <DialogTitle className="text-xl font-bold">Foydalanuvchi ma'lumoti</DialogTitle>
           </DialogHeader>
           {selectedUser && (
             <div className="space-y-4">
               <div className="flex items-center gap-4">
-                <Avatar className="h-16 w-16">
+                <Avatar className="h-14 w-14 sm:h-16 sm:w-16">
                   <AvatarImage src={getProfileImageUrl(selectedUser.profile_picture)} />
-                  <AvatarFallback className="bg-red-100 text-red-700 text-xl">
+                  <AvatarFallback className="bg-red-100 text-red-700 text-lg sm:text-xl">
                     {selectedUser.fullname?.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
-                <div>
-                  <h3 className="text-lg font-semibold">{selectedUser.fullname}</h3>
-                  <p className="text-gray-500">@{selectedUser.username}</p>
+                <div className="min-w-0">
+                  <h3 className="text-base sm:text-lg font-semibold break-words">{selectedUser.fullname}</h3>
+                  <p className="text-gray-500 text-sm">@{selectedUser.username}</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4 text-sm">
@@ -775,11 +876,11 @@ export default function UsersListPage() {
                 {selectedUser.role === "student" && (
                   <div className="col-span-2 space-y-4">
                      {isAdmin && (
-                       <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 space-y-3">
+                       <div className="bg-gray-50 dark:bg-gray-900/50 p-3 sm:p-4 rounded-2xl border border-gray-100 dark:border-gray-800 space-y-3">
                          <Label className="text-[10px] font-black uppercase text-gray-500 tracking-wider">Sinfni o'zgartirish (Admin)</Label>
-                         <div className="flex gap-2">
+                         <div className="flex flex-col sm:flex-row gap-2">
                            <Select value={selectedClass} onValueChange={setSelectedClass}>
-                             <SelectTrigger className="bg-white rounded-xl h-11">
+                             <SelectTrigger className="bg-white dark:bg-gray-800 rounded-xl h-11">
                                <SelectValue placeholder="Sinfni tanlang" />
                              </SelectTrigger>
                              <SelectContent className="z-[130]">
@@ -794,7 +895,7 @@ export default function UsersListPage() {
                            <Button 
                              onClick={handleClassAssignment} 
                              disabled={isStatusUpdating || selectedClass === (selectedUser.class_id ? String(selectedUser.class_id) : "none")}
-                             className="bg-red-600 hover:bg-red-700 h-11 px-6 rounded-xl font-bold"
+                             className="bg-red-600 hover:bg-red-700 h-11 px-6 rounded-xl font-bold w-full sm:w-auto"
                            >
                              {isStatusUpdating ? <Loader2 className="w-4 h-4 animate-spin" /> : "Saqlash"}
                            </Button>

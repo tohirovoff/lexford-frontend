@@ -304,19 +304,19 @@ export default function Shop() {
   }
 
   return (
-    <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-10 animate-in fade-in duration-700">
+    <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto space-y-6 sm:space-y-10 animate-in fade-in duration-700">
       {/* Red Premium Header */}
-      <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-red-600 via-red-700 to-red-800 p-8 md:p-12 text-white shadow-2xl">
+      <div className="relative overflow-hidden rounded-2xl sm:rounded-[2rem] bg-gradient-to-br from-red-600 via-red-700 to-red-800 p-5 sm:p-8 md:p-12 text-white shadow-2xl">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
           <div className="space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold tracking-wider uppercase">
               <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
               Eksklyuziv Do'kon
             </div>
-            <h1 className="text-4xl md:text-5xl font-black tracking-tight">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight">
               Lexford <span className="text-red-200">Market</span>
             </h1>
-            <p className="text-red-100/80 text-lg md:text-xl max-w-xl font-medium leading-relaxed">
+            <p className="text-red-100/80 text-sm sm:text-lg md:text-xl max-w-xl font-medium leading-relaxed">
               Tangalaringiz yordamida noyob imtiyozlar va ajoyib sovg'alarni qo'lga kiriting. O'qishda davom eting va ko'proq jamg'aring!
             </p>
           </div>
@@ -358,7 +358,7 @@ export default function Shop() {
         <button
           onClick={() => setActiveTab("products")}
           className={cn(
-            "px-8 py-4 font-bold text-lg transition-all border-b-2",
+            "px-4 sm:px-8 py-3 sm:py-4 font-bold text-sm sm:text-lg transition-all border-b-2",
             activeTab === "products" 
               ? "border-primary text-primary" 
               : "border-transparent text-muted-foreground hover:text-foreground"
@@ -369,7 +369,7 @@ export default function Shop() {
         <button
           onClick={() => setActiveTab("purchases")}
           className={cn(
-            "px-8 py-4 font-bold text-lg transition-all border-b-2 flex items-center gap-2",
+            "px-4 sm:px-8 py-3 sm:py-4 font-bold text-sm sm:text-lg transition-all border-b-2 flex items-center gap-2",
             activeTab === "purchases" 
               ? "border-primary text-primary" 
               : "border-transparent text-muted-foreground hover:text-foreground"
@@ -557,8 +557,9 @@ export default function Shop() {
               <p className="text-gray-500 font-medium">Hozircha hech qanday xaridlar mavjud emas.</p>
             </Card>
           ) : (
-            <div className="bg-card rounded-3xl shadow-xl overflow-hidden border border-border">
-              <table className="w-full text-left border-collapse">
+            <div className="bg-card rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden border border-border">
+              <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-[700px]">
                 <thead>
                   <tr className="bg-muted border-b border-border">
                     <th className="px-6 py-4 font-bold text-muted-foreground uppercase text-[11px] tracking-widest">Mahsulot</th>
@@ -652,6 +653,7 @@ export default function Shop() {
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
           )}
         </div>
@@ -659,10 +661,10 @@ export default function Shop() {
 
       {/* Modern Dialog Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-xl rounded-[2.5rem] p-0 overflow-hidden border-none shadow-3xl bg-white/95 backdrop-blur-xl">
-          <div className="p-8 space-y-8">
+        <DialogContent className="sm:max-w-xl rounded-2xl sm:rounded-[2.5rem] p-0 overflow-hidden border-none shadow-3xl bg-white/95 backdrop-blur-xl max-h-[90vh]">
+          <div className="p-4 sm:p-8 space-y-6 sm:space-y-8 overflow-y-auto max-h-[85vh]">
             <DialogHeader>
-              <DialogTitle className="text-3xl font-black text-gray-900 border-b pb-4 border-gray-100">
+              <DialogTitle className="text-xl sm:text-3xl font-black text-gray-900 border-b pb-4 border-gray-100">
                 {editingItem ? "Mahsulotni yangilash" : "Yangi mahsulot"}
               </DialogTitle>
               <DialogDescription className="text-gray-500 font-medium">
@@ -672,7 +674,7 @@ export default function Shop() {
             
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-xs font-black text-gray-400 uppercase tracking-widest pl-1">Sarlavha *</label>
                     <Input 
@@ -736,7 +738,7 @@ export default function Shop() {
                    </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                    <div className="space-y-2">
                      <label className="text-xs font-black text-gray-400 uppercase tracking-widest pl-1">Aktiv holati</label>
                      <select 
