@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { useGetAllUsersQuery, useDeleteUserMutation, useUpdateUserMutation, useUpdateStudentClassMutation, useCreateUserMutation, useCreateManyUsersMutation } from "@/lib/api/usersApi"
+import { useGetAllUsersQuery, useDeleteUserMutation, useUpdateUserMutation, useUpdateStudentClassMutation, useCreateUserMutation, useCreateManyUsersMutation, useAdminResetPasswordMutation } from "@/lib/api/usersApi"
 import { useGetAllClassesQuery } from "@/lib/api/classesApi"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -103,6 +103,22 @@ export default function UsersListPage() {
   const [updateStudentClass, { isLoading: isStatusUpdating }] = useUpdateStudentClassMutation()
   const [createUser, { isLoading: isCreating }] = useCreateUserMutation()
   const [createManyUsers, { isLoading: isBulkCreating }] = useCreateManyUsersMutation()
+  const [adminResetPassword, { isLoading: isResettingPassword }] = useAdminResetPasswordMutation()
+  const [adminNewPassword, setAdminNewPassword] = useState("")
+
+  const handleAdminResetPassword = async () => {
+    if (!adminNewPassword || adminNewPassword.length < 6) {
+      toast.error("Parol kamida 6 ta belgidan iborat bo'lishi kerak")
+      return
+    }
+    try {
+      await adminResetPassword({ id: selectedUser.id, newPassword: adminNewPassword }).unwrap()
+      toast.success("Parol muvaffaqiyatli saqlandi")
+      setAdminNewPassword("")
+    } catch (err: any) {
+        toast.error(err?.data?.message || err?.data?.error || "Xatolik yuz berdi")
+    }
+  }
 
   const filteredUsers = useMemo(() => {
     if (!users) return []
@@ -277,6 +293,7 @@ export default function UsersListPage() {
     setSelectedUser(user)
     setSelectedClass(user.class_id ? String(user.class_id) : (user.classId ? String(user.classId) : "none"))
     setUpdateSuccess(false)
+    setAdminNewPassword("")
   }
 
   const getRoleBadgeClass = (role: string) => {
@@ -873,6 +890,27 @@ export default function UsersListPage() {
                   <p className="text-gray-500">Tangalar</p>
                   <p className="font-medium text-amber-600">{selectedUser.coinBalance || 0}</p>
                 </div>
+                {isAdmin && (
+                  <div className="col-span-2 bg-gray-50 dark:bg-gray-900/50 p-3 sm:p-4 rounded-2xl border border-gray-100 dark:border-gray-800 space-y-3">
+                     <Label className="text-[10px] font-black uppercase text-gray-500 tracking-wider">Parolni o'zgartirish (Admin)</Label>
+                     <div className="flex flex-col sm:flex-row gap-2">
+                        <Input 
+                          placeholder="Yangi parol..." 
+                          type="text"
+                          value={adminNewPassword}
+                          onChange={(e) => setAdminNewPassword(e.target.value)}
+                          className="bg-white dark:bg-gray-800 rounded-xl h-11"
+                        />
+                        <Button 
+                          onClick={handleAdminResetPassword} 
+                          disabled={isResettingPassword || !adminNewPassword}
+                          className="bg-red-600 hover:bg-red-700 h-11 px-6 rounded-xl font-bold w-full sm:w-auto"
+                        >
+                          {isResettingPassword ? <Loader2 className="w-4 h-4 animate-spin" /> : "Saqlash"}
+                        </Button>
+                     </div>
+                  </div>
+                )}
                 {selectedUser.role === "student" && (
                   <div className="col-span-2 space-y-4">
                      {isAdmin && (
