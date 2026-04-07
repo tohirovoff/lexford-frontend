@@ -16,6 +16,7 @@ import {
   X,
   ShoppingBag,
   Calendar,
+  ShieldAlert,
 } from "lucide-react"
 
 interface SidebarProps {
@@ -76,6 +77,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       label: "Sozlamalar",
       icon: Settings,
       roles: ["admin", "teacher", "student"],
+    },
+    {
+      href: "/audit",
+      label: "Audit",
+      icon: ShieldAlert,
+      roles: ["admin"],
     },
   ].filter((item) => item.roles.includes(user?.role || ""))
 

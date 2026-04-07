@@ -92,10 +92,8 @@ export default function CoinsPage() {
       return
     }
 
-    if (transactionType === "reward" && Number(amount) > 10) {
-      toast?.error("Eng ko'pi bilan 10 ta tanga berish mumkin!")
-      return
-    }
+    // 10 tadan ortiq bo'lsa backend o'zi 'pending' statusga o'tkazadi
+
 
     if (Number(amount) < 1) {
       toast?.error("Kamida 1 ta tanga kiritish kerak")
@@ -113,7 +111,7 @@ export default function CoinsPage() {
         created_by: Number(user?.id)
       }))
 
-      await createManyTransactions(payloads).unwrap()
+      const response = await createManyTransactions(payloads).unwrap()
       
       // Boshqa API'larni refresh qilish
       selectedStudentIds.forEach(studentId => {
@@ -123,7 +121,14 @@ export default function CoinsPage() {
       dispatch(classesApi.util.invalidateTags(['Classes']))
       dispatch(coinsApi.util.invalidateTags(['Transactions', 'Balance']))
 
-      toast?.success(`Muvaffaqiyatli: ${amount} tangadan ${selectedStudentIds.length} o'quvchiga ${transactionType === 'reward' ? 'berildi' : 'jarima qilindi'}`)
+      // Check if it requires admin approval
+      const isPending = Array.isArray(response) && response.length > 0 && response[0]?.status === 'pending';
+
+      if (isPending) {
+        toast?.info(response[0].message || "10 tadan ortiq tanga qo'shish uchun admin tasdig'i kutilmoqda.", { duration: 5000 })
+      } else {
+        toast?.success(`Muvaffaqiyatli: ${amount} tangadan ${selectedStudentIds.length} o'quvchiga ${transactionType === 'reward' ? 'berildi' : 'jarima qilindi'}`)
+      }
       
       // Reset form
       setAmount("")
@@ -304,19 +309,18 @@ export default function CoinsPage() {
                     <Label>Miqdor (tanga)</Label>
                     <Input 
                       type="number" 
-                      placeholder={transactionType === "reward" ? "1 dan 10 gacha" : "Miqdorni kiriting"} 
+                      placeholder="Miqdorni kiriting" 
                       value={amount}
                       onChange={(e) => {
                         const val = e.target.value
-                        if (val === "" || transactionType === "penalty" || Number(val) <= 10) {
+                        if (val === "" || Number(val) > 0) {
                           setAmount(val)
                         }
                       }}
                       min="1"
-                      max={transactionType === "reward" ? "10" : undefined}
                     />
                     <p className="text-xs text-gray-500">
-                      {transactionType === "reward" ? "Eng ko'pi bilan 10 ta tanga" : "Jarima miqdorida cheklov yo'q"}
+                      {transactionType === "reward" ? "Eslatma: Bitta o'quvchiga 1 kun ichida jami 10 tadan ortiq tanga qo'shish admin tasdig'ini talab qiladi" : "Jarima miqdorida cheklov yo'q"}
                     </p>
                   </div>
 

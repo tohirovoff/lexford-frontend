@@ -29,6 +29,7 @@ import {
   ArrowDownRight
 } from "lucide-react"
 import Link from "next/link"
+import PendingApprovals from "./pending-approvals"
 
 export default function Dashboard() {
   const { user } = useSelector((state: any) => state.auth)
@@ -170,6 +171,9 @@ export default function Dashboard() {
           <StatCard icon={Award} label="Sinflar soni" value={classesCount} color="green" />
         </div>
       )}
+
+      {/* Admin uchun Kutilayotgan Tasdiqlar */}
+      {isAdmin && <PendingApprovals />}
 
       {/* Student Personal Stats */}
       {isStudent && (
