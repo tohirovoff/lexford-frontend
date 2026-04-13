@@ -125,7 +125,7 @@ export default function CoinsPage() {
       const isPending = Array.isArray(response) && response.length > 0 && response[0]?.status === 'pending';
 
       if (isPending) {
-        toast?.info(response[0].message || "10 tadan ortiq tanga qo'shish uchun admin tasdig'i kutilmoqda.", { duration: 5000 })
+        toast?.info(response[0].message || "Kutilmoqda...", { duration: 5000 })
       } else {
         toast?.success(`Muvaffaqiyatli: ${amount} tangadan ${selectedStudentIds.length} o'quvchiga ${transactionType === 'reward' ? 'berildi' : 'jarima qilindi'}`)
       }
@@ -320,7 +320,7 @@ export default function CoinsPage() {
                       min="1"
                     />
                     <p className="text-xs text-gray-500">
-                      {transactionType === "reward" ? "Eslatma: Bitta o'quvchiga 1 kun ichida jami 10 tadan ortiq tanga qo'shish admin tasdig'ini talab qiladi" : "Jarima miqdorida cheklov yo'q"}
+                      {transactionType === "reward" ? "Muvaffaqiyatli tanga berilganda darhol qo'shiladi." : "Jarima miqdorida cheklov yo'q"}
                     </p>
                   </div>
 

@@ -78,12 +78,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       icon: Settings,
       roles: ["admin", "teacher", "student"],
     },
-    {
-      href: "/audit",
-      label: "Audit",
-      icon: ShieldAlert,
-      roles: ["admin"],
-    },
   ].filter((item) => item.roles.includes(user?.role || ""))
 
   const isActive = (href: string) => 
