@@ -109,13 +109,13 @@ export default function NotificationBell() {
         <>
           {/* Overlay for mobile to close when clicking outside */}
           <div 
-            className="md:hidden fixed inset-0 bg-black/50 z-40" 
+            className="md:hidden fixed inset-0 z-40 bg-transparent" 
             onClick={() => setIsOpen(false)}
           />
           
           <div className={cn(
-            "fixed inset-x-4 top-20 bottom-20 md:absolute md:inset-auto md:right-0 md:top-full md:mt-3 md:w-96 md:max-h-[500px]",
-            "bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50 animate-in fade-in zoom-in duration-200",
+            "absolute right-[-60px] sm:right-0 top-full mt-3 w-[calc(100vw-32px)] sm:w-96 max-h-[80vh] md:max-h-[500px]",
+            "bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50 animate-in fade-in duration-200",
             "flex flex-col"
           )}>
             <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between bg-gray-50/50 dark:bg-gray-800/50">
