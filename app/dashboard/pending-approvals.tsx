@@ -1,5 +1,7 @@
 "use client"
-
+import { useDispatch } from "react-redux"
+import { usersApi } from "@/lib/api/usersApi"
+import { classesApi } from "@/lib/api/classesApi"
 import { useGetPendingTransactionsQuery, useApproveTransactionMutation, useRejectTransactionMutation, useApproveAllTransactionsMutation } from "@/lib/api/coinsApi"
 import { Check, X, Clock, AlertCircle, CheckCircle2 } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
@@ -11,6 +13,8 @@ export default function PendingApprovals() {
   const { data: pendingResponse, isLoading } = useGetPendingTransactionsQuery(undefined, { pollingInterval: 15000 })
   const pendingTransactions = Array.isArray(pendingResponse) ? pendingResponse : pendingResponse?.data || []
 
+  const dispatch = useDispatch()
+
   const [approveTx, { isLoading: isApproving }] = useApproveTransactionMutation()
   const [approveAllTx, { isLoading: isApprovingAll }] = useApproveAllTransactionsMutation()
   const [rejectTx, { isLoading: isRejecting }] = useRejectTransactionMutation()
@@ -20,7 +24,14 @@ export default function PendingApprovals() {
 
   const handleApprove = async (id: number) => {
     try {
+      const tx = pendingTransactions.find((t: any) => t.id === id)
       await approveTx(id).unwrap()
+      if (tx) {
+        dispatch(usersApi.util.invalidateTags([{ type: 'Users', id: tx.user_id }, 'Users']))
+      } else {
+        dispatch(usersApi.util.invalidateTags(['Users']))
+      }
+      dispatch(classesApi.util.invalidateTags(['Classes']))
       toast.success("Tanga qo'shish tasdiqlandi")
     } catch (err: any) {
       toast.error(err?.data?.message || "Xatolik yuz berdi")
@@ -31,6 +42,8 @@ export default function PendingApprovals() {
     if (typeof window !== "undefined" && !window.confirm("Barcha kutilayotgan tranzaksiyalarni tasdiqlamoqchimisiz?")) return
     try {
       const result = await approveAllTx(undefined).unwrap()
+      dispatch(usersApi.util.invalidateTags(['Users']))
+      dispatch(classesApi.util.invalidateTags(['Classes']))
       toast.success(result?.message || "Barcha tranzaksiyalar tasdiqlandi")
     } catch (err: any) {
       toast.error(err?.data?.message || "Xatolik yuz berdi")
@@ -39,7 +52,13 @@ export default function PendingApprovals() {
 
   const handleReject = async (id: number) => {
     try {
+      const tx = pendingTransactions.find((t: any) => t.id === id)
       await rejectTx(id).unwrap()
+      if (tx) {
+        dispatch(usersApi.util.invalidateTags([{ type: 'Users', id: tx.user_id }, 'Users']))
+      } else {
+        dispatch(usersApi.util.invalidateTags(['Users']))
+      }
       toast.success("Tanga qo'shish rad etildi")
     } catch (err: any) {
       toast.error(err?.data?.message || "Xatolik yuz berdi")
