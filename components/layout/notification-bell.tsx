@@ -20,7 +20,7 @@ export default function NotificationBell() {
   const dropdownRef = useRef<HTMLDivElement>(null)
   
   const { data: notificationsData, isLoading } = useGetNotificationsQuery(undefined, {
-    pollingInterval: 10000, 
+    pollingInterval: 30000, 
   })
 
   useEffect(() => {

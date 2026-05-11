@@ -74,6 +74,8 @@ export default function UsersListPage() {
     key: 'fullname',
     direction: 'asc'
   })
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 50
   
   const { user: currentUser } = useSelector((state: any) => state.auth)
   const isAdmin = currentUser?.role === "admin"
@@ -94,8 +96,9 @@ export default function UsersListPage() {
     { fullname: "", username: "", password: "", role: "student", class_id: "", class_name: "", grade: "" }
   ])
 
-  const { data: usersResponse, isLoading, error } = useGetAllUsersQuery(undefined)
+  const { data: usersResponse, isLoading, error } = useGetAllUsersQuery({ page: currentPage, limit: pageSize })
   const users = Array.isArray(usersResponse) ? usersResponse : usersResponse?.data || []
+  const totalPages = usersResponse?.totalPages || 1
   const { data: classesResponse } = useGetAllClassesQuery(undefined)
   const classes = Array.isArray(classesResponse) ? classesResponse : classesResponse?.data || []
   const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation()
@@ -858,6 +861,43 @@ export default function UsersListPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Pagination Controls - Both Mobile and Desktop */}
+      {totalPages > 1 && (
+        <Card className="rounded-2xl border border-border/50 shadow-sm bg-card/30 backdrop-blur-sm">
+          <CardContent className="p-4 flex items-center justify-between">
+            <div className="text-sm text-muted-foreground font-medium">
+              Sahifa <span className="text-foreground">{currentPage}</span> / {totalPages}
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setCurrentPage(prev => Math.max(1, prev - 1))
+                  window.scrollTo({ top: 0, behavior: 'smooth' })
+                }}
+                disabled={currentPage === 1}
+                className="rounded-xl h-10 px-4"
+              >
+                Oldingi
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setCurrentPage(prev => Math.min(totalPages, prev + 1))
+                  window.scrollTo({ top: 0, behavior: 'smooth' })
+                }}
+                disabled={currentPage === totalPages}
+                className="rounded-xl h-10 px-4"
+              >
+                Keyingi
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* User Details Dialog */}
       <Dialog open={!!selectedUser} onOpenChange={() => setSelectedUser(null)}>

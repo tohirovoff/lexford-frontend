@@ -33,7 +33,7 @@ export default function ProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [updateUserMutation, { isLoading: isUpdating }] = useUpdateUserMutation()
-  const { data: transactions, isLoading: loadingTransactions } = useGetUserTransactionsQuery(user?.id, {
+  const { data: transactions, isLoading: loadingTransactions } = useGetUserTransactionsQuery({ userId: user?.id }, {
     skip: !user?.id,
   })
   const { data: allPenalties } = useGetAllPenaltiesQuery(undefined)

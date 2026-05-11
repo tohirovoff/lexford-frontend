@@ -2,9 +2,9 @@
 
 import { useSelector } from "react-redux"
 import {
-  useGetAllUsersQuery,
   useGetSchoolLeaderboardQuery,
   useGetUserQuery,
+  useGetDashboardStatsQuery,
 } from "@/lib/api/usersApi"
 import { useGetAllClassesQuery } from "@/lib/api/classesApi"
 import { useGetUserTransactionsQuery, useGetWeeklyChangeQuery, useGetWeeklyTopGainersQuery } from "@/lib/api/coinsApi"
@@ -34,98 +34,55 @@ export default function Dashboard() {
   const { user } = useSelector((state: any) => state.auth)
 
   // Fresh user data for coins
-  const { data: userProfileResponse } = useGetUserQuery(user?.id, { skip: !user?.id })
+  const { data: userProfileResponse, isLoading: loadingProfile } = useGetUserQuery(user?.id, { skip: !user?.id })
   const userProfile = userProfileResponse?.data || user
 
   const isAdmin = user?.role === "admin"
   const isTeacher = user?.role === "teacher"
   const isStudent = user?.role === "student"
 
+  // Dashboard Stats (Admin/Teacher uchun - count endpoint)
+  const { data: statsData, isLoading: loadingStats } = useGetDashboardStatsQuery(undefined, { skip: !isAdmin && !isTeacher })
+
   // Leaderboard
   const { data: leaderboardResponse, isLoading: loadingLeaderboard } = useGetSchoolLeaderboardQuery(undefined)
   const leaderboardRaw = leaderboardResponse?.data || leaderboardResponse || []
   const leaderboard = Array.isArray(leaderboardRaw) ? leaderboardRaw.slice(0, 10) : []
 
-  // Qolgan ma'lumotlar
-  const { data: usersResponse, isLoading: loadingUsers } = useGetAllUsersQuery(undefined)
-  const users = Array.isArray(usersResponse) ? usersResponse : usersResponse?.data || []
-
-  const { data: classesResponse, isLoading: loadingClasses } = useGetAllClassesQuery(undefined)
+  // Sinflar (faqat count kerak bo'lsa stats endpoint ishlatamiz)
+  const { data: classesResponse, isLoading: loadingClasses } = useGetAllClassesQuery(undefined, { skip: isStudent || isAdmin })
   const classes = Array.isArray(classesResponse) ? classesResponse : classesResponse?.data || []
   
-  const { data: transactionsResponse, isLoading: loadingTransactions } = useGetUserTransactionsQuery(user?.id, { skip: !user?.id })
-  const transactionsData = Array.isArray(transactionsResponse) ? transactionsResponse : transactionsResponse?.data || []
+  const { data: transactionsResponse, isLoading: loadingTransactions } = useGetUserTransactionsQuery({ userId: user?.id }, { skip: !user?.id || !isStudent })
+  const transactionsRaw = transactionsResponse?.data || transactionsResponse
+  const transactionsData = Array.isArray(transactionsRaw) ? transactionsRaw : []
 
-  const recentTransactions = Array.isArray(transactionsData) ? transactionsData.slice(0, 5) : []
+  const recentTransactions = transactionsData.slice(0, 5)
 
   // Haftalik o'zgarish (student uchun)
-  const { data: weeklyChangeData } = useGetWeeklyChangeQuery(user?.id, { skip: !user?.id })
+  const { data: weeklyChangeData, isLoading: loadingWeeklyChange } = useGetWeeklyChangeQuery(user?.id, { skip: !user?.id || !isStudent })
   
   // Haftalik top 10 (admin/teacher uchun)
-  const { data: weeklyTopGainersResponse } = useGetWeeklyTopGainersQuery(undefined, { skip: !isAdmin && !isTeacher })
+  const { data: weeklyTopGainersResponse, isLoading: loadingTopGainers } = useGetWeeklyTopGainersQuery(undefined, { skip: !isAdmin && !isTeacher })
   const topGainers = weeklyTopGainersResponse?.data || (Array.isArray(weeklyTopGainersResponse) ? weeklyTopGainersResponse : [])
   const weeklyPeriodStart = weeklyTopGainersResponse?.period_start
   const weeklyPeriodEnd = weeklyTopGainersResponse?.period_end
   const isCurrentWeek = weeklyTopGainersResponse?.is_current_week
 
-  let studentsCount = Array.isArray(users) ? users.filter((u: any) => u.role === "student").length : 0
-  let teachersCount = Array.isArray(users) ? users.filter((u: any) => u.role === "teacher").length : 0
-  const classesCount = Array.isArray(classes) ? classes.length : 0
+  // Stats - endi backend'dan tayyor keladi
+  const studentsCount = statsData?.studentsCount || 0
+  const teachersCount = statsData?.teachersCount || 0
+  const classesCount = statsData?.classesCount || 0
 
-  // Fallback: Agar users bo'sh bo'lsa (masalan, o'qituvchi uchun 403 qilsa), 
-  // o'quvchilar sonini sinflar ichidagi studentlar orqali hisoblaymiz.
-  if (studentsCount === 0 && classes.length > 0) {
-    studentsCount = classes.reduce((acc: number, c: any) => acc + (c.students?.length || 0), 0)
-    // O'qituvchilarni sinf rahbarlaridan sanaymiz (taxminiy, uniq qilib)
-    const uniqueTeachers = new Set()
-    classes.forEach((c: any) => { if (c.teacher?.id) uniqueTeachers.add(c.teacher.id) })
-    teachersCount = uniqueTeachers.size || 1
-  }
-
-  const isLoading = loadingUsers || loadingClasses || loadingLeaderboard || loadingTransactions
-
-  if (isLoading) {
+  // Progressive loading: faqat eng muhim qismlar yuklanishini kutamiz
+  if (loadingProfile && isStudent) {
     return (
       <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
-      <div className="bg-card/40 dark:bg-card/40 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6 border border-border/50 backdrop-blur-sm">
-          <div className="space-y-3 flex-1">
-            <Skeleton className="h-10 w-[280px] md:w-[400px]" />
-            <Skeleton className="h-5 w-[140px]" />
-          </div>
-          <Skeleton className="h-16 w-16 rounded-full" />
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-32 rounded-2xl shadow-sm border border-border/50" />
-          ))}
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-white/40 dark:bg-gray-900/40 rounded-2xl border border-gray-100/50 p-6 lg:p-8 space-y-6">
-            <div className="flex items-center justify-between">
-              <Skeleton className="h-8 w-40" />
-              <Skeleton className="h-8 w-8 rounded-lg" />
-            </div>
-            <div className="space-y-4">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="flex items-center gap-5 p-4 rounded-xl border border-gray-50/50 text-ellipsis">
-                   <Skeleton className="h-12 w-12 rounded-lg" />
-                   <div className="flex-1 space-y-2">
-                     <Skeleton className="h-5 w-3/4" />
-                     <Skeleton className="h-4 w-1/2" />
-                   </div>
-                   <Skeleton className="h-8 w-16" />
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="bg-white/40 dark:bg-gray-900/40 rounded-2xl border border-gray-100/50 p-6 lg:p-8 space-y-6">
-            <Skeleton className="h-8 w-48" />
-            <div className="grid grid-cols-2 gap-5">
-              {[1, 2, 3, 4].map((i) => (
-                <Skeleton key={i} className="h-32 rounded-2xl" />
-              ))}
-            </div>
-          </div>
+        <Skeleton className="h-32 w-full rounded-2xl" />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <Skeleton className="h-32 rounded-2xl" />
+          <Skeleton className="h-32 rounded-2xl" />
+          <Skeleton className="h-32 rounded-2xl" />
         </div>
       </div>
     )
