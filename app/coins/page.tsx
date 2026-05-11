@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useSelector, useDispatch } from "react-redux"
-import { useGetUserTransactionsQuery, useCreateTransactionMutation, useCreatePenaltyMutation, useCreateManyTransactionsMutation, coinsApi, useGetAllTransactionsQuery } from "@/lib/api/coinsApi"
+import { useGetUserTransactionsQuery, useCreateTransactionMutation, useCreatePenaltyMutation, useCreateManyTransactionsMutation, coinsApi } from "@/lib/api/coinsApi"
 import { useGetAllClassesQuery, classesApi } from "@/lib/api/classesApi"
 import { useGetUserQuery, usersApi } from "@/lib/api/usersApi"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -37,27 +37,15 @@ export default function CoinsPage() {
   const [reason, setReason] = useState<string>("")
   const [transactionType, setTransactionType] = useState<"reward" | "penalty">("reward")
   const [filterType, setFilterType] = useState<string>("all")
-  const [successMessage, setSuccessMessage] = useState<string | null>(null)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const pageSize = 20
 
-  // Transactions Query based on role
+  // Always use User-specific transactions for everyone (Admin/Teacher/Student)
   const { 
-    data: allTransactionsResponse,
-    isLoading: allTransactionsLoading,
-    error: allTransactionsError
-  } = useGetAllTransactionsQuery({ page: currentPage, limit: pageSize }, { skip: !isTeacherOrAdmin })
-
-  const { 
-    data: userTransactionsResponse, 
-    isLoading: userTransactionsLoading, 
-    error: userTransactionsError 
-  } = useGetUserTransactionsQuery({ userId: user?.id, page: currentPage, limit: pageSize }, { skip: !user?.id || isTeacherOrAdmin })
-
-  const transactionsResponse = isTeacherOrAdmin ? allTransactionsResponse : userTransactionsResponse
-  const transactionsLoading = isTeacherOrAdmin ? allTransactionsLoading : userTransactionsLoading
-  const transactionsError = isTeacherOrAdmin ? allTransactionsError : userTransactionsError
+    data: transactionsResponse, 
+    isLoading: transactionsLoading, 
+    error: transactionsError 
+  } = useGetUserTransactionsQuery({ userId: user?.id, page: currentPage, limit: pageSize }, { skip: !user?.id })
 
   const rawTransactions = Array.isArray(transactionsResponse) 
     ? transactionsResponse 
@@ -98,8 +86,6 @@ export default function CoinsPage() {
 
   const handleGiveCoins = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSuccessMessage(null)
-    setErrorMessage(null)
 
     if (selectedStudentIds.length === 0 || !amount || !reason) {
       toast?.error("Barcha maydonlarni to'ldiring")
@@ -122,7 +108,7 @@ export default function CoinsPage() {
         created_by: Number(user?.id)
       }))
 
-      const response = await createManyTransactions(payloads).unwrap()
+      await createManyTransactions(payloads).unwrap()
       
       // Invalidate tags
       selectedStudentIds.forEach(studentId => {
@@ -132,13 +118,7 @@ export default function CoinsPage() {
       dispatch(classesApi.util.invalidateTags(['Classes']))
       dispatch(coinsApi.util.invalidateTags(['Transactions', 'Balance']))
 
-      const isPending = Array.isArray(response) && response.length > 0 && response[0]?.status === 'pending';
-
-      if (isPending) {
-        toast?.info(response[0].message || "Kutilmoqda...", { duration: 5000 })
-      } else {
-        toast?.success(`Muvaffaqiyatli: ${amount} tangadan ${selectedStudentIds.length} o'quvchiga ${transactionType === 'reward' ? 'berildi' : 'jarima qilindi'}`)
-      }
+      toast?.success(`Muvaffaqiyatli: ${amount} tangadan ${selectedStudentIds.length} o'quvchiga ${transactionType === 'reward' ? 'berildi' : 'jarima qilindi'}`)
       
       setAmount("")
       setReason("")
