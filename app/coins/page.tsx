@@ -21,6 +21,18 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Coins, TrendingUp, TrendingDown, History, ArrowUpCircle, ArrowDownCircle, Gift, AlertCircle, CheckCircle2, User, ArrowRight, Loader2, PlusCircle, MinusCircle } from "lucide-react"
 import { toast } from "sonner"
 
+const getTypeStyles = (type: string) => {
+  switch(type) {
+    case 'reward': return { label: "Mukofot", class: "bg-green-600 text-white shadow-sm" }
+    case 'penalty': return { label: "Jarima", class: "bg-red-600/10 text-red-600 dark:text-red-400" }
+    case 'attendance': return { label: "Davomat", class: "bg-blue-500/10 text-blue-600 dark:text-blue-400" }
+    case 'purchase': return { label: "Xarid", class: "bg-purple-500/10 text-purple-600 dark:text-purple-400" }
+    case 'auction_spent': return { label: "Auksion", class: "bg-red-600/10 text-red-600 dark:text-red-400" }
+    case 'bid_refund': return { label: "Qaytarildi", class: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" }
+    default: return { label: type, class: "bg-muted text-muted-foreground" }
+  }
+}
+
 export default function CoinsPage() {
   const dispatch = useDispatch()
   const { user: sessionUser } = useSelector((state: any) => state.auth)
@@ -111,9 +123,6 @@ export default function CoinsPage() {
       await createManyTransactions(payloads).unwrap()
       
       // Invalidate tags
-      selectedStudentIds.forEach(studentId => {
-        dispatch(usersApi.util.invalidateTags([{ type: 'Users', id: Number(studentId) }]))
-      })
       dispatch(usersApi.util.invalidateTags(['Users']))
       dispatch(classesApi.util.invalidateTags(['Classes']))
       dispatch(coinsApi.util.invalidateTags(['Transactions', 'Balance']))
@@ -250,34 +259,37 @@ export default function CoinsPage() {
                       </div>
                     ) : (
                       <ScrollArea className="h-[220px] w-full border border-border/50 rounded-2xl bg-muted/10 p-2">
-                        <div className="space-y-1.5">
+                        <div className="space-y-1">
                           {students.map((student: any) => {
                             const studentId = (student._id || student.id).toString()
                             const isSelected = selectedStudentIds.includes(studentId)
                             return (
                               <div 
                                 key={studentId} 
-                                onClick={() => {
-                                  if (isSelected) setSelectedStudentIds(p => p.filter(id => id !== studentId))
-                                  else setSelectedStudentIds(p => [...p, studentId])
-                                }}
-                                className={`flex items-center space-x-3 p-2.5 rounded-xl cursor-pointer transition-all border ${
+                                className={`flex items-center space-x-3 p-2 rounded-lg transition-all ${
                                   isSelected 
-                                    ? "bg-red-600/10 border-red-600/30 dark:bg-red-600/20" 
-                                    : "bg-transparent border-transparent hover:bg-muted/50"
+                                    ? "bg-primary/5 border-primary/20" 
+                                    : "hover:bg-muted/50"
                                 }`}
                               >
                                 <Checkbox
                                   id={`student-${studentId}`}
                                   checked={isSelected}
+                                  onCheckedChange={(checked) => {
+                                    if (checked) setSelectedStudentIds(p => [...p, studentId])
+                                    else setSelectedStudentIds(p => p.filter(id => id !== studentId))
+                                  }}
                                   className="rounded-md"
                                 />
-                                <div className="flex-1 flex justify-between items-center min-w-0">
-                                  <span className="text-sm font-semibold truncate">{student.fullname}</span>
-                                  <Badge variant="outline" className="bg-red-600/10 text-red-600 dark:text-red-400 border-red-600/20 text-[10px] font-black h-5">
+                                <label 
+                                  htmlFor={`student-${studentId}`}
+                                  className="flex-1 flex justify-between items-center min-w-0 cursor-pointer"
+                                >
+                                  <span className="text-sm font-medium truncate">{student.fullname}</span>
+                                  <Badge variant="outline" className="text-[10px] h-5 px-1.5">
                                     {student.coins || 0}
                                   </Badge>
-                                </div>
+                                </label>
                               </div>
                             )
                           })}
@@ -399,23 +411,8 @@ export default function CoinsPage() {
                     {filteredTransactions.map((tx: any) => {
                       const amountValue = Number(tx.amount)
                       const isPositive = amountValue > 0
-                      const giverName = tx.giver?.fullname || tx.giver?.username || "Tizim"
-                      const receiverName = tx.receiver?.fullname || tx.receiver?.username || "Noma'lum"
                       const isGiverSelf = Number(tx.created_by) === Number(user?.id)
                       const isReceiverSelf = Number(tx.user_id) === Number(user?.id)
-                      
-                      const getTypeStyles = (type: string) => {
-                        switch(type) {
-                          case 'reward': return { label: "Mukofot", class: "bg-green-600 text-white shadow-sm" }
-                          case 'penalty': return { label: "Jarima", class: "bg-red-600/10 text-red-600 dark:text-red-400" }
-                          case 'attendance': return { label: "Davomat", class: "bg-blue-500/10 text-blue-600 dark:text-blue-400" }
-                          case 'purchase': return { label: "Xarid", class: "bg-purple-500/10 text-purple-600 dark:text-purple-400" }
-                          case 'auction_spent': return { label: "Auksion", class: "bg-red-600/10 text-red-600 dark:text-red-400" }
-                          case 'bid_refund': return { label: "Qaytarildi", class: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" }
-                          default: return { label: type, class: "bg-muted text-muted-foreground" }
-                        }
-                      }
-                      
                       const typeStyle = getTypeStyles(tx.type)
                       
                       return (
@@ -435,7 +432,7 @@ export default function CoinsPage() {
                                   <Badge variant="outline" className={`text-[9px] h-4.5 font-black uppercase px-1.5 border-none ${typeStyle.class}`}>
                                     {typeStyle.label}
                                   </Badge>
-                                  <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-tighter">
+                                  <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-tighter" suppressHydrationWarning>
                                     {new Date(tx.createdAt || tx.created_at).toLocaleDateString("uz-UZ", { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                                   </span>
                                 </div>
@@ -460,7 +457,7 @@ export default function CoinsPage() {
                                       <User className="h-2.5 w-2.5 text-red-600" />
                                     </div>
                                     <span className="text-[10px] sm:text-xs font-bold text-foreground/80">
-                                      {isReceiverSelf ? "Siz" : (tx.receiver?.fullname || tx.receiver?.username || receiverName)}
+                                      {isReceiverSelf ? "Siz" : (tx.receiver?.fullname || tx.receiver?.username || tx.receiver?.username || "Noma'lum")}
                                     </span>
                                   </div>
                                 </div>
