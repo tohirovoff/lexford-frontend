@@ -105,7 +105,7 @@ export default function CoinsPage() {
         amount: finalAmount,
         type: transactionType,
         reason: reason,
-        created_by: Number(user?.id)
+        created_by: Number(user?.id) || 0
       }))
 
       await createManyTransactions(payloads).unwrap()
@@ -192,7 +192,7 @@ export default function CoinsPage() {
                       <Button
                         type="button"
                         variant={transactionType === "reward" ? "default" : "outline"}
-                        className={`rounded-xl h-11 font-bold transition-all ${transactionType === "reward" ? "bg-red-600 hover:bg-red-700 shadow-lg shadow-red-500/20" : "hover:bg-red-500/5 hover:text-red-600"}`}
+                        className={`rounded-xl h-11 font-bold transition-all ${transactionType === "reward" ? "bg-green-600 hover:bg-green-700 shadow-lg shadow-green-500/20" : "hover:bg-green-500/5 hover:text-green-600"}`}
                         onClick={() => setTransactionType("reward")}
                       >
                         <TrendingUp className="h-4 w-4 mr-2" />
@@ -406,7 +406,7 @@ export default function CoinsPage() {
                       
                       const getTypeStyles = (type: string) => {
                         switch(type) {
-                          case 'reward': return { label: "Mukofot", class: "bg-green-500/10 text-green-600 dark:text-green-400" }
+                          case 'reward': return { label: "Mukofot", class: "bg-green-600 text-white shadow-sm" }
                           case 'penalty': return { label: "Jarima", class: "bg-red-600/10 text-red-600 dark:text-red-400" }
                           case 'attendance': return { label: "Davomat", class: "bg-blue-500/10 text-blue-600 dark:text-blue-400" }
                           case 'purchase': return { label: "Xarid", class: "bg-purple-500/10 text-purple-600 dark:text-purple-400" }
