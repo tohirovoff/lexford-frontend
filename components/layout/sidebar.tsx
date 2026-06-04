@@ -1,6 +1,7 @@
 "use client"
 
 import { useSelector, useDispatch } from "react-redux"
+import { useTheme } from "next-themes"
 import { logout } from "@/lib/store"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -28,6 +29,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const dispatch = useDispatch()
   const { user } = useSelector((state: any) => state.auth)
   const pathname = usePathname()
+  const { theme } = useTheme()
 
   const navItems = [
     {
@@ -112,7 +114,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         <div className="p-6 border-b border-border dark:border-border flex items-center justify-between">
           <Link href="/dashboard" className="flex items-center gap-3">
             <div className="w-10 h-10 flex items-center justify-center">
-              <img src="/logo.png" alt="Lexford Logo" className="w-full h-full object-contain drop-shadow-sm" />
+              <img src={theme === "dark" ? "/Container-2 (2).png" : "/logo.png"} alt="Lexford Logo" className="w-full h-full object-contain" />
             </div>
             <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">Lexford</span>
           </Link>

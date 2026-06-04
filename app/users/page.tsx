@@ -333,12 +333,12 @@ export default function UsersListPage() {
           <div className="flex flex-col sm:flex-row gap-2">
             <Dialog open={isBulkAddOpen} onOpenChange={setIsBulkAddOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline" className="border-red-600 text-red-600 hover:bg-red-50 rounded-2xl h-10 sm:h-12 px-4 sm:px-6 font-bold shadow-sm transition-all hover:scale-105 text-sm sm:text-base">
+                <Button variant="outline" className="border-red-600 text-red-600 hover:bg-red-50 rounded-lg h-10 sm:h-12 px-4 sm:px-6 font-bold shadow-sm text-sm sm:text-base">
                   <PlusCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   Ommaviy
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[900px] w-[95vw] max-w-full max-h-[85vh] overflow-y-auto rounded-2xl sm:rounded-3xl p-4 sm:p-6">
+              <DialogContent className="sm:max-w-[900px] w-[95vw] max-w-full max-h-[85vh] overflow-y-auto rounded-xl p-4 sm:p-6">
                 <DialogHeader>
                   <DialogTitle className="text-xl sm:text-2xl font-bold">Ommaviy qo'shish</DialogTitle>
                 </DialogHeader>
@@ -450,12 +450,12 @@ export default function UsersListPage() {
 
             <Dialog open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-red-600 hover:bg-red-700 text-white rounded-2xl shadow-lg transition-all hover:scale-105 active:scale-95 h-10 sm:h-12 px-4 sm:px-6 text-sm sm:text-base">
+                <Button className="bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-sm h-10 sm:h-12 px-4 sm:px-6 text-sm sm:text-base">
                   <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   Qo'shish
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px] w-[95vw] max-w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 rounded-2xl sm:rounded-3xl">
+              <DialogContent className="sm:max-w-[425px] w-[95vw] max-w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 rounded-xl">
                 <DialogHeader>
                   <DialogTitle className="text-xl sm:text-2xl font-bold">Yangi foydalanuvchi</DialogTitle>
                 </DialogHeader>
@@ -571,7 +571,7 @@ export default function UsersListPage() {
         <Card className="border-l-4 border-l-indigo-500 dark:border-l-indigo-400 shadow-sm hover:shadow-md transition-shadow bg-card/50">
           <CardContent className="p-4">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-indigo-50 dark:bg-indigo-950/30 rounded-2xl">
+              <div className="p-3 bg-indigo-50 dark:bg-indigo-950/30 rounded-lg">
                 <Users className="h-6 w-6 text-indigo-500 dark:text-indigo-400" />
               </div>
               <div>
@@ -584,7 +584,7 @@ export default function UsersListPage() {
         <Card className="border-l-4 border-l-red-500 dark:border-l-red-400 shadow-sm hover:shadow-md transition-shadow bg-card/50">
           <CardContent className="p-4">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-red-50 dark:bg-red-950/30 rounded-2xl">
+              <div className="p-3 bg-red-50 dark:bg-red-950/30 rounded-lg">
                 <UserCog className="h-6 w-6 text-red-500 dark:text-red-400" />
               </div>
               <div>
@@ -597,7 +597,7 @@ export default function UsersListPage() {
         <Card className="border-l-4 border-l-blue-500 dark:border-l-blue-400 shadow-sm hover:shadow-md transition-shadow bg-card/50">
           <CardContent className="p-4">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-blue-50 dark:bg-blue-950/30 rounded-2xl">
+              <div className="p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
                 <GraduationCap className="h-6 w-6 text-blue-500 dark:text-blue-400" />
               </div>
               <div>
@@ -610,7 +610,7 @@ export default function UsersListPage() {
         <Card className="border-l-4 border-l-green-500 dark:border-l-green-400 shadow-sm hover:shadow-md transition-shadow bg-card/50">
           <CardContent className="p-4">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-green-50 dark:bg-green-950/30 rounded-2xl">
+              <div className="p-3 bg-green-50 dark:bg-green-950/30 rounded-lg">
                 <Users className="h-6 w-6 text-green-500 dark:text-green-400" />
               </div>
               <div>
@@ -623,7 +623,7 @@ export default function UsersListPage() {
       </div>
 
       {/* Filters */}
-      <Card className="rounded-2xl border border-border/50 shadow-sm bg-card/30 backdrop-blur-sm">
+      <Card className="rounded-xl border border-border/50 shadow-sm bg-card/30 backdrop-blur-sm">
         <CardContent className="p-3 sm:p-4">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
@@ -686,7 +686,7 @@ export default function UsersListPage() {
           filteredUsers.map((user: any) => (
             <Card 
               key={user.id} 
-              className="overflow-hidden border border-border/50 shadow-sm hover:shadow-md transition-shadow rounded-2xl bg-card/80"
+              className="overflow-hidden border border-border/50 shadow-sm hover:shadow-md transition-shadow rounded-xl bg-card/80"
             >
               <CardContent className="p-4">
                 <div className="flex items-start gap-3">
@@ -752,7 +752,7 @@ export default function UsersListPage() {
       </div>
 
       {/* Desktop Table View */}
-      <Card className="overflow-hidden border border-border/50 shadow-lg rounded-2xl bg-card/30 backdrop-blur-sm hidden md:block">
+      <Card className="overflow-hidden border border-border/50 shadow-sm rounded-xl bg-card/30 backdrop-blur-sm hidden md:block">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
@@ -864,7 +864,7 @@ export default function UsersListPage() {
 
       {/* Pagination Controls - Both Mobile and Desktop */}
       {totalPages > 1 && (
-        <Card className="rounded-2xl border border-border/50 shadow-sm bg-card/30 backdrop-blur-sm">
+        <Card className="rounded-xl border border-border/50 shadow-sm bg-card/30 backdrop-blur-sm">
           <CardContent className="p-4 flex items-center justify-between">
             <div className="text-sm text-muted-foreground font-medium">
               Sahifa <span className="text-foreground">{currentPage}</span> / {totalPages}
@@ -900,7 +900,7 @@ export default function UsersListPage() {
       )}
         {/* User Details Dialog */}
       <Dialog open={!!selectedUser} onOpenChange={() => setSelectedUser(null)}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto p-4 sm:p-6 w-[95vw] max-w-full sm:max-w-md rounded-2xl sm:rounded-3xl border border-border bg-card">
+        <DialogContent className="max-h-[90vh] overflow-y-auto p-4 sm:p-6 w-[95vw] max-w-full sm:max-w-md rounded-xl sm:rounded-2xl border border-border bg-card">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-foreground">Foydalanuvchi ma'lumoti</DialogTitle>
           </DialogHeader>
@@ -930,7 +930,7 @@ export default function UsersListPage() {
                   <p className="font-medium text-amber-600 dark:text-amber-500">{selectedUser.coinBalance || 0}</p>
                 </div>
                 {isAdmin && (
-                  <div className="col-span-2 bg-muted dark:bg-gray-900/50 p-3 sm:p-4 rounded-2xl border border-border space-y-3">
+                  <div className="col-span-2 bg-muted dark:bg-gray-900/50 p-3 sm:p-4 rounded-lg border border-border space-y-3">
                      <Label className="text-[10px] font-black uppercase text-muted-foreground tracking-wider">Parolni o'zgartirish (Admin)</Label>
                      <div className="flex flex-col sm:flex-row gap-2">
                         <Input 
@@ -953,7 +953,7 @@ export default function UsersListPage() {
                 {selectedUser.role === "student" && (
                   <div className="col-span-2 space-y-4">
                      {isAdmin && (
-                       <div className="bg-muted dark:bg-gray-900/50 p-3 sm:p-4 rounded-2xl border border-border space-y-3">
+                       <div className="bg-muted dark:bg-gray-900/50 p-3 sm:p-4 rounded-lg border border-border space-y-3">
                           <Label className="text-[10px] font-black uppercase text-muted-foreground tracking-wider">Sinfni o'zgartirish (Admin)</Label>
                           <div className="flex flex-col sm:flex-row gap-2">
                             <Select value={selectedClass} onValueChange={setSelectedClass}>

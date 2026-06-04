@@ -306,7 +306,7 @@ export default function Shop() {
   return (
     <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto space-y-6 sm:space-y-10 animate-in fade-in duration-700">
       {/* Red Premium Header */}
-      <div className="relative overflow-hidden rounded-2xl sm:rounded-[2rem] bg-gradient-to-br from-red-600 via-red-700 to-red-800 p-5 sm:p-8 md:p-12 text-white shadow-2xl">
+      <div className="relative overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-br from-red-600 via-red-700 to-red-800 p-5 sm:p-8 md:p-12 text-white shadow-lg">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-8">
           <div className="space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold tracking-wider uppercase">
@@ -323,9 +323,9 @@ export default function Shop() {
 
           <div className="flex flex-col sm:flex-row items-center gap-4">
             {isStudent && (
-              <div className="group relative overflow-hidden px-8 py-5 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-lg transition-all hover:bg-white/15">
+              <div className="group relative overflow-hidden px-8 py-5 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl shadow-lg">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-red-400/20 rounded-2xl">
+                  <div className="p-3 bg-red-400/20 rounded-lg">
                     <Coins className="w-8 h-8 text-yellow-400 animate-bounce-slow" />
                   </div>
                   <div>
@@ -340,7 +340,7 @@ export default function Shop() {
               <Button 
                 onClick={() => handleOpenModal()} 
                 size="lg"
-                className="rounded-2xl bg-white text-red-700 hover:bg-red-50 font-bold px-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+                className="rounded-lg bg-white text-red-700 hover:bg-red-50 font-bold px-8 shadow-md"
               >
                 <Plus className="w-5 h-5 mr-2" /> Mahsulot qo'shish
               </Button>
@@ -408,13 +408,13 @@ export default function Shop() {
              
              return (
               <Card key={item.id} className={cn(
-                "group relative border-none bg-card shadow-lg hover:shadow-2xl transition-all duration-500 rounded-[2rem] overflow-hidden flex flex-col h-full hover:-translate-y-2 border border-border/50",
+                "group relative border-none bg-card shadow-md hover:shadow-lg transition-shadow duration-200 rounded-xl overflow-hidden flex flex-col h-full border border-border/50",
                 isOutOfStock && "opacity-60 grayscale-[0.6] cursor-not-allowed"
               )}>
                 {/* Out of Stock Overlay */}
                 {isOutOfStock && (
                   <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/10 backdrop-blur-[1px] pointer-events-none">
-                    <div className="bg-gray-900/90 text-white px-6 py-3 rounded-2xl font-black text-xl tracking-widest border-2 border-white/20 shadow-2xl rotate-[-5deg] animate-in zoom-in duration-300">
+                    <div className="bg-gray-900/90 text-white px-6 py-3 rounded-xl font-black text-xl tracking-widest border-2 border-white/20 shadow-xl rotate-[-5deg]">
                       MAHSULOT TUGADI
                     </div>
                   </div>
@@ -445,7 +445,7 @@ export default function Shop() {
                      <img 
                        src={getImageUrl(item.image_url) ?? undefined} 
                        alt={item.name} 
-                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
                        onError={(e) => {
                          console.log('Image load error for:', item.name, 'URL:', getImageUrl(item.image_url), 'Raw:', item.image_url);
                          const target = e.target as HTMLImageElement;
@@ -481,7 +481,7 @@ export default function Shop() {
                 
                 <CardContent className="p-6 pt-0 space-y-4 flex-1">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 bg-red-50 dark:bg-red-900/30 px-3 py-1.5 rounded-2xl border border-red-100 dark:border-red-800">
+                    <div className="flex items-center gap-2 bg-red-50 dark:bg-red-900/30 px-3 py-1.5 rounded-lg border border-red-100 dark:border-red-800">
                        <Coins className="w-5 h-5 text-red-600 dark:text-red-400" />
                        <span className="font-black text-red-700 dark:text-red-300 text-lg">{item.price_coins}</span>
                     </div>
@@ -508,14 +508,14 @@ export default function Shop() {
                        <Button 
                          onClick={() => handleOpenModal(item)} 
                          variant="outline"
-                         className="rounded-2xl border-orange-200 bg-orange-50 text-orange-700 hover:bg-orange-100 hover:text-orange-800"
+                         className="rounded-lg border-orange-200 bg-orange-50 text-orange-700 hover:bg-orange-100 hover:text-orange-800"
                        >
                           <Edit className="w-4 h-4 mr-2" /> Tahrir
                        </Button>
                        <Button 
                          onClick={() => handleDelete(item.id)}
                          variant="destructive"
-                         className="rounded-2xl shadow-md hover:shadow-red-500/20"
+                         className="rounded-lg shadow-sm"
                        >
                           <Trash2 className="w-4 h-4" />
                        </Button>
@@ -525,7 +525,7 @@ export default function Shop() {
                       onClick={() => handleBuyClick(item)} 
                       disabled={!canAfford || isOutOfStock || isBuying}
                       className={cn(
-                        "w-full py-6 rounded-2xl font-bold text-lg shadow-lg transition-all duration-300",
+                        "w-full py-6 rounded-lg font-bold text-lg shadow-md transition-colors duration-200",
                         isOutOfStock 
                           ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                           : canAfford 
@@ -557,7 +557,7 @@ export default function Shop() {
               <p className="text-muted-foreground font-medium">Hozircha hech qanday xaridlar mavjud emas.</p>
             </Card>
           ) : (
-            <div className="bg-card rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden border border-border">
+            <div className="bg-card rounded-xl shadow-lg overflow-hidden border border-border">
               <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse min-w-[700px]">
                 <thead>
@@ -661,7 +661,7 @@ export default function Shop() {
 
       {/* Modern Dialog Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-xl rounded-2xl sm:rounded-[2.5rem] p-0 overflow-hidden border border-border shadow-3xl bg-card/95 backdrop-blur-xl max-h-[90vh]">
+        <DialogContent className="sm:max-w-xl rounded-xl p-0 overflow-hidden border border-border shadow-xl bg-card/95 backdrop-blur-xl max-h-[90vh]">
           <div className="p-4 sm:p-8 space-y-6 sm:space-y-8 overflow-y-auto max-h-[85vh]">
             <DialogHeader>
               <DialogTitle className="text-xl sm:text-3xl font-black text-foreground border-b pb-4 border-border">
@@ -682,7 +682,7 @@ export default function Shop() {
                       required 
                       value={formData.name} 
                       onChange={(e) => setFormData({...formData, name: e.target.value})}
-                      className="rounded-2xl border-border bg-muted/50 h-12 focus:bg-background text-foreground transition-all shadow-sm" 
+                      className="rounded-lg border-border bg-muted/50 h-12 focus:bg-background text-foreground transition-all shadow-sm" 
                     />
                   </div>
                   <div className="space-y-2">
@@ -694,7 +694,7 @@ export default function Shop() {
                         min="0"
                         value={formData.price_coins} 
                         onChange={(e) => setFormData({...formData, price_coins: e.target.value})}
-                        className="rounded-2xl border-border bg-muted/50 h-12 pl-10 focus:bg-background text-foreground transition-all shadow-sm" 
+                        className="rounded-lg border-border bg-muted/50 h-12 pl-10 focus:bg-background text-foreground transition-all shadow-sm" 
                       />
                       <Coins className="absolute left-3.5 top-3.5 w-5 h-5 text-yellow-500" />
                     </div>
@@ -708,7 +708,7 @@ export default function Shop() {
                     rows={3} 
                     value={formData.description} 
                     onChange={(e) => setFormData({...formData, description: e.target.value})}
-                    className="rounded-2xl border-border bg-muted/50 focus:bg-background text-foreground transition-all shadow-sm resize-none" 
+                    className="rounded-lg border-border bg-muted/50 focus:bg-background text-foreground transition-all shadow-sm resize-none" 
                   />
                 </div>
 
@@ -721,7 +721,7 @@ export default function Shop() {
                        placeholder="Cheksiz"
                        value={formData.stock} 
                        onChange={(e) => setFormData({...formData, stock: e.target.value})}
-                       className="rounded-2xl border-border bg-muted/50 h-12 focus:bg-background text-foreground transition-all shadow-sm" 
+                       className="rounded-lg border-border bg-muted/50 h-12 focus:bg-background text-foreground transition-all shadow-sm" 
                      />
                    </div>
                    <div className="space-y-2">
@@ -729,7 +729,7 @@ export default function Shop() {
                      <select 
                        value={formData.item_type} 
                        onChange={(e) => setFormData({...formData, item_type: e.target.value})}
-                       className="w-full px-4 rounded-2xl border-border bg-muted/50 h-12 focus:bg-background text-foreground transition-all shadow-sm text-sm outline-none focus:ring-2 focus:ring-red-500/20 dark:bg-muted"
+                       className="w-full px-4 rounded-lg border-border bg-muted/50 h-12 focus:bg-background text-foreground transition-all shadow-sm text-sm outline-none focus:ring-2 focus:ring-red-500/20 dark:bg-muted"
                      >
                        <option value="Virtual">Virtual</option>
                        <option value="Jismoniy">Jismoniy</option>
@@ -744,7 +744,7 @@ export default function Shop() {
                      <select 
                        value={formData.is_active} 
                        onChange={(e) => setFormData({...formData, is_active: e.target.value})}
-                       className="w-full px-4 rounded-2xl border-border bg-muted/50 h-12 focus:bg-background text-foreground transition-all shadow-sm text-sm outline-none focus:ring-2 focus:ring-red-500/20 dark:bg-muted"
+                       className="w-full px-4 rounded-lg border-border bg-muted/50 h-12 focus:bg-background text-foreground transition-all shadow-sm text-sm outline-none focus:ring-2 focus:ring-red-500/20 dark:bg-muted"
                      >
                        <option value="true">Sotuvga chiqarish</option>
                        <option value="false">Hozircha yashirin</option>
@@ -755,7 +755,7 @@ export default function Shop() {
                      <label className="text-xs font-black text-muted-foreground uppercase tracking-widest pl-1">Rasm</label>
                      <div 
                         onClick={() => document.getElementById("file-upload")?.click()}
-                        className="flex items-center gap-3 px-4 rounded-2xl border border-dashed border-border bg-muted h-12 cursor-pointer hover:bg-muted/80 transition shadow-sm overflow-hidden"
+                        className="flex items-center gap-3 px-4 rounded-lg border border-dashed border-border bg-muted h-12 cursor-pointer hover:bg-muted/80 transition shadow-sm overflow-hidden"
                      >
                         <Upload className="w-5 h-5 text-muted-foreground flex-shrink-0" />
                         <span className="text-sm text-muted-foreground truncate">{imageFile ? imageFile.name : "Rasm yuklang"}</span>
@@ -765,7 +765,7 @@ export default function Shop() {
                 </div>
 
                 {imagePreview && (
-                  <div className="relative w-full h-32 rounded-2xl overflow-hidden border border-border group">
+                  <div className="relative w-full h-32 rounded-xl overflow-hidden border border-border group">
                     <img src={imagePreview || "/placeholder.jpg"} alt="Preview" className="w-full h-full object-cover" />
                     <button 
                       type="button" 
@@ -783,14 +783,14 @@ export default function Shop() {
                   type="button" 
                   variant="ghost" 
                   onClick={handleCloseModal}
-                  className="rounded-2xl px-8 h-12 font-bold text-muted-foreground"
+                  className="rounded-lg px-8 h-12 font-bold text-muted-foreground"
                 >
                   Bekor qilish
                 </Button>
                 <Button 
                   type="submit" 
                   disabled={isCreating || isUpdating}
-                  className="rounded-2xl px-12 h-12 bg-red-600 hover:bg-red-700 text-white font-bold shadow-xl shadow-red-500/20"
+                  className="rounded-lg px-12 h-12 bg-red-600 hover:bg-red-700 text-white font-bold shadow-md shadow-red-500/20"
                 >
                   {isCreating || isUpdating ? <Loader2 className="h-5 w-5 animate-spin mx-auto" /> : editingItem ? "Yangilash" : "Qo'shish"}
                 </Button>
@@ -805,7 +805,7 @@ export default function Shop() {
         setIsPurchaseModalOpen(open)
         if (!open) setTimeout(() => setPurchaseItem(null), 300)
       }}>
-        <DialogContent className="sm:max-w-md rounded-[2.5rem] p-0 overflow-hidden border-none shadow-3xl bg-card/95 backdrop-blur-xl">
+        <DialogContent className="sm:max-w-md rounded-xl p-0 overflow-hidden border-none shadow-xl bg-card/95 backdrop-blur-xl">
           <DialogTitle className="sr-only">Xaridni tasdiqlash</DialogTitle>
           <DialogDescription className="sr-only">Rostdan ham ushbu maxsulotni xarid qilasizmi?</DialogDescription>
           {purchaseItem && (
@@ -836,7 +836,7 @@ export default function Shop() {
                 <div className="space-y-4">
                   <p className="text-muted-foreground font-medium text-center text-lg">Bu mahsulotni haqiqatan ham xarid qilasizmi?</p>
                   
-                  <div className="bg-gradient-to-br from-red-500/10 to-orange-500/10 rounded-3xl p-5 flex items-start gap-4 border border-red-500/20 shadow-inner">
+                  <div className="bg-gradient-to-br from-red-500/10 to-orange-500/10 rounded-xl p-5 flex items-start gap-4 border border-red-500/20 shadow-sm">
                     <div className="bg-card p-3 rounded-full shadow-md">
                       <Coins className="w-6 h-6 text-red-500" />
                     </div>
@@ -858,14 +858,14 @@ export default function Shop() {
                   <Button 
                     variant="ghost" 
                     onClick={() => setIsPurchaseModalOpen(false)}
-                    className="flex-1 rounded-2xl h-14 font-bold text-muted-foreground bg-muted hover:bg-muted/80"
+                    className="flex-1 rounded-lg h-14 font-bold text-muted-foreground bg-muted hover:bg-muted/80"
                   >
                     Bekor qilish
                   </Button>
                   <Button 
                     onClick={handleConfirmBuy}
                     disabled={isBuying}
-                    className="flex-1 rounded-2xl h-14 bg-red-600 hover:bg-red-700 text-white font-bold shadow-xl shadow-red-500/25 transition-all"
+                    className="flex-1 rounded-lg h-14 bg-red-600 hover:bg-red-700 text-white font-bold shadow-md transition-colors"
                   >
                     {isBuying ? <Loader2 className="h-6 w-6 animate-spin mx-auto" /> : "Xaridni tasdiqlash"}
                   </Button>

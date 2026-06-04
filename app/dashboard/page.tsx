@@ -78,11 +78,11 @@ export default function Dashboard() {
   if (loadingProfile && isStudent) {
     return (
       <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
-        <Skeleton className="h-32 w-full rounded-2xl" />
+        <Skeleton className="h-32 w-full rounded-xl" />
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <Skeleton className="h-32 rounded-2xl" />
-          <Skeleton className="h-32 rounded-2xl" />
-          <Skeleton className="h-32 rounded-2xl" />
+          <Skeleton className="h-32 rounded-xl" />
+          <Skeleton className="h-32 rounded-xl" />
+          <Skeleton className="h-32 rounded-xl" />
         </div>
       </div>
     )
@@ -91,7 +91,7 @@ export default function Dashboard() {
   return (
     <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto space-y-6 md:space-y-8">
       {/* Welcome Header */}
-      <div className="bg-card dark:bg-card rounded-2xl shadow-md p-6 md:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 border border-border dark:border-border transition-all hover:shadow-lg">
+      <div className="bg-card dark:bg-card rounded-xl shadow-sm p-6 md:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 border border-border dark:border-border">
         <div className="space-y-1">
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-gray-900 dark:text-gray-100 tracking-tight">
             Xush kelibsiz, <span className="text-red-600">{user?.fullname || user?.username}</span>!
@@ -113,7 +113,7 @@ export default function Dashboard() {
               size="lg"
               showLabel={true}
               label="Coins"
-              className="shadow-sm hover:scale-105 transition-transform duration-300"
+              className="shadow-sm"
             />
           </div>
         )}
@@ -139,7 +139,7 @@ export default function Dashboard() {
 
           {/* Haftalik O'zgarish Karti */}
           {weeklyChangeData && (
-            <div className={`rounded-2xl shadow-sm border p-5 md:p-6 flex items-center gap-5 transition-all ${
+            <div className={`rounded-xl shadow-sm border p-5 md:p-6 flex items-center gap-5 ${
               weeklyChangeData.weekly_change > 0
                 ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-200 dark:from-green-950/30 dark:to-emerald-950/30 dark:border-green-800'
                 : weeklyChangeData.weekly_change < 0
@@ -196,7 +196,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Leaderboard */}
-        <div className="bg-card dark:bg-card rounded-2xl shadow-sm border border-border dark:border-border p-6 lg:p-8">
+        <div className="bg-card dark:bg-card rounded-xl shadow-sm border border-border dark:border-border p-6 lg:p-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">Reyting jadvali</h2>
             <Award className="w-8 h-8 text-yellow-600" />
@@ -216,7 +216,7 @@ export default function Dashboard() {
               {leaderboard.map((item: any, index: number) => (
                 <div
                   key={item.user_id || index}
-                  className="flex items-center gap-3 md:gap-5 p-3 md:p-4 rounded-xl hover:bg-accent dark:hover:bg-accent transition-all duration-300 border border-border dark:border-border shadow-sm hover:shadow-md"
+                  className="flex items-center gap-3 md:gap-5 p-3 md:p-4 rounded-lg hover:bg-accent dark:hover:bg-accent transition-colors duration-200 border border-border dark:border-border shadow-sm"
                 >
                   <div
                     className={`w-8 h-8 md:w-12 md:h-12 rounded-xl flex items-center justify-center font-bold text-sm md:text-lg flex-shrink-0 shadow-sm
@@ -249,7 +249,7 @@ export default function Dashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-card dark:bg-card rounded-2xl shadow-sm border border-border dark:border-border p-6 lg:p-8">
+        <div className="bg-card dark:bg-card rounded-xl shadow-sm border border-border dark:border-border p-6 lg:p-8">
           <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Tezkor harakatlar</h2>
 
           <div className="grid grid-cols-2 gap-4 md:gap-5">
@@ -272,7 +272,7 @@ export default function Dashboard() {
 
       {/* Haftalik TOP 10 — Admin/Teacher uchun */}
       {(isAdmin || isTeacher) && topGainers.length > 0 && (
-        <div className="bg-card dark:bg-card rounded-2xl shadow-sm border border-border dark:border-border p-6 lg:p-8">
+        <div className="bg-card dark:bg-card rounded-xl shadow-sm border border-border dark:border-border p-6 lg:p-8">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-xl">
@@ -298,7 +298,7 @@ export default function Dashboard() {
             {topGainers.map((student: any, index: number) => (
               <div
                 key={student.user_id || index}
-                className="flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-xl hover:bg-accent dark:hover:bg-accent transition-all duration-300 border border-border dark:border-border shadow-sm hover:shadow-md"
+                className="flex items-center gap-3 md:gap-4 p-3 md:p-4 rounded-lg hover:bg-accent dark:hover:bg-accent transition-colors duration-200 border border-border dark:border-border shadow-sm"
               >
                 {/* Rank */}
                 <div
@@ -345,7 +345,7 @@ export default function Dashboard() {
 
       {/* Recent Transactions */}
       {isStudent && recentTransactions.length > 0 && (
-        <div className="bg-card dark:bg-card rounded-2xl shadow-sm border border-border dark:border-border p-6 lg:p-8">
+        <div className="bg-card dark:bg-card rounded-xl shadow-sm border border-border dark:border-border p-6 lg:p-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">So'nggi harakatlar</h2>
             <Link
@@ -360,7 +360,7 @@ export default function Dashboard() {
             {recentTransactions.map((tx: any) => (
               <div
                 key={tx.id}
-                className="flex items-center justify-between p-3 md:p-4 rounded-xl bg-accent/50 dark:bg-accent/50 hover:bg-accent dark:hover:bg-accent transition-all duration-300 border border-border dark:border-border shadow-sm"
+                className="flex items-center justify-between p-3 md:p-4 rounded-lg bg-accent/50 dark:bg-accent/50 hover:bg-accent dark:hover:bg-accent transition-colors duration-200 border border-border dark:border-border shadow-sm"
               >
                 <div className="flex items-center gap-3 md:gap-4 min-w-0 flex-1">
                   <div

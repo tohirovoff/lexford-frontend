@@ -20,7 +20,7 @@ export default function QuickActionCard({ href, icon: Icon, label, color }: Quic
   return (
     <Link
       href={href}
-      className={`p-5 rounded-xl border flex flex-col items-center gap-3 transition-all duration-300 hover:shadow-md hover:scale-[1.02] ${colorClasses[color]}`}
+      className={`p-5 rounded-lg border flex flex-col items-center gap-3 transition-shadow duration-200 hover:shadow-md ${colorClasses[color]}`}
     >
       <Icon className="w-10 h-10" />
       <span className="text-sm font-semibold text-center">{label}</span>

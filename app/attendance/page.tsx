@@ -502,7 +502,7 @@ export default function AttendanceMarkingPage() {
                        const time = recordDate.toLocaleTimeString("uz-UZ", { hour: '2-digit', minute: '2-digit' })
 
                        return (
-                       <div key={record._id || record.id || index} className="overflow-hidden border border-border rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
+                       <div key={record._id || record.id || index} className="overflow-hidden border border-border rounded-xl shadow-sm hover:shadow-md transition-shadow">
                           {/* Top bar with stats highlight */}
                           <div className="bg-muted/80 px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border">
                             <div className="flex items-center gap-4">
@@ -556,7 +556,7 @@ export default function AttendanceMarkingPage() {
                               <div className="space-y-2">
                                 {presentStudents.length > 0 ? presentStudents.map((s: any) => (
                                   <div key={s.id} className="flex items-center gap-2 p-1.5 hover:bg-muted rounded-lg transition-colors group">
-                                     <Avatar className="h-6 w-6 border-border group-hover:scale-110 transition-transform">
+                                     <Avatar className="h-6 w-6 border-border transition-colors">
                                        <AvatarImage src={s.profilePicture} />
                                        <AvatarFallback className="bg-muted text-[10px] font-bold text-muted-foreground">{s.fullname?.charAt(0)}</AvatarFallback>
                                      </Avatar>
@@ -577,7 +577,7 @@ export default function AttendanceMarkingPage() {
                               <div className="space-y-2">
                                 {lateStudents.length > 0 ? lateStudents.map((s: any) => (
                                   <div key={s.id} className="flex items-center gap-2 p-1.5 hover:bg-muted rounded-lg transition-colors group">
-                                     <Avatar className="h-6 w-6 border-border group-hover:scale-110 transition-transform">
+                                     <Avatar className="h-6 w-6 border-border transition-colors">
                                        <AvatarImage src={s.profilePicture} />
                                        <AvatarFallback className="bg-muted text-[10px] font-bold text-muted-foreground">{s.fullname?.charAt(0)}</AvatarFallback>
                                      </Avatar>
@@ -598,7 +598,7 @@ export default function AttendanceMarkingPage() {
                               <div className="space-y-2">
                                 {absentStudents.length > 0 ? absentStudents.map((s: any) => (
                                   <div key={s.id} className="flex items-center gap-2 p-1.5 hover:bg-muted rounded-lg transition-colors group">
-                                     <Avatar className="h-6 w-6 border-border group-hover:scale-110 transition-transform">
+                                     <Avatar className="h-6 w-6 border-border transition-colors">
                                        <AvatarImage src={s.profilePicture} />
                                        <AvatarFallback className="bg-muted text-[10px] font-bold text-muted-foreground">{s.fullname?.charAt(0)}</AvatarFallback>
                                      </Avatar>
@@ -651,7 +651,7 @@ export default function AttendanceMarkingPage() {
       )}
       {/* Result Modal */}
       <Dialog open={isResultModalOpen} onOpenChange={setIsResultModalOpen}>
-        <DialogContent className="sm:max-w-md rounded-[2rem] p-0 overflow-hidden border border-border shadow-2xl bg-card/95 backdrop-blur-xl">
+        <DialogContent className="sm:max-w-md rounded-xl p-0 overflow-hidden border border-border shadow-xl bg-card/95 backdrop-blur-xl">
           <div className="p-8 text-center space-y-6">
             <div className={`mx-auto w-20 h-20 rounded-full flex items-center justify-center ${
               resultData?.success ? 'bg-green-100 dark:bg-green-950 text-green-600' : 'bg-red-100 dark:bg-red-950 text-red-600'
@@ -673,7 +673,7 @@ export default function AttendanceMarkingPage() {
             </div>
 
             {resultData?.success && resultData.stats && (
-              <div className="grid grid-cols-3 gap-2 py-4 bg-muted rounded-2xl border border-border">
+              <div className="grid grid-cols-3 gap-2 py-4 bg-muted rounded-xl border border-border">
                 <div className="space-y-1">
                   <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Keldi</p>
                   <p className="text-xl font-black text-green-600">{resultData.stats.present_count}</p>
@@ -692,7 +692,7 @@ export default function AttendanceMarkingPage() {
             <DialogFooter className="sm:justify-center">
               <Button 
                 onClick={() => setIsResultModalOpen(false)}
-                className={`w-full h-12 rounded-2xl font-bold shadow-lg transition-all ${
+                className={`w-full h-12 rounded-lg font-bold shadow-md transition-colors ${
                   resultData?.success ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'
                 }`}
               >

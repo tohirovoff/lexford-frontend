@@ -165,9 +165,9 @@ export default function CoinsPage() {
         </div>
         
         {!isTeacherOrAdmin && (
-          <Card className="w-full sm:w-auto bg-gradient-to-br from-red-600/10 via-red-600/5 to-transparent border-red-600/20 shadow-lg backdrop-blur-md rounded-2xl overflow-hidden">
+          <Card className="w-full sm:w-auto bg-gradient-to-br from-red-600/10 via-red-600/5 to-transparent border-red-600/20 shadow-md backdrop-blur-md rounded-xl overflow-hidden">
             <CardContent className="p-4 flex items-center gap-4">
-               <div className="bg-white/80 dark:bg-black/20 p-2.5 rounded-2xl shadow-sm">
+               <div className="bg-white/80 dark:bg-black/20 p-2.5 rounded-xl shadow-sm">
                  <Coins className="h-7 w-7 text-red-600" />
                </div>
                 <div>
@@ -183,7 +183,7 @@ export default function CoinsPage() {
         {/* Left Column: Form or Stats */}
         <div className="lg:col-span-1 space-y-6">
           {isTeacherOrAdmin ? (
-            <Card className="border-t-4 border-t-red-600 shadow-xl rounded-2xl bg-card/50 backdrop-blur-sm overflow-hidden">
+            <Card className="border-t-4 border-t-red-600 shadow-lg rounded-xl bg-card/50 backdrop-blur-sm overflow-hidden">
               <CardHeader className="pb-4">
                 <CardTitle className="text-xl font-bold flex items-center gap-2">
                   <div className="p-1.5 bg-red-600/10 rounded-lg">
@@ -250,15 +250,15 @@ export default function CoinsPage() {
                     </div>
                     
                     {!selectedClassId ? (
-                      <div className="border-2 border-dashed rounded-2xl p-8 text-center text-muted-foreground/50 text-sm font-medium bg-muted/20">
+                      <div className="border-2 border-dashed rounded-xl p-8 text-center text-muted-foreground/50 text-sm font-medium bg-muted/20">
                         Avval sinfni tanlang
                       </div>
                     ) : students.length === 0 ? (
-                      <div className="border-2 border-dashed rounded-2xl p-8 text-center text-muted-foreground/50 text-sm font-medium bg-muted/20">
+                      <div className="border-2 border-dashed rounded-xl p-8 text-center text-muted-foreground/50 text-sm font-medium bg-muted/20">
                         O'quvchilar topilmadi
                       </div>
                     ) : (
-                      <ScrollArea className="h-[220px] w-full border border-border/50 rounded-2xl bg-muted/10 p-2">
+                      <ScrollArea className="h-[220px] w-full border border-border/50 rounded-xl bg-muted/10 p-2">
                         <div className="space-y-1">
                           {students.map((student: any) => {
                             const studentId = (student._id || student.id).toString()
@@ -326,7 +326,7 @@ export default function CoinsPage() {
                   <Button 
                     type="submit" 
                     disabled={isSubmitting || selectedStudentIds.length === 0} 
-                    className="w-full h-12 rounded-2xl font-black uppercase tracking-widest text-white shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98] bg-red-600 hover:bg-red-700 shadow-red-500/20"
+                    className="w-full h-12 rounded-lg font-black uppercase tracking-widest text-white shadow-md transition-colors bg-red-600 hover:bg-red-700"
                   >
                     {isSubmitting ? (
                       <Loader2 className="h-5 w-5 animate-spin" />
@@ -341,7 +341,7 @@ export default function CoinsPage() {
               </CardContent>
             </Card>
           ) : (
-            <Card className="rounded-2xl shadow-xl border-none bg-gradient-to-br from-red-600/10 to-red-900/10 backdrop-blur-md overflow-hidden">
+            <Card className="rounded-xl shadow-lg border-none bg-gradient-to-br from-red-600/10 to-red-900/10 backdrop-blur-md overflow-hidden">
               <CardHeader>
                 <CardTitle className="text-xl font-bold flex items-center gap-2">
                   <TrendingUp className="h-5 w-5 text-red-600" />
@@ -349,16 +349,16 @@ export default function CoinsPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="bg-card/40 dark:bg-black/20 p-5 rounded-2xl flex items-center justify-between border border-border/50 group transition-all hover:border-green-500/30">
+                <div className="bg-card/40 dark:bg-black/20 p-5 rounded-xl flex items-center justify-between border border-border/50 group transition-colors hover:border-green-500/30">
                    <div className="flex items-center gap-4">
-                     <div className="bg-green-500/10 p-3 rounded-2xl text-green-600 shadow-sm group-hover:scale-110 transition-transform"><TrendingUp className="h-6 w-6"/></div>
+                     <div className="bg-green-500/10 p-3 rounded-lg text-green-600 shadow-sm"><TrendingUp className="h-6 w-6"/></div>
                      <span className="font-bold text-foreground">Ishlangan</span>
                    </div>
                    <span className="text-2xl font-black text-green-600">+{stats.earned}</span>
                 </div>
-                <div className="bg-card/40 dark:bg-black/20 p-5 rounded-2xl flex items-center justify-between border border-border/50 group transition-all hover:border-red-600/30">
+                <div className="bg-card/40 dark:bg-black/20 p-5 rounded-xl flex items-center justify-between border border-border/50 group transition-colors hover:border-red-600/30">
                    <div className="flex items-center gap-4">
-                     <div className="bg-red-600/10 p-3 rounded-2xl text-red-600 shadow-sm group-hover:scale-110 transition-transform"><TrendingDown className="h-6 w-6"/></div>
+                     <div className="bg-red-600/10 p-3 rounded-lg text-red-600 shadow-sm"><TrendingDown className="h-6 w-6"/></div>
                      <span className="font-bold text-foreground">Sarflangan</span>
                    </div>
                    <span className="text-2xl font-black text-red-600">-{stats.spent}</span>
@@ -370,7 +370,7 @@ export default function CoinsPage() {
 
         {/* Right Column: History */}
         <div className="lg:col-span-2">
-          <Card className="h-full border-none shadow-xl rounded-2xl bg-card/50 backdrop-blur-sm overflow-hidden flex flex-col">
+          <Card className="h-full border-none shadow-lg rounded-xl bg-card/50 backdrop-blur-sm overflow-hidden flex flex-col">
             <CardHeader className="border-b border-border/50 bg-muted/30 pb-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <CardTitle className="flex items-center gap-2 text-xl font-bold">
@@ -419,11 +419,11 @@ export default function CoinsPage() {
                         <div key={tx._id || tx.id} className="p-4 sm:p-5 hover:bg-muted/30 transition-all duration-300 group">
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex items-start gap-4 flex-1 min-w-0">
-                              <div className={`p-2.5 rounded-2xl shrink-0 mt-1 shadow-sm ${
+                              <div className={`p-2.5 rounded-xl shrink-0 mt-1 shadow-sm ${
                                 isPositive 
-                                  ? 'bg-green-500/10 text-green-600 group-hover:scale-110' 
-                                  : 'bg-red-600/10 text-red-600 group-hover:scale-110'
-                              } transition-transform`}>
+                                  ? 'bg-green-500/10 text-green-600' 
+                                  : 'bg-red-600/10 text-red-600'
+                              } transition-colors`}>
                                  {isPositive ? <ArrowUpCircle className="h-5 w-5 sm:h-6 sm:w-6" /> : <ArrowDownCircle className="h-5 w-5 sm:h-6 sm:w-6" />}
                               </div>
                               
@@ -464,7 +464,7 @@ export default function CoinsPage() {
                               </div>
                             </div>
                             
-                            <div className={`text-right shrink-0 px-3 py-2 rounded-2xl border transition-all ${
+                            <div className={`text-right shrink-0 px-3 py-2 rounded-xl border transition-colors ${
                               isPositive 
                                 ? 'bg-green-500/5 border-green-500/20 group-hover:bg-green-500/10' 
                                 : 'bg-red-600/5 border-red-600/20 group-hover:bg-red-600/10'

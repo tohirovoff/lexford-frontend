@@ -131,7 +131,7 @@ export default function SchedulePage() {
 
   const renderSchedule = (shiftData: any[], shiftNumber: 1 | 2) => (
     <div className={cn(
-      "bg-card p-8 rounded-[2.5rem] shadow-2xl border border-border print:shadow-none print:p-0 print:border-none relative",
+      "bg-card p-8 rounded-xl shadow-lg border border-border print:shadow-none print:p-0 print:border-none relative",
       `shift-container-${shiftNumber}`,
       activeShift !== shiftNumber && "print:block hidden",
       isFetching && "opacity-50 pointer-events-none"
@@ -159,7 +159,7 @@ export default function SchedulePage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 print:grid-cols-5 print:gap-3 grid-cols-5-print relative z-10">
         {shiftData.map((dayData, dayIndex) => (
           <div key={dayData.day} className="flex flex-col space-y-4 print:space-y-4 print:break-inside-avoid">
-            <div className="bg-red-600 text-white py-3 px-4 rounded-2xl shadow-lg text-center font-black tracking-widest uppercase print:py-2 print:px-2 print:text-xs print:rounded-xl">
+            <div className="bg-red-600 text-white py-3 px-4 rounded-xl shadow-md text-center font-black tracking-widest uppercase print:py-2 print:px-2 print:text-xs">
               {dayData.day}
             </div>
             
@@ -168,9 +168,9 @@ export default function SchedulePage() {
                 <div 
                   key={lessonIndex} 
                   className={cn(
-                    "p-4 rounded-3xl border transition-all duration-300 relative group",
+                    "p-4 rounded-xl border transition-shadow duration-200 relative group",
                     "bg-red-500/5 border-red-500/10 dark:bg-red-950/20 dark:border-red-950/30",
-                    "hover:shadow-xl relative z-10",
+                    "relative z-10",
                     isEditing && activeShift === shiftNumber && "ring-2 ring-red-500/20",
                     "print:shadow-none print:p-3 lesson-card-print"
                   )}
@@ -229,14 +229,14 @@ export default function SchedulePage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex bg-muted p-1 rounded-2xl border border-border">
+          <div className="flex bg-muted p-1 rounded-xl border border-border">
              <button onClick={() => setActiveShift(1)} className={cn("px-4 py-2 rounded-xl text-sm font-bold transition-all", activeShift === 1 ? "bg-card text-red-600 shadow-sm" : "text-muted-foreground hover:text-foreground")}>1-Smena</button>
              <button onClick={() => setActiveShift(2)} className={cn("px-4 py-2 rounded-xl text-sm font-bold transition-all", activeShift === 2 ? "bg-card text-red-600 shadow-sm" : "text-muted-foreground hover:text-foreground")}>2-Smena</button>
           </div>
 
           {isAdminOrTeacher && (
             <Select value={selectedClassId} onValueChange={(val) => { setSelectedClassId(val); setIsEditing(false); }}>
-              <SelectTrigger className="w-[200px] h-12 rounded-2xl border-border bg-card shadow-sm font-bold text-foreground">
+              <SelectTrigger className="w-[200px] h-12 rounded-xl border-border bg-card shadow-sm font-bold text-foreground">
                 <SelectValue placeholder="Sinfni tanlang" />
               </SelectTrigger>
               <SelectContent className="z-[110]">
@@ -248,20 +248,20 @@ export default function SchedulePage() {
           )}
 
           {isAdminOrTeacher && activeClassId && (
-            <Button onClick={() => setIsEditing(!isEditing)} variant={isEditing ? "destructive" : "outline"} className="rounded-2xl h-12 px-6 font-bold transition-all shadow-sm">
+            <Button onClick={() => setIsEditing(!isEditing)} variant={isEditing ? "destructive" : "outline"} className="rounded-xl h-12 px-6 font-bold transition-all shadow-sm">
               {isEditing ? "Bekor qilish" : "Tahrirlash"}
             </Button>
           )}
           
           {isEditing && (
-            <Button onClick={handleSave} disabled={isSaving} className="bg-green-600 hover:bg-green-700 text-white rounded-2xl h-12 px-8 font-black shadow-lg shadow-green-500/20">
+            <Button onClick={handleSave} disabled={isSaving} className="bg-green-600 hover:bg-green-700 text-white rounded-xl h-12 px-8 font-black shadow-md shadow-green-500/20">
               {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5 mr-2" />}
               Saqlash
             </Button>
           )}
 
           {activeClassId && (
-            <Button onClick={handlePrint} className="bg-red-600 hover:bg-red-700 text-white rounded-2xl h-12 px-8 font-black shadow-lg shadow-red-500/20">
+            <Button onClick={handlePrint} className="bg-red-600 hover:bg-red-700 text-white rounded-xl h-12 px-8 font-black shadow-md shadow-red-500/20">
               <Printer className="w-5 h-5 mr-2" /> Hamma smenani chop etish
             </Button>
           )}

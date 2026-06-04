@@ -7,12 +7,12 @@ import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Eye, EyeOff, LogIn, XCircle } from "lucide-react";
+import { Eye, EyeOff, LogIn, XCircle, Loader2 } from "lucide-react";
 import { useLoginMutation } from "@/lib/api/authApi";
 import { decodeToken } from "@/lib/auth";
 import { setCredentials } from "@/lib/store";
 import { toast } from "sonner";
-import LoadingSpinner from "@/components/ui/loading-spinner";
+import { useTheme } from "next-themes";
 
 // Validation schema
 const loginSchema = z.object({
@@ -28,6 +28,7 @@ export default function LoginPage() {
   const [login, { isLoading }] = useLoginMutation();
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState("");
+  const { theme } = useTheme();
 
   const {
     register,
@@ -95,14 +96,14 @@ export default function LoginPage() {
         {/* Logo va sarlavha */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-24 h-24 mb-2">
-            <img src="/logo.png" alt="Lexford Logo" className="w-full h-full object-contain drop-shadow-md" />
+            <img src={theme === "dark" ? "/Container-2 (2).png" : "/logo.png"} alt="Lexford Logo" className="w-full h-full object-contain" />
           </div>
           <h1 className="text-3xl font-extrabold text-foreground dark:text-foreground tracking-tight">Lexford</h1>
           <p className="text-muted-foreground mt-1 font-medium">Maktab boshqaruvi tizimi</p>
         </div>
 
         {/* Login kartasi */}
-        <div className="bg-card dark:bg-card rounded-3xl shadow-2xl p-8 md:p-10 border border-border dark:border-border relative z-10">
+        <div className="bg-card dark:bg-card rounded-2xl shadow-xl p-8 md:p-10 border border-border dark:border-border relative z-10">
           <h2 className="text-2xl font-bold text-foreground dark:text-foreground mb-1 tracking-tight">
             Tizimga kirish
           </h2>
@@ -185,13 +186,13 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-4 px-6 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl
-                         transition-all duration-300 flex items-center justify-center gap-2
-                         disabled:opacity-70 disabled:cursor-not-allowed shadow-[0_4px_12px_rgba(220,38,38,0.25)] hover:shadow-xl hover:-translate-y-0.5"
+              className="w-full py-4 px-6 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-lg
+                         transition-colors duration-200 flex items-center justify-center gap-2
+                         disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <>
-                  <LoadingSpinner size="sm" />
+                  <Loader2 className="w-5 h-5 animate-spin" />
                   <span>Kirilmoqda...</span>
                 </>
               ) : (
