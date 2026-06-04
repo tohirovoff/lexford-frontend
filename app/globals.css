@@ -136,3 +136,42 @@
 .animate-reverse-spin {
   animation: reverse-spin 1.5s infinite linear;
 }
+
+/* Top progress bar — route transition indicator */
+@keyframes progress-load {
+  0%   { width: 0; }
+  15%  { width: 42%; }
+  45%  { width: 68%; }
+  75%  { width: 85%; }
+  100% { width: 92%; }
+}
+
+@keyframes progress-glow {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 1; }
+}
+
+.route-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: var(--primary);
+  z-index: 99999;
+  animation: progress-load 2.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  transform-origin: left;
+}
+
+.route-progress::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 80px;
+  height: 100%;
+  background: linear-gradient(to right, transparent, var(--primary));
+  opacity: 0.6;
+  animation: progress-glow 1.6s ease-in-out infinite;
+  border-radius: 0 2px 2px 0;
+  box-shadow: 0 0 8px var(--primary), 0 0 3px var(--primary);
+}
