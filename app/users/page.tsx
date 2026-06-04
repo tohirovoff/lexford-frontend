@@ -302,11 +302,11 @@ export default function UsersListPage() {
   const getRoleBadgeClass = (role: string) => {
     switch (role) {
       case "admin":
-        return "bg-red-100 text-red-700 border-red-200"
+        return "bg-red-100 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800"
       case "teacher":
-        return "bg-blue-100 text-blue-700 border-blue-200"
+        return "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800"
       default:
-        return "bg-green-100 text-green-700 border-green-200"
+        return "bg-green-100 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800"
     }
   }
 
@@ -898,53 +898,52 @@ export default function UsersListPage() {
           </CardContent>
         </Card>
       )}
-
-      {/* User Details Dialog */}
+        {/* User Details Dialog */}
       <Dialog open={!!selectedUser} onOpenChange={() => setSelectedUser(null)}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto p-4 sm:p-6 w-[95vw] max-w-full sm:max-w-md rounded-2xl sm:rounded-3xl">
+        <DialogContent className="max-h-[90vh] overflow-y-auto p-4 sm:p-6 w-[95vw] max-w-full sm:max-w-md rounded-2xl sm:rounded-3xl border border-border bg-card">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold">Foydalanuvchi ma'lumoti</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-foreground">Foydalanuvchi ma'lumoti</DialogTitle>
           </DialogHeader>
           {selectedUser && (
             <div className="space-y-4">
               <div className="flex items-center gap-4">
                 <Avatar className="h-14 w-14 sm:h-16 sm:w-16">
                   <AvatarImage src={getProfileImageUrl(selectedUser.profile_picture)} />
-                  <AvatarFallback className="bg-red-100 text-red-700 text-lg sm:text-xl">
+                  <AvatarFallback className="bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300 text-lg sm:text-xl">
                     {selectedUser.fullname?.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="min-w-0">
-                  <h3 className="text-base sm:text-lg font-semibold break-words">{selectedUser.fullname}</h3>
-                  <p className="text-gray-500 text-sm">@{selectedUser.username}</p>
+                  <h3 className="text-base sm:text-lg font-semibold break-words text-foreground">{selectedUser.fullname}</h3>
+                  <p className="text-muted-foreground text-sm">@{selectedUser.username}</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="text-gray-500">Rol</p>
+                  <p className="text-muted-foreground">Rol</p>
                   <Badge variant="outline" className={getRoleBadgeClass(selectedUser.role)}>
                     {selectedUser.role}
                   </Badge>
                 </div>
                 <div>
-                  <p className="text-gray-500">Tangalar</p>
-                  <p className="font-medium text-amber-600">{selectedUser.coinBalance || 0}</p>
+                  <p className="text-muted-foreground">Tangalar</p>
+                  <p className="font-medium text-amber-600 dark:text-amber-500">{selectedUser.coinBalance || 0}</p>
                 </div>
                 {isAdmin && (
-                  <div className="col-span-2 bg-gray-50 dark:bg-gray-900/50 p-3 sm:p-4 rounded-2xl border border-gray-100 dark:border-gray-800 space-y-3">
-                     <Label className="text-[10px] font-black uppercase text-gray-500 tracking-wider">Parolni o'zgartirish (Admin)</Label>
+                  <div className="col-span-2 bg-muted dark:bg-gray-900/50 p-3 sm:p-4 rounded-2xl border border-border space-y-3">
+                     <Label className="text-[10px] font-black uppercase text-muted-foreground tracking-wider">Parolni o'zgartirish (Admin)</Label>
                      <div className="flex flex-col sm:flex-row gap-2">
                         <Input 
                           placeholder="Yangi parol..." 
                           type="text"
                           value={adminNewPassword}
                           onChange={(e) => setAdminNewPassword(e.target.value)}
-                          className="bg-white dark:bg-gray-800 rounded-xl h-11"
+                          className="bg-background text-foreground border-border rounded-xl h-11"
                         />
                         <Button 
                           onClick={handleAdminResetPassword} 
                           disabled={isResettingPassword || !adminNewPassword}
-                          className="bg-red-600 hover:bg-red-700 h-11 px-6 rounded-xl font-bold w-full sm:w-auto"
+                          className="bg-red-600 hover:bg-red-700 h-11 px-6 rounded-xl font-bold w-full sm:w-auto text-white"
                         >
                           {isResettingPassword ? <Loader2 className="w-4 h-4 animate-spin" /> : "Saqlash"}
                         </Button>
@@ -954,40 +953,40 @@ export default function UsersListPage() {
                 {selectedUser.role === "student" && (
                   <div className="col-span-2 space-y-4">
                      {isAdmin && (
-                       <div className="bg-gray-50 dark:bg-gray-900/50 p-3 sm:p-4 rounded-2xl border border-gray-100 dark:border-gray-800 space-y-3">
-                         <Label className="text-[10px] font-black uppercase text-gray-500 tracking-wider">Sinfni o'zgartirish (Admin)</Label>
-                         <div className="flex flex-col sm:flex-row gap-2">
-                           <Select value={selectedClass} onValueChange={setSelectedClass}>
-                             <SelectTrigger className="bg-white dark:bg-gray-800 rounded-xl h-11">
-                               <SelectValue placeholder="Sinfni tanlang" />
-                             </SelectTrigger>
-                             <SelectContent className="z-[130]">
-                               <SelectItem value="none">Sinf yo'q</SelectItem>
-                               {classes.map((cls: any) => (
-                                 <SelectItem key={cls.id || cls._id} value={String(cls.id || cls._id)}>
-                                   {cls.name}
-                                 </SelectItem>
-                               ))}
-                             </SelectContent>
-                           </Select>
-                           <Button 
-                             onClick={handleClassAssignment} 
-                             disabled={isStatusUpdating || selectedClass === (selectedUser.class_id ? String(selectedUser.class_id) : "none")}
-                             className="bg-red-600 hover:bg-red-700 h-11 px-6 rounded-xl font-bold w-full sm:w-auto"
-                           >
-                             {isStatusUpdating ? <Loader2 className="w-4 h-4 animate-spin" /> : "Saqlash"}
-                           </Button>
-                         </div>
-                         {updateSuccess && (
-                           <p className="text-xs text-green-600 font-bold flex items-center gap-1">
-                             <CheckCircle2 className="w-3 h-3" /> Muvaffaqiyatli saqlandi!
-                           </p>
-                         )}
+                       <div className="bg-muted dark:bg-gray-900/50 p-3 sm:p-4 rounded-2xl border border-border space-y-3">
+                          <Label className="text-[10px] font-black uppercase text-muted-foreground tracking-wider">Sinfni o'zgartirish (Admin)</Label>
+                          <div className="flex flex-col sm:flex-row gap-2">
+                            <Select value={selectedClass} onValueChange={setSelectedClass}>
+                              <SelectTrigger className="bg-background text-foreground border-border rounded-xl h-11">
+                                <SelectValue placeholder="Sinfni tanlang" />
+                              </SelectTrigger>
+                              <SelectContent className="z-[130]">
+                                <SelectItem value="none">Sinf yo'q</SelectItem>
+                                {classes.map((cls: any) => (
+                                  <SelectItem key={cls.id || cls._id} value={String(cls.id || cls._id)}>
+                                    {cls.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <Button 
+                              onClick={handleClassAssignment} 
+                              disabled={isStatusUpdating || selectedClass === (selectedUser.class_id ? String(selectedUser.class_id) : "none")}
+                              className="bg-red-600 hover:bg-red-700 h-11 px-6 rounded-xl font-bold w-full sm:w-auto text-white"
+                            >
+                              {isStatusUpdating ? <Loader2 className="w-4 h-4 animate-spin" /> : "Saqlash"}
+                            </Button>
+                          </div>
+                          {updateSuccess && (
+                            <p className="text-xs text-green-600 dark:text-green-400 font-bold flex items-center gap-1">
+                              <CheckCircle2 className="w-3 h-3" /> Muvaffaqiyatli saqlandi!
+                            </p>
+                          )}
                        </div>
                      )}
                      
                      <div className="pt-2">
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Davomat kalendari</p>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Davomat kalendari</p>
                         <AttendanceCalendar studentId={selectedUser.id} />
                      </div>
                   </div>
@@ -1000,11 +999,11 @@ export default function UsersListPage() {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={!!deleteConfirm} onOpenChange={() => setDeleteConfirm(null)}>
-        <DialogContent>
+        <DialogContent className="border border-border bg-card">
           <DialogHeader>
-            <DialogTitle>O'chirishni tasdiqlang</DialogTitle>
+            <DialogTitle className="text-foreground">O'chirishni tasdiqlang</DialogTitle>
           </DialogHeader>
-          <p className="text-gray-600">{deleteConfirm?.fullname} ni tizimdan o'chirmoqchimisiz?</p>
+          <p className="text-muted-foreground">{deleteConfirm?.fullname} ni tizimdan o'chirmoqchimisiz?</p>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteConfirm(null)}>
               Bekor qilish

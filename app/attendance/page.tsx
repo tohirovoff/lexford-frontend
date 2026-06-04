@@ -266,7 +266,7 @@ export default function AttendanceMarkingPage() {
           ) : (
             <div className="flex flex-col md:flex-row gap-4 items-end md:items-center">
               <div className="w-full md:w-64 space-y-2">
-                <label className="text-sm font-medium text-gray-700">Sinfni tanlang</label>
+                <label className="text-sm font-medium text-muted-foreground">Sinfni tanlang</label>
                 <Select value={selectedClassId} onValueChange={setSelectedClassId}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Sinf tanlanmagan" />
@@ -309,7 +309,7 @@ export default function AttendanceMarkingPage() {
                    <div className="flex flex-wrap gap-3">
                       <Button
                         variant="outline"
-                        className="bg-green-50 text-green-700 border-green-200 hover:bg-green-100 hover:text-green-800"
+                        className="bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20 hover:bg-green-500/20 hover:text-green-700 dark:hover:text-green-300"
                         onClick={() => handleMarkAll("present")}
                       >
                         <CheckCircle2 className="h-4 w-4 mr-2" />
@@ -317,7 +317,7 @@ export default function AttendanceMarkingPage() {
                       </Button>
                       <Button
                         variant="outline"
-                        className="bg-red-50 text-red-700 border-red-200 hover:bg-red-100 hover:text-red-800"
+                        className="bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20 hover:bg-red-500/20 hover:text-red-700 dark:hover:text-red-300"
                         onClick={() => handleMarkAll("absent")}
                       >
                         <XCircle className="h-4 w-4 mr-2" />
@@ -334,16 +334,16 @@ export default function AttendanceMarkingPage() {
                  <CardContent>
                    <div className="space-y-2">
                       <div className="flex justify-between items-center text-sm">
-                        <span className="flex items-center text-green-700"><Check className="w-4 h-4 mr-2"/> Keldi</span>
-                        <Badge className="bg-green-100 text-green-700">{stats.present}</Badge>
+                        <span className="flex items-center text-green-600 dark:text-green-400"><Check className="w-4 h-4 mr-2"/> Keldi</span>
+                        <Badge className="bg-green-500/10 text-green-600 dark:text-green-400">{stats.present}</Badge>
                       </div>
                       <div className="flex justify-between items-center text-sm">
-                        <span className="flex items-center text-red-700"><X className="w-4 h-4 mr-2"/> Kelmadi</span>
-                        <Badge className="bg-red-100 text-red-700">{stats.absent}</Badge>
+                        <span className="flex items-center text-red-600 dark:text-red-400"><X className="w-4 h-4 mr-2"/> Kelmadi</span>
+                        <Badge className="bg-red-500/10 text-red-600 dark:text-red-400">{stats.absent}</Badge>
                       </div>
                       <div className="flex justify-between items-center text-sm">
-                        <span className="flex items-center text-amber-700"><Clock className="w-4 h-4 mr-2"/> Kechikdi</span>
-                        <Badge className="bg-amber-100 text-amber-700">{stats.late}</Badge>
+                        <span className="flex items-center text-amber-600 dark:text-amber-400"><Clock className="w-4 h-4 mr-2"/> Kechikdi</span>
+                        <Badge className="bg-amber-500/10 text-amber-600 dark:text-amber-400">{stats.late}</Badge>
                       </div>
                       <div className="pt-2 mt-2 border-t border-border flex justify-between items-center font-medium">
                         <span>Jami</span>
@@ -378,12 +378,12 @@ export default function AttendanceMarkingPage() {
                          const currentStatus = attendanceMap[sId]
                          
                          return (
-                        <TableRow key={sId} className={currentStatus ? "bg-gray-50/30" : ""}>
+                        <TableRow key={sId} className={currentStatus ? "bg-muted/30" : ""}>
                           <TableCell>
                             <div className="flex items-center gap-3">
-                              <Avatar className="h-9 w-9 border border-gray-100">
+                              <Avatar className="h-9 w-9 border border-border">
                                 <AvatarImage src={student.profilePicture || "/placeholder.svg"} />
-                                <AvatarFallback className="bg-gradient-to-br from-red-100 to-orange-100 text-red-700 font-medium">
+                                <AvatarFallback className="bg-gradient-to-br from-red-100 dark:from-red-950 to-orange-100 dark:to-orange-950 text-red-700 dark:text-red-400 font-medium">
                                   {student.fullname?.charAt(0) || "?"}
                                 </AvatarFallback>
                               </Avatar>
@@ -394,7 +394,7 @@ export default function AttendanceMarkingPage() {
                             </div>
                           </TableCell>
                           <TableCell className="text-center">
-                            {currentStatus ? getStatusBadge(currentStatus) : <span className="text-gray-400 text-sm">—</span>}
+                            {currentStatus ? getStatusBadge(currentStatus) : <span className="text-muted-foreground text-sm">—</span>}
                           </TableCell>
                           <TableCell>
                             <div className="flex justify-end gap-1.5">
@@ -403,8 +403,8 @@ export default function AttendanceMarkingPage() {
                                 variant="ghost"
                                 className={`h-9 w-9 p-0 rounded-full transition-all ${
                                   currentStatus === "present"
-                                    ? "bg-green-100 text-green-700 ring-2 ring-green-500 ring-offset-2"
-                                    : "text-gray-400 hover:bg-green-50 hover:text-green-600"
+                                    ? "bg-green-500/20 text-green-600 dark:text-green-400 ring-2 ring-green-500 ring-offset-2 dark:ring-offset-background"
+                                    : "text-muted-foreground hover:bg-green-500/10 hover:text-green-600"
                                 }`}
                                 onClick={() => handleStatusChange(sId, "present")}
                                 title="Keldi"
@@ -416,8 +416,8 @@ export default function AttendanceMarkingPage() {
                                 variant="ghost"
                                 className={`h-9 w-9 p-0 rounded-full transition-all ${
                                   currentStatus === "late"
-                                    ? "bg-amber-100 text-amber-700 ring-2 ring-amber-500 ring-offset-2"
-                                    : "text-gray-400 hover:bg-amber-50 hover:text-amber-600"
+                                    ? "bg-amber-500/20 text-amber-600 dark:text-amber-400 ring-2 ring-amber-500 ring-offset-2 dark:ring-offset-background"
+                                    : "text-muted-foreground hover:bg-amber-500/10 hover:text-amber-600"
                                 }`}
                                 onClick={() => handleStatusChange(sId, "late")}
                                 title="Kechikdi"
@@ -429,8 +429,8 @@ export default function AttendanceMarkingPage() {
                                 variant="ghost"
                                 className={`h-9 w-9 p-0 rounded-full transition-all ${
                                   currentStatus === "absent"
-                                    ? "bg-red-100 text-red-700 ring-2 ring-red-500 ring-offset-2"
-                                    : "text-gray-400 hover:bg-red-50 hover:text-red-600"
+                                    ? "bg-red-500/20 text-red-600 dark:text-red-400 ring-2 ring-red-500 ring-offset-2 dark:ring-offset-background"
+                                    : "text-muted-foreground hover:bg-red-500/10 hover:text-red-600"
                                 }`}
                                 onClick={() => handleStatusChange(sId, "absent")}
                                 title="Kelmadi"
@@ -471,15 +471,15 @@ export default function AttendanceMarkingPage() {
             </div>
           </TabsContent>          <TabsContent value="history">
             <Card className="shadow-sm overflow-hidden">
-              <CardHeader className="bg-gray-50/50 border-b">
+              <CardHeader className="bg-muted/50 border-b border-border">
                 <CardTitle className="text-xl">Davomat tarixi</CardTitle>
-                <p className="text-sm text-gray-500 font-normal">Oxirgi qayd etilgan davomatlar</p>
+                <p className="text-sm text-muted-foreground font-normal">Oxirgi qayd etilgan davomatlar</p>
               </CardHeader>
               <CardContent className="p-6">
                 {historyLoading ? (
                   <div className="py-20 flex flex-col items-center gap-4">
                     <LoadingSpinner />
-                    <p className="text-sm text-gray-400">Tarix yuklanmoqda...</p>
+                    <p className="text-sm text-muted-foreground">Tarix yuklanmoqda...</p>
                   </div>
                 ) : (
                   <div className="space-y-6">
@@ -502,20 +502,20 @@ export default function AttendanceMarkingPage() {
                        const time = recordDate.toLocaleTimeString("uz-UZ", { hour: '2-digit', minute: '2-digit' })
 
                        return (
-                       <div key={record._id || record.id || index} className="overflow-hidden border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
+                       <div key={record._id || record.id || index} className="overflow-hidden border border-border rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
                           {/* Top bar with stats highlight */}
-                          <div className="bg-gray-50/80 px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100">
+                          <div className="bg-muted/80 px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border">
                             <div className="flex items-center gap-4">
-                              <div className="bg-white p-2.5 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center min-w-[60px]">
+                              <div className="bg-card p-2.5 rounded-xl shadow-sm border border-border flex flex-col items-center min-w-[60px]">
                                 <span className="text-xs font-bold text-red-600 uppercase tracking-tighter">{recordDate.getDate()}</span>
-                                <span className="text-[10px] text-gray-400 font-medium uppercase tracking-widest">{uzbekWeekdays[recordDate.getDay()].substring(0, 3)}</span>
+                                <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">{uzbekWeekdays[recordDate.getDay()].substring(0, 3)}</span>
                               </div>
                               <div>
-                                <h4 className="font-bold text-gray-900 leading-tight">{dateStr}</h4>
-                                <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-500">
+                                <h4 className="font-bold text-foreground leading-tight">{dateStr}</h4>
+                                <div className="flex items-center gap-2 mt-0.5 text-xs text-muted-foreground">
                                   <Clock className="w-3 h-3" />
                                   <span>{time}</span>
-                                  <span className="text-gray-300 mx-1">•</span>
+                                  <span className="text-border mx-1">•</span>
                                   <span>{record.subject || "Umumiy dars"}</span>
                                 </div>
                               </div>
@@ -524,22 +524,22 @@ export default function AttendanceMarkingPage() {
                             <div className="flex items-center gap-2">
                                <div className="flex -space-x-2 mr-2 overflow-hidden">
                                   {presentStudents.slice(0, 4).map((s: any) => (
-                                    <Avatar key={s.id} className="h-7 w-7 border-2 border-white ring-1 ring-gray-100">
+                                    <Avatar key={s.id} className="h-7 w-7 border-2 border-card ring-1 ring-border">
                                       <AvatarImage src={s.profilePicture} />
-                                      <AvatarFallback className="bg-green-50 text-[10px] text-green-600">{s.fullname?.charAt(0)}</AvatarFallback>
+                                      <AvatarFallback className="bg-green-500/10 text-[10px] text-green-600 dark:text-green-400">{s.fullname?.charAt(0)}</AvatarFallback>
                                     </Avatar>
                                   ))}
                                   {presentStudents.length > 4 && (
-                                    <div className="h-7 w-7 rounded-full bg-gray-100 border-2 border-white ring-1 ring-gray-100 flex items-center justify-center text-[8px] font-bold text-gray-500">
+                                    <div className="h-7 w-7 rounded-full bg-muted border-2 border-card ring-1 ring-border flex items-center justify-center text-[8px] font-bold text-muted-foreground">
                                       +{presentStudents.length - 4}
                                     </div>
                                   )}
                                </div>
-                               <div className="flex items-center gap-1.5 bg-green-50 text-green-700 px-2.5 py-1 rounded-full text-xs font-bold border border-green-100">
+                               <div className="flex items-center gap-1.5 bg-green-500/10 text-green-600 dark:text-green-400 px-2.5 py-1 rounded-full text-xs font-bold border border-green-500/20">
                                  <Check className="w-3 h-3" />
                                  {presentStudents.length}
                                </div>
-                               <div className="flex items-center gap-1.5 bg-red-50 text-red-700 px-2.5 py-1 rounded-full text-xs font-bold border border-red-100">
+                               <div className="flex items-center gap-1.5 bg-red-500/10 text-red-600 dark:text-red-400 px-2.5 py-1 rounded-full text-xs font-bold border border-red-500/20">
                                  <X className="w-3 h-3" />
                                  {absentStudents.length}
                                </div>
@@ -550,20 +550,20 @@ export default function AttendanceMarkingPage() {
                             {/* Present List */}
                             <div className="space-y-3">
                               <h5 className="text-[10px] font-bold text-green-600 uppercase tracking-widest flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-green-500 ring-4 ring-green-100"></span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-green-500 ring-4 ring-green-100 dark:ring-green-950"></span>
                                 Kelganlar
                               </h5>
                               <div className="space-y-2">
                                 {presentStudents.length > 0 ? presentStudents.map((s: any) => (
-                                  <div key={s.id} className="flex items-center gap-2 p-1.5 hover:bg-gray-50 rounded-lg transition-colors group">
-                                     <Avatar className="h-6 w-6 border-gray-100 group-hover:scale-110 transition-transform">
+                                  <div key={s.id} className="flex items-center gap-2 p-1.5 hover:bg-muted rounded-lg transition-colors group">
+                                     <Avatar className="h-6 w-6 border-border group-hover:scale-110 transition-transform">
                                        <AvatarImage src={s.profilePicture} />
-                                       <AvatarFallback className="bg-gray-50 text-[10px] font-bold">{s.fullname?.charAt(0)}</AvatarFallback>
+                                       <AvatarFallback className="bg-muted text-[10px] font-bold text-muted-foreground">{s.fullname?.charAt(0)}</AvatarFallback>
                                      </Avatar>
-                                     <span className="text-xs font-medium text-gray-700 truncate">{s.fullname}</span>
+                                     <span className="text-xs font-medium text-muted-foreground truncate">{s.fullname}</span>
                                   </div>
                                 )) : (
-                                  <p className="text-[10px] text-gray-400 italic py-2">Hali hech kim yo'q</p>
+                                  <p className="text-[10px] text-muted-foreground italic py-2">Hali hech kim yo'q</p>
                                 )}
                               </div>
                             </div>
@@ -571,20 +571,20 @@ export default function AttendanceMarkingPage() {
                             {/* Late List */}
                             <div className="space-y-3">
                               <h5 className="text-[10px] font-bold text-amber-600 uppercase tracking-widest flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 ring-4 ring-amber-100"></span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 ring-4 ring-amber-100 dark:ring-amber-950"></span>
                                 Kechikkanlar
                               </h5>
                               <div className="space-y-2">
                                 {lateStudents.length > 0 ? lateStudents.map((s: any) => (
-                                  <div key={s.id} className="flex items-center gap-2 p-1.5 hover:bg-gray-50 rounded-lg transition-colors group">
-                                     <Avatar className="h-6 w-6 border-gray-100 group-hover:scale-110 transition-transform">
+                                  <div key={s.id} className="flex items-center gap-2 p-1.5 hover:bg-muted rounded-lg transition-colors group">
+                                     <Avatar className="h-6 w-6 border-border group-hover:scale-110 transition-transform">
                                        <AvatarImage src={s.profilePicture} />
-                                       <AvatarFallback className="bg-gray-50 text-[10px] font-bold">{s.fullname?.charAt(0)}</AvatarFallback>
+                                       <AvatarFallback className="bg-muted text-[10px] font-bold text-muted-foreground">{s.fullname?.charAt(0)}</AvatarFallback>
                                      </Avatar>
-                                     <span className="text-xs font-medium text-gray-700 truncate">{s.fullname}</span>
+                                     <span className="text-xs font-medium text-muted-foreground truncate">{s.fullname}</span>
                                   </div>
                                 )) : (
-                                  <p className="text-[10px] text-gray-400 italic py-2">Kechikkanlar yo'q</p>
+                                  <p className="text-[10px] text-muted-foreground italic py-2">Kechikkanlar yo'q</p>
                                 )}
                               </div>
                             </div>
@@ -592,20 +592,20 @@ export default function AttendanceMarkingPage() {
                             {/* Absent List */}
                             <div className="space-y-3">
                               <h5 className="text-[10px] font-bold text-red-600 uppercase tracking-widest flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-red-500 ring-4 ring-red-100"></span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-red-500 ring-4 ring-red-100 dark:ring-red-950"></span>
                                 Kelmaganlar
                               </h5>
                               <div className="space-y-2">
                                 {absentStudents.length > 0 ? absentStudents.map((s: any) => (
-                                  <div key={s.id} className="flex items-center gap-2 p-1.5 hover:bg-gray-50 rounded-lg transition-colors group">
-                                     <Avatar className="h-6 w-6 border-gray-100 group-hover:scale-110 transition-transform">
+                                  <div key={s.id} className="flex items-center gap-2 p-1.5 hover:bg-muted rounded-lg transition-colors group">
+                                     <Avatar className="h-6 w-6 border-border group-hover:scale-110 transition-transform">
                                        <AvatarImage src={s.profilePicture} />
-                                       <AvatarFallback className="bg-gray-50 text-[10px] font-bold">{s.fullname?.charAt(0)}</AvatarFallback>
+                                       <AvatarFallback className="bg-muted text-[10px] font-bold text-muted-foreground">{s.fullname?.charAt(0)}</AvatarFallback>
                                      </Avatar>
-                                     <span className="text-xs font-medium text-gray-700 truncate">{s.fullname}</span>
+                                     <span className="text-xs font-medium text-muted-foreground truncate">{s.fullname}</span>
                                   </div>
                                 )) : (
-                                  <p className="text-[10px] text-gray-400 italic py-2">Barakalla, hamma kelgan!</p>
+                                  <p className="text-[10px] text-muted-foreground italic py-2">Barakalla, hamma kelgan!</p>
                                 )}
                               </div>
                             </div>
@@ -616,11 +616,11 @@ export default function AttendanceMarkingPage() {
                     
                     {(!history || history.length === 0) && (
                       <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
-                        <div className="w-20 h-20 bg-gray-50 text-gray-200 rounded-full flex items-center justify-center mb-6 border border-dashed border-gray-200">
+                        <div className="w-20 h-20 bg-muted text-muted-foreground/30 rounded-full flex items-center justify-center mb-6 border border-dashed border-border">
                            <Calendar className="w-10 h-10" />
                         </div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-2">Davomat tarixi topilmadi</h3>
-                        <p className="text-gray-500 max-w-sm mb-8 text-sm">
+                        <h3 className="text-lg font-bold text-foreground mb-2">Davomat tarixi topilmadi</h3>
+                        <p className="text-muted-foreground max-w-sm mb-8 text-sm">
                            Ushbu sinf uchun hali hech qanday davomat qayd etilmagan.
                         </p>
                         <Button onClick={() => setActiveTab("mark")} className="bg-red-600 hover:bg-red-700">
@@ -636,13 +636,13 @@ export default function AttendanceMarkingPage() {
         </Tabs>
       ) : (
         !classesLoading && (
-          <Card className="bg-gray-50 border-dashed border-2 border-gray-200">
+          <Card className="bg-muted/50 border-dashed border-2 border-border">
             <CardContent className="p-12 text-center flex flex-col items-center">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 text-red-100">
+              <div className="w-16 h-16 bg-card rounded-full flex items-center justify-center shadow-sm mb-4 text-red-100 dark:text-red-950">
                 <AlertCircle className="h-8 w-8 text-red-500" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Sinf tanlanmagan</h3>
-              <p className="text-gray-500 max-w-sm">
+              <h3 className="text-lg font-semibold text-foreground mb-2">Sinf tanlanmagan</h3>
+              <p className="text-muted-foreground max-w-sm">
                 Davomat qilish yoki tarixni ko'rish uchun yuqoridagi ro'yxatdan sinfni tanlang
               </p>
             </CardContent>
@@ -651,10 +651,10 @@ export default function AttendanceMarkingPage() {
       )}
       {/* Result Modal */}
       <Dialog open={isResultModalOpen} onOpenChange={setIsResultModalOpen}>
-        <DialogContent className="sm:max-w-md rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl bg-white/95 backdrop-blur-xl">
+        <DialogContent className="sm:max-w-md rounded-[2rem] p-0 overflow-hidden border border-border shadow-2xl bg-card/95 backdrop-blur-xl">
           <div className="p-8 text-center space-y-6">
             <div className={`mx-auto w-20 h-20 rounded-full flex items-center justify-center ${
-              resultData?.success ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
+              resultData?.success ? 'bg-green-100 dark:bg-green-950 text-green-600' : 'bg-red-100 dark:bg-red-950 text-red-600'
             }`}>
               {resultData?.success ? (
                 <CheckCircle2 className="w-10 h-10" />
@@ -664,26 +664,26 @@ export default function AttendanceMarkingPage() {
             </div>
             
             <div className="space-y-2">
-              <DialogTitle className="text-2xl font-black text-gray-900">
+              <DialogTitle className="text-2xl font-black text-foreground">
                 {resultData?.title}
               </DialogTitle>
-              <DialogDescription className="text-gray-500 font-medium">
+              <DialogDescription className="text-muted-foreground font-medium">
                 {resultData?.description}
               </DialogDescription>
             </div>
 
             {resultData?.success && resultData.stats && (
-              <div className="grid grid-cols-3 gap-2 py-4 bg-gray-50 rounded-2xl border border-gray-100">
+              <div className="grid grid-cols-3 gap-2 py-4 bg-muted rounded-2xl border border-border">
                 <div className="space-y-1">
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Keldi</p>
+                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Keldi</p>
                   <p className="text-xl font-black text-green-600">{resultData.stats.present_count}</p>
                 </div>
-                <div className="space-y-1 border-x border-gray-200">
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Kechikdi</p>
+                <div className="space-y-1 border-x border-border">
+                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Kechikdi</p>
                   <p className="text-xl font-black text-amber-500">{resultData.stats.late_count}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Kelmadi</p>
+                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Kelmadi</p>
                   <p className="text-xl font-black text-red-500">{resultData.stats.absent_count}</p>
                 </div>
               </div>

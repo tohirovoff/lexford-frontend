@@ -131,7 +131,7 @@ export default function SchedulePage() {
 
   const renderSchedule = (shiftData: any[], shiftNumber: 1 | 2) => (
     <div className={cn(
-      "bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] shadow-2xl border border-gray-100 print:shadow-none print:p-0 print:border-none relative",
+      "bg-card p-8 rounded-[2.5rem] shadow-2xl border border-border print:shadow-none print:p-0 print:border-none relative",
       `shift-container-${shiftNumber}`,
       activeShift !== shiftNumber && "print:block hidden",
       isFetching && "opacity-50 pointer-events-none"
@@ -151,7 +151,7 @@ export default function SchedulePage() {
                 {shiftNumber}-SMENA
             </div>
          </div>
-         <div className="text-right text-[10px] font-bold text-gray-400">
+         <div className="text-right text-[10px] font-bold text-muted-foreground">
             2025-2026 o'quv yili
          </div>
       </div>
@@ -169,16 +169,14 @@ export default function SchedulePage() {
                   key={lessonIndex} 
                   className={cn(
                     "p-4 rounded-3xl border transition-all duration-300 relative group",
-                    lessonColors[0].bg,
-                    lessonColors[0].border,
+                    "bg-red-500/5 border-red-500/10 dark:bg-red-950/20 dark:border-red-950/30",
                     "hover:shadow-xl relative z-10",
-                    isEditing && activeShift === shiftNumber && "ring-2 ring-red-100",
+                    isEditing && activeShift === shiftNumber && "ring-2 ring-red-500/20",
                     "print:shadow-none print:p-3 lesson-card-print"
                   )}
                 >
                   <div className={cn(
-                    "flex items-center gap-2 text-[10px] font-black uppercase tracking-tighter mb-2",
-                    lessonColors[0].text,
+                    "flex items-center gap-2 text-[10px] font-black uppercase tracking-tighter mb-2 text-red-600 dark:text-red-400",
                     "print:text-red-700"
                   )}>
                      <Clock className="w-3 h-3" />
@@ -191,14 +189,13 @@ export default function SchedulePage() {
                         placeholder="Fan nomi" 
                         value={lesson.subject} 
                         onChange={(e) => handleUpdateLesson(shiftNumber, dayIndex, lessonIndex, 'subject', e.target.value)}
-                        className="h-10 text-sm font-bold rounded-xl border-gray-200 bg-white/50"
+                        className="h-10 text-sm font-bold rounded-xl border-border bg-background text-foreground focus:bg-background/80"
                       />
                     </div>
                   ) : (
                     <div className="py-1">
                       <p className={cn(
-                        "font-black text-lg print:text-base subject-text",
-                        lessonColors[0].text
+                        "font-black text-lg print:text-base subject-text text-red-700 dark:text-red-300"
                       )}>
                         {lesson.subject || "..."}
                       </p>
@@ -218,13 +215,13 @@ export default function SchedulePage() {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 print:hidden">
         <div>
-          <h1 className="text-3xl font-black text-gray-900 flex items-center gap-3">
-            <div className="p-2 bg-red-100 rounded-xl">
-              <CalendarIcon className="w-8 h-8 text-red-600" />
+          <h1 className="text-3xl font-black text-foreground flex items-center gap-3">
+            <div className="p-2 bg-red-500/10 rounded-xl">
+              <CalendarIcon className="w-8 h-8 text-red-600 dark:text-red-400" />
             </div>
             Dars Jadvali {isAdminOrTeacher && "- Boshqaruv"}
           </h1>
-          <p className="text-gray-500 mt-2 font-medium">
+          <p className="text-muted-foreground mt-2 font-medium">
             {isAdminOrTeacher 
               ? "Barcha sinflar uchun dars jadvallarini boshqarish" 
               : `${selectedClassName} dars jadvali`}
@@ -232,14 +229,14 @@ export default function SchedulePage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex bg-gray-100 p-1 rounded-2xl border border-gray-200">
-             <button onClick={() => setActiveShift(1)} className={cn("px-4 py-2 rounded-xl text-sm font-bold", activeShift === 1 ? "bg-white text-red-600 shadow-sm" : "text-gray-500")}>1-Smena</button>
-             <button onClick={() => setActiveShift(2)} className={cn("px-4 py-2 rounded-xl text-sm font-bold", activeShift === 2 ? "bg-white text-red-600 shadow-sm" : "text-gray-500")}>2-Smena</button>
+          <div className="flex bg-muted p-1 rounded-2xl border border-border">
+             <button onClick={() => setActiveShift(1)} className={cn("px-4 py-2 rounded-xl text-sm font-bold transition-all", activeShift === 1 ? "bg-card text-red-600 shadow-sm" : "text-muted-foreground hover:text-foreground")}>1-Smena</button>
+             <button onClick={() => setActiveShift(2)} className={cn("px-4 py-2 rounded-xl text-sm font-bold transition-all", activeShift === 2 ? "bg-card text-red-600 shadow-sm" : "text-muted-foreground hover:text-foreground")}>2-Smena</button>
           </div>
 
           {isAdminOrTeacher && (
             <Select value={selectedClassId} onValueChange={(val) => { setSelectedClassId(val); setIsEditing(false); }}>
-              <SelectTrigger className="w-[200px] h-12 rounded-2xl border-gray-200 bg-white shadow-sm font-bold">
+              <SelectTrigger className="w-[200px] h-12 rounded-2xl border-border bg-card shadow-sm font-bold text-foreground">
                 <SelectValue placeholder="Sinfni tanlang" />
               </SelectTrigger>
               <SelectContent className="z-[110]">
@@ -272,8 +269,8 @@ export default function SchedulePage() {
       </div>
 
       {!activeClassId && !isAdminOrTeacher && (
-        <Card className="bg-amber-50 border-amber-200 px-4">
-          <CardContent className="p-12 text-center space-y-4 text-amber-900 border-none shadow-none">
+        <Card className="bg-amber-500/10 border-amber-500/20 px-4">
+          <CardContent className="p-12 text-center space-y-4 text-amber-600 dark:text-amber-400 border-none shadow-none">
             <AlertCircle className="w-12 h-12 mx-auto" />
             <h2 className="text-xl font-bold">Sizga sinf biriktirilmagan</h2>
           </CardContent>

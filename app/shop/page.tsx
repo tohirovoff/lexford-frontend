@@ -546,15 +546,15 @@ export default function Shop() {
                   )}
                 </CardFooter>
               </Card>
-            )
-          })}
+             )
+           })}
         </div>
       )) : (
         <div className="space-y-6">
           {purchases.length === 0 ? (
             <Card className="p-20 text-center border-dashed border-2">
-              <History className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-              <p className="text-gray-500 font-medium">Hozircha hech qanday xaridlar mavjud emas.</p>
+              <History className="w-16 h-16 mx-auto text-muted-foreground/30 mb-4" />
+              <p className="text-muted-foreground font-medium">Hozircha hech qanday xaridlar mavjud emas.</p>
             </Card>
           ) : (
             <div className="bg-card rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden border border-border">
@@ -575,7 +575,7 @@ export default function Shop() {
                     <tr key={purchase.id} className="border-b border-border hover:bg-muted/30 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-xl overflow-hidden bg-gray-100">
+                          <div className="w-12 h-12 rounded-xl overflow-hidden bg-muted">
                              <img src={getImageUrl(purchase.item?.image_url) || "/placeholder.png"} className="w-full h-full object-cover" />
                           </div>
                           <div>
@@ -592,26 +592,26 @@ export default function Shop() {
                         </td>
                       )}
                       <td className="px-6 py-4 text-center">
-                        <Badge variant="secondary" className="bg-yellow-50 text-yellow-700 border-yellow-100">
+                        <Badge variant="secondary" className="bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20">
                           {purchase.price_paid} 🪙
                         </Badge>
                       </td>
-                      <td className="px-6 py-4 text-center text-sm text-gray-500">
+                      <td className="px-6 py-4 text-center text-sm text-muted-foreground">
                         {new Date(purchase.createdAt).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 text-center">
                         {purchase.status === 'pending' && (
-                          <Badge className="bg-orange-100 text-orange-600 border-none rounded-full flex items-center justify-center gap-1">
+                          <Badge className="bg-orange-500/10 text-orange-600 dark:text-orange-400 border-none rounded-full flex items-center justify-center gap-1">
                             <Clock className="w-3 h-3" /> Kutilmoqda
                           </Badge>
                         )}
                         {purchase.status === 'completed' && (
-                          <Badge className="bg-green-100 text-green-600 border-none rounded-full flex items-center justify-center gap-1">
+                          <Badge className="bg-green-500/10 text-green-600 dark:text-green-400 border-none rounded-full flex items-center justify-center gap-1">
                             <CheckCircle className="w-3 h-3" /> Yakunlandi
                           </Badge>
                         )}
                         {purchase.status === 'cancelled' && (
-                          <Badge className="bg-red-100 text-red-600 border-none rounded-full flex items-center justify-center gap-1">
+                          <Badge className="bg-red-500/10 text-red-600 dark:text-red-400 border-none rounded-full flex items-center justify-center gap-1">
                             <X className="w-3 h-3" /> Bekor qilindi
                           </Badge>
                         )}
@@ -624,17 +624,17 @@ export default function Shop() {
                                  <Button 
                                    size="sm" 
                                    onClick={() => handleStatusUpdate(purchase.id, 'completed')}
-                                   className="bg-green-600 hover:bg-green-700 h-8 text-xs rounded-lg"
+                                   className="bg-green-600 hover:bg-green-700 h-8 text-xs rounded-lg text-white"
                                  >
-                                    Tasdiqlash
+                                     Tasdiqlash
                                  </Button>
                                  <Button 
                                    size="sm" 
                                    variant="outline"
                                    onClick={() => handleStatusUpdate(purchase.id, 'cancelled')}
-                                   className="h-8 text-xs rounded-lg text-red-600 border-red-100 hover:bg-red-50"
+                                   className="h-8 text-xs rounded-lg text-red-600 border-red-500/20 hover:bg-red-500/10 dark:hover:bg-red-950/20"
                                  >
-                                    Bekor qilish
+                                     Bekor qilish
                                  </Button>
                                </>
                              )}
@@ -642,7 +642,7 @@ export default function Shop() {
                                size="sm" 
                                variant="ghost" 
                                onClick={() => handleDeletePurchase(purchase.id)}
-                               className="h-8 w-8 p-0 text-gray-400 hover:text-red-600"
+                               className="h-8 w-8 p-0 text-muted-foreground hover:text-red-600"
                              >
                                 <Trash2 className="w-4 h-4" />
                              </Button>
@@ -661,13 +661,13 @@ export default function Shop() {
 
       {/* Modern Dialog Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-xl rounded-2xl sm:rounded-[2.5rem] p-0 overflow-hidden border-none shadow-3xl bg-white/95 backdrop-blur-xl max-h-[90vh]">
+        <DialogContent className="sm:max-w-xl rounded-2xl sm:rounded-[2.5rem] p-0 overflow-hidden border border-border shadow-3xl bg-card/95 backdrop-blur-xl max-h-[90vh]">
           <div className="p-4 sm:p-8 space-y-6 sm:space-y-8 overflow-y-auto max-h-[85vh]">
             <DialogHeader>
-              <DialogTitle className="text-xl sm:text-3xl font-black text-gray-900 border-b pb-4 border-gray-100">
+              <DialogTitle className="text-xl sm:text-3xl font-black text-foreground border-b pb-4 border-border">
                 {editingItem ? "Mahsulotni yangilash" : "Yangi mahsulot"}
               </DialogTitle>
-              <DialogDescription className="text-gray-500 font-medium">
+              <DialogDescription className="text-muted-foreground font-medium">
                 Do'konga o'quvchilar uchun qiziqarli yangilik qo'shing.
               </DialogDescription>
             </DialogHeader>
@@ -676,17 +676,17 @@ export default function Shop() {
               <div className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-xs font-black text-gray-400 uppercase tracking-widest pl-1">Sarlavha *</label>
+                    <label className="text-xs font-black text-muted-foreground uppercase tracking-widest pl-1">Sarlavha *</label>
                     <Input 
                       placeholder="Masalan: 1 kunlik kiyim tanlash" 
                       required 
                       value={formData.name} 
                       onChange={(e) => setFormData({...formData, name: e.target.value})}
-                      className="rounded-2xl border-gray-100 bg-gray-50/50 h-12 focus:bg-white transition-all shadow-sm" 
+                      className="rounded-2xl border-border bg-muted/50 h-12 focus:bg-background text-foreground transition-all shadow-sm" 
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-black text-gray-400 uppercase tracking-widest pl-1">Narxi (Coin) *</label>
+                    <label className="text-xs font-black text-muted-foreground uppercase tracking-widest pl-1">Narxi (Coin) *</label>
                     <div className="relative">
                       <Input 
                         type="number" 
@@ -694,7 +694,7 @@ export default function Shop() {
                         min="0"
                         value={formData.price_coins} 
                         onChange={(e) => setFormData({...formData, price_coins: e.target.value})}
-                        className="rounded-2xl border-gray-100 bg-gray-50/50 h-12 pl-10 focus:bg-white transition-all shadow-sm" 
+                        className="rounded-2xl border-border bg-muted/50 h-12 pl-10 focus:bg-background text-foreground transition-all shadow-sm" 
                       />
                       <Coins className="absolute left-3.5 top-3.5 w-5 h-5 text-yellow-500" />
                     </div>
@@ -702,34 +702,34 @@ export default function Shop() {
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="text-xs font-black text-gray-400 uppercase tracking-widest pl-1">Tavsif</label>
+                  <label className="text-xs font-black text-muted-foreground uppercase tracking-widest pl-1">Tavsif</label>
                   <Textarea 
                     placeholder="Mahsulot haqida batafsil ma'lumot..." 
                     rows={3} 
                     value={formData.description} 
                     onChange={(e) => setFormData({...formData, description: e.target.value})}
-                    className="rounded-2xl border-gray-100 bg-gray-50/50 focus:bg-white transition-all shadow-sm resize-none" 
+                    className="rounded-2xl border-border bg-muted/50 focus:bg-background text-foreground transition-all shadow-sm resize-none" 
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                    <div className="space-y-2">
-                     <label className="text-xs font-black text-gray-400 uppercase tracking-widest pl-1">Miqdori (null=cheksiz)</label>
+                     <label className="text-xs font-black text-muted-foreground uppercase tracking-widest pl-1">Miqdori (null=cheksiz)</label>
                      <Input 
                        type="number" 
                        min="0"
                        placeholder="Cheksiz"
                        value={formData.stock} 
                        onChange={(e) => setFormData({...formData, stock: e.target.value})}
-                       className="rounded-2xl border-gray-100 bg-gray-50/50 h-12 focus:bg-white transition-all shadow-sm" 
+                       className="rounded-2xl border-border bg-muted/50 h-12 focus:bg-background text-foreground transition-all shadow-sm" 
                      />
                    </div>
                    <div className="space-y-2">
-                     <label className="text-xs font-black text-gray-400 uppercase tracking-widest pl-1">Turi</label>
+                     <label className="text-xs font-black text-muted-foreground uppercase tracking-widest pl-1">Turi</label>
                      <select 
                        value={formData.item_type} 
                        onChange={(e) => setFormData({...formData, item_type: e.target.value})}
-                       className="w-full px-4 rounded-2xl border-gray-100 bg-gray-50/50 h-12 focus:bg-white transition-all shadow-sm text-sm outline-none focus:ring-2 focus:ring-red-500/20"
+                       className="w-full px-4 rounded-2xl border-border bg-muted/50 h-12 focus:bg-background text-foreground transition-all shadow-sm text-sm outline-none focus:ring-2 focus:ring-red-500/20 dark:bg-muted"
                      >
                        <option value="Virtual">Virtual</option>
                        <option value="Jismoniy">Jismoniy</option>
@@ -740,11 +740,11 @@ export default function Shop() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                    <div className="space-y-2">
-                     <label className="text-xs font-black text-gray-400 uppercase tracking-widest pl-1">Aktiv holati</label>
+                     <label className="text-xs font-black text-muted-foreground uppercase tracking-widest pl-1">Aktiv holati</label>
                      <select 
                        value={formData.is_active} 
                        onChange={(e) => setFormData({...formData, is_active: e.target.value})}
-                       className="w-full px-4 rounded-2xl border-gray-100 bg-gray-50/50 h-12 focus:bg-white transition-all shadow-sm text-sm outline-none focus:ring-2 focus:ring-red-500/20"
+                       className="w-full px-4 rounded-2xl border-border bg-muted/50 h-12 focus:bg-background text-foreground transition-all shadow-sm text-sm outline-none focus:ring-2 focus:ring-red-500/20 dark:bg-muted"
                      >
                        <option value="true">Sotuvga chiqarish</option>
                        <option value="false">Hozircha yashirin</option>
@@ -752,20 +752,20 @@ export default function Shop() {
                    </div>
                    
                    <div className="space-y-2">
-                     <label className="text-xs font-black text-gray-400 uppercase tracking-widest pl-1">Rasm</label>
+                     <label className="text-xs font-black text-muted-foreground uppercase tracking-widest pl-1">Rasm</label>
                      <div 
                         onClick={() => document.getElementById("file-upload")?.click()}
-                        className="flex items-center gap-3 px-4 rounded-2xl border border-dashed border-gray-300 bg-gray-50 h-12 cursor-pointer hover:bg-gray-100 transition shadow-sm overflow-hidden"
+                        className="flex items-center gap-3 px-4 rounded-2xl border border-dashed border-border bg-muted h-12 cursor-pointer hover:bg-muted/80 transition shadow-sm overflow-hidden"
                      >
-                        <Upload className="w-5 h-5 text-gray-400 flex-shrink-0" />
-                        <span className="text-sm text-gray-500 truncate">{imageFile ? imageFile.name : "Rasm yuklang"}</span>
+                        <Upload className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                        <span className="text-sm text-muted-foreground truncate">{imageFile ? imageFile.name : "Rasm yuklang"}</span>
                         <input id="file-upload" type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
                      </div>
                    </div>
                 </div>
 
                 {imagePreview && (
-                  <div className="relative w-full h-32 rounded-2xl overflow-hidden border border-gray-100 group">
+                  <div className="relative w-full h-32 rounded-2xl overflow-hidden border border-border group">
                     <img src={imagePreview || "/placeholder.jpg"} alt="Preview" className="w-full h-full object-cover" />
                     <button 
                       type="button" 
@@ -778,12 +778,12 @@ export default function Shop() {
                 )}
               </div>
 
-              <DialogFooter className="pt-4 border-t border-gray-100 flex gap-4">
+              <DialogFooter className="pt-4 border-t border-border flex gap-4">
                 <Button 
                   type="button" 
                   variant="ghost" 
                   onClick={handleCloseModal}
-                  className="rounded-2xl px-8 h-12 font-bold"
+                  className="rounded-2xl px-8 h-12 font-bold text-muted-foreground"
                 >
                   Bekor qilish
                 </Button>

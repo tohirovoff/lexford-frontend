@@ -301,14 +301,14 @@ export default function ClassListPage() {
                     {cls.studentCount || cls.students?.length || 0} o'quvchi
                   </span>
                 </div>
-                <div className="flex items-center gap-2 text-amber-600">
+                <div className="flex items-center gap-2 text-amber-600 dark:text-amber-500">
                   <Trophy className="h-4 w-4" />
                   <span className="text-sm font-medium">
                     {cls.totalCoins || 0} tanga
                   </span>
                 </div>
 
-                <div className="mt-4 pt-4 border-t border-gray-100">
+                <div className="mt-4 pt-4 border-t border-border">
                    {(() => {
                      const today = new Date().toISOString().split('T')[0]
                      const todayAttendance = cls.attendances?.find((a: any) => {
@@ -320,18 +320,18 @@ export default function ClassListPage() {
                        const presentCount = (todayAttendance.present_student_ids || []).length
                        const total = cls.studentCount || cls.students?.length || 0
                        return (
-                         <div className="flex items-center justify-between bg-green-50 p-2 rounded-lg border border-green-100">
-                            <div className="flex items-center gap-2 text-green-700">
-                               <CheckCircle2 className="h-4 w-4" />
-                               <span className="text-xs font-bold uppercase tracking-tight">Bugun keldi</span>
-                            </div>
-                            <span className="text-sm font-black text-green-700">{presentCount}/{total}</span>
-                         </div>
+                         <div className="flex items-center justify-between bg-green-500/10 p-2 rounded-lg border border-green-500/20">
+                             <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+                                <CheckCircle2 className="h-4 w-4" />
+                                <span className="text-xs font-bold uppercase tracking-tight">Bugun keldi</span>
+                             </div>
+                             <span className="text-sm font-black text-green-600 dark:text-green-400">{presentCount}/{total}</span>
+                          </div>
                        )
                      }
 
                      return (
-                       <div className="flex items-center gap-2 bg-amber-50 p-2 rounded-lg border border-amber-100 text-amber-700">
+                       <div className="flex items-center gap-2 bg-amber-500/10 p-2 rounded-lg border border-amber-500/20 text-amber-600 dark:text-amber-400">
                           <AlertCircle className="h-4 w-4" />
                           <span className="text-[10px] font-bold uppercase tracking-tight">O'qituvchi hali davomat qilmadi</span>
                        </div>
@@ -341,7 +341,7 @@ export default function ClassListPage() {
               </div>
               <Button
                 variant="outline"
-                className="w-full mt-4 border-red-200 text-red-700 hover:bg-red-50 bg-transparent"
+                className="w-full mt-4 border-red-500/20 text-red-700 dark:text-red-400 hover:bg-red-500/10 bg-transparent"
                 onClick={(e) => {
                   e.stopPropagation()
                   setSelectedClass(cls)
@@ -374,12 +374,12 @@ export default function ClassListPage() {
                 key={student._id || student.id}
                 className={`flex items-center gap-3 p-3 rounded-lg ${
                   index === 0
-                    ? "bg-amber-50 border border-amber-200"
+                    ? "bg-amber-500/10 border border-amber-500/30 text-amber-900 dark:text-amber-200"
                     : index === 1
-                      ? "bg-gray-100 border border-gray-200"
+                      ? "bg-muted border border-border text-foreground"
                       : index === 2
-                        ? "bg-orange-50 border border-orange-200"
-                        : "bg-white border border-gray-100"
+                        ? "bg-orange-500/10 border border-orange-500/30 text-orange-900 dark:text-orange-200"
+                        : "bg-card border border-border text-foreground"
                 }`}
               >
                 <div className="w-8 h-8 flex items-center justify-center">
@@ -390,25 +390,25 @@ export default function ClassListPage() {
                       }`}
                     />
                   ) : (
-                    <span className="text-gray-500 font-medium">{index + 1}</span>
+                    <span className="text-muted-foreground font-medium">{index + 1}</span>
                   )}
                 </div>
                 <Avatar>
                   <AvatarImage src={getProfileImageUrl(student.profile_picture || student.profilePicture)} />
-                  <AvatarFallback className="bg-red-100 text-red-700">{student.fullname?.charAt(0) || "S"}</AvatarFallback>
+                  <AvatarFallback className="bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300">{student.fullname?.charAt(0) || "S"}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
                   <p className="font-semibold text-foreground">{student.fullname || student.username}</p>
                   <p className="text-sm text-muted-foreground">@{student.username}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-amber-600">{student.coinBalance || student.coins || 0}</p>
-                  <p className="text-xs text-gray-500">tanga</p>
+                  <p className="font-bold text-amber-600 dark:text-amber-500">{student.coinBalance || student.coins || 0}</p>
+                  <p className="text-xs text-muted-foreground">tanga</p>
                 </div>
               </div>
             ))}
             {(!leaderboard || leaderboard.length === 0) && (
-              <p className="text-center py-8 text-gray-500">
+              <p className="text-center py-8 text-muted-foreground">
                 Ushbu sinfda o'quvchilar yo'q yoki reyting bo'sh
               </p>
             )}
@@ -428,7 +428,7 @@ export default function ClassListPage() {
           <form onSubmit={handleUpdateTeacher} className="space-y-4 py-4">
             <div className="space-y-2">
               <Label className="text-sm text-muted-foreground">Sinf</Label>
-              <div className="p-3 rounded-lg bg-red-50/50 border border-red-100">
+              <div className="p-3 rounded-lg bg-red-500/5 border border-red-500/15">
                 <p className="font-semibold text-foreground">{editingClass?.name}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">Hozirgi rahbar: {editingClass?.teacher?.fullname || "Tayinlanmagan"}</p>
               </div>

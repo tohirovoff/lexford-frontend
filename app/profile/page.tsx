@@ -121,10 +121,10 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 pt-4 md:pt-6">
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div className="bg-card rounded-xl shadow-sm border border-border p-6">
         <div className="flex flex-col sm:flex-row items-center gap-6">
           <div className="relative">
-            <div className="w-24 h-24 rounded-full bg-red-100 flex items-center justify-center overflow-hidden border-4 border-white shadow-lg relative">
+            <div className="w-24 h-24 rounded-full bg-red-100 dark:bg-red-950/50 flex items-center justify-center overflow-hidden border-4 border-card shadow-lg relative">
               {imagePreview || getImageUrl(user?.profile_picture) ? (
                 <img
                   src={imagePreview || getImageUrl(user?.profile_picture) || ""}
@@ -142,13 +142,13 @@ export default function ProfilePage() {
                   }}
                 />
               ) : (
-                <User className="w-12 h-12 text-red-600" />
+                <User className="w-12 h-12 text-red-600 dark:text-red-400" />
               )}
             </div>
             {isEditing && (
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="absolute bottom-0 right-0 w-8 h-8 bg-red-600 rounded-full flex items-center justify-center text-white shadow-lg hover:bg-red-700"
+                className="absolute bottom-0 right-0 w-8 h-8 bg-red-600 dark:bg-red-500 rounded-full flex items-center justify-center text-white shadow-lg hover:bg-red-700 dark:hover:bg-red-600"
               >
                 <Camera className="w-4 h-4" />
               </button>
@@ -157,16 +157,16 @@ export default function ProfilePage() {
           </div>
 
           <div className="flex-1 text-center sm:text-left">
-            <h1 className="text-2xl font-bold text-gray-900">{user?.fullname}</h1>
-            <p className="text-gray-500">@{user?.username}</p>
+            <h1 className="text-2xl font-bold text-foreground">{user?.fullname}</h1>
+            <p className="text-muted-foreground">@{user?.username}</p>
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mt-2">
               <span
                 className={`px-3 py-1 rounded-full text-xs font-medium
-                ${user?.role === "admin" ? "bg-red-100 text-red-700" : user?.role === "teacher" ? "bg-blue-100 text-blue-700" : "bg-green-100 text-green-700"}`}
+                ${user?.role === "admin" ? "bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300" : user?.role === "teacher" ? "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300" : "bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-300"}`}
               >
                 {getRoleLabel(user?.role)}
               </span>
-              {user?.class_name && <span className="text-sm text-gray-500">{user.class_name}</span>}
+              {user?.class_name && <span className="text-sm text-muted-foreground">{user.class_name}</span>}
             </div>
           </div>
 
@@ -184,7 +184,7 @@ export default function ProfilePage() {
                     grade: user?.grade || "",
                   })
                 }}
-                className="px-4 py-2 border border-red-600 text-red-600 rounded-lg font-medium hover:bg-red-50 flex items-center gap-2 text-sm"
+                className="px-4 py-2 border border-red-600 text-red-600 dark:border-red-500 dark:text-red-400 rounded-lg font-medium hover:bg-red-50 dark:hover:bg-red-950/30 flex items-center gap-2 text-sm"
               >
                 <Edit3 className="w-4 h-4" />
                 Profilni tahrirlash
@@ -195,41 +195,41 @@ export default function ProfilePage() {
       </div>
 
       {isEditing && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Profilni tahrirlash</h2>
+        <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+          <h2 className="text-lg font-semibold text-foreground mb-4">Profilni tahrirlash</h2>
           <form onSubmit={handleSubmit(onProfileSubmit)} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">To'liq ism</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">To'liq ism</label>
                 <input
                   type="text"
                   {...register("fullname")}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-red-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Username</label>
                 <input
                   type="text"
                   value={user?.username}
                   disabled
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                  className="w-full px-4 py-2 border border-border rounded-lg bg-muted text-muted-foreground"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Sinf</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Sinf</label>
                 <input
                   type="text"
                   {...register("class_name")}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-red-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Daraja/Baho</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-1">Daraja/Baho</label>
                 <input
                   type="text"
                   {...register("grade")}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                  className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-red-500"
                 />
               </div>
             </div>
@@ -251,7 +251,7 @@ export default function ProfilePage() {
                     fileInputRef.current.value = ""
                   }
                 }}
-                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 flex items-center gap-2"
+                className="px-4 py-2 border border-border text-foreground rounded-lg font-medium hover:bg-muted flex items-center gap-2"
               >
                 <X className="w-4 h-4" />
                 Bekor qilish
@@ -263,23 +263,23 @@ export default function ProfilePage() {
 
       {user?.role === "student" && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center">
-              <Coins className="w-6 h-6 text-red-600" />
+          <div className="bg-card rounded-xl shadow-sm border border-border p-6 flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-red-50 dark:bg-red-950/30 flex items-center justify-center">
+              <Coins className="w-6 h-6 text-red-600 dark:text-red-400" />
             </div>
             <div>
-              <p className="text-sm text-gray-500">Tangalar</p>
-              <p className="text-2xl font-bold text-gray-900">{user?.coins || 0}</p>
+              <p className="text-sm text-muted-foreground">Tangalar</p>
+              <p className="text-2xl font-bold text-foreground">{user?.coins || 0}</p>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center">
-              <AlertTriangle className="w-6 h-6 text-yellow-600" />
+          <div className="bg-card rounded-xl shadow-sm border border-border p-6 flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-yellow-50 dark:bg-yellow-950/30 flex items-center justify-center">
+              <AlertTriangle className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
             </div>
             <div>
-              <p className="text-sm text-gray-500">Jarimalar</p>
-              <p className="text-2xl font-bold text-gray-900">{userPenalties.length}</p>
+              <p className="text-sm text-muted-foreground">Jarimalar</p>
+              <p className="text-2xl font-bold text-foreground">{userPenalties.length}</p>
             </div>
           </div>
         </div>
@@ -287,29 +287,29 @@ export default function ProfilePage() {
 
       {user?.role === "student" && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">So'nggi bitimlar</h2>
+          <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+            <h2 className="text-lg font-semibold text-foreground mb-4">So'nggi bitimlar</h2>
             {loadingTransactions ? (
               <LoadingSpinner size="sm" />
             ) : recentTransactions.length > 0 ? (
               <div className="space-y-3">
                 {recentTransactions.map((tx: any) => (
-                  <div key={tx.id} className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
+                  <div key={tx.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                     <div className="flex items-center gap-3">
                       <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center ${tx.amount > 0 ? "bg-green-100" : "bg-red-100"}`}
+                        className={`w-8 h-8 rounded-full flex items-center justify-center ${tx.amount > 0 ? "bg-green-100 dark:bg-green-950" : "bg-red-100 dark:bg-red-950"}`}
                       >
-                        <Coins className={`w-4 h-4 ${tx.amount > 0 ? "text-green-600" : "text-red-600"}`} />
+                        <Coins className={`w-4 h-4 ${tx.amount > 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`} />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{tx.reason}</p>
-                        <p className="text-xs text-gray-500 flex items-center gap-1">
+                        <p className="text-sm font-medium text-foreground">{tx.reason}</p>
+                        <p className="text-xs text-muted-foreground flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
                           {new Date(tx.created_at).toLocaleDateString()}
                         </p>
                       </div>
                     </div>
-                    <span className={`font-semibold ${tx.amount > 0 ? "text-green-600" : "text-red-600"}`}>
+                    <span className={`font-semibold ${tx.amount > 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
                       {tx.amount > 0 ? "+" : ""}
                       {tx.amount}
                     </span>
@@ -317,35 +317,35 @@ export default function ProfilePage() {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-500 text-sm text-center py-4">Bitimlar mavjud emas</p>
+              <p className="text-muted-foreground text-sm text-center py-4">Bitimlar mavjud emas</p>
             )}
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">So'nggi jarimalar</h2>
+          <div className="bg-card rounded-xl shadow-sm border border-border p-6">
+            <h2 className="text-lg font-semibold text-foreground mb-4">So'nggi jarimalar</h2>
             {recentPenalties.length > 0 ? (
               <div className="space-y-3">
                 {recentPenalties.map((penalty: any) => (
-                  <div key={penalty.id} className="flex items-center justify-between p-3 rounded-lg bg-red-50">
+                  <div key={penalty.id} className="flex items-center justify-between p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-900 dark:text-red-200">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
-                        <AlertTriangle className="w-4 h-4 text-red-600" />
+                      <div className="w-8 h-8 rounded-full bg-red-100 dark:bg-red-950 flex items-center justify-center">
+                        <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{penalty.reason}</p>
-                        <p className="text-xs text-gray-500">{new Date(penalty.created_at).toLocaleDateString()}</p>
+                        <p className="text-sm font-medium text-foreground">{penalty.reason}</p>
+                        <p className="text-xs text-muted-foreground">{new Date(penalty.created_at).toLocaleDateString()}</p>
                       </div>
                     </div>
-                    <span className="font-semibold text-red-600">-{penalty.coin_penalty}</span>
+                    <span className="font-semibold text-red-600 dark:text-red-400">-{penalty.coin_penalty}</span>
                   </div>
                 ))}
               </div>
             ) : (
               <div className="text-center py-8">
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <TrendingUp className="w-6 h-6 text-green-600" />
+                <div className="w-12 h-12 bg-green-100 dark:bg-green-950/50 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <TrendingUp className="w-6 h-6 text-green-600 dark:text-green-400" />
                 </div>
-                <p className="text-gray-500 text-sm">Jarimalar yo'q! Ajoyib!</p>
+                <p className="text-muted-foreground text-sm">Jarimalar yo'q! Ajoyib!</p>
               </div>
             )}
           </div>
