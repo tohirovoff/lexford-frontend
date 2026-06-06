@@ -33,21 +33,27 @@ export default function ProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [updateUserMutation, { isLoading: isUpdating }] = useUpdateUserMutation()
-  const { data: transactions, isLoading: loadingTransactions } = useGetUserTransactionsQuery({ userId: user?.id }, {
+  const { data: transactionsResponse, isLoading: loadingTransactions } = useGetUserTransactionsQuery({ userId: user?.id }, {
     skip: !user?.id,
   })
-  const { data: allPenalties } = useGetAllPenaltiesQuery(undefined)
+  const { data: allPenaltiesResponse } = useGetAllPenaltiesQuery(undefined)
 
-  const auctionPenalties = allPenalties?.filter((p: any) => p.user_id === user?.id) || []
-  const transactionPenalties = transactions
-    ?.filter((t: any) => t.type === "penalty" && Number(t.amount) < 0)
+  const transactionsData = transactionsResponse?.data || transactionsResponse;
+  const transactionsList = Array.isArray(transactionsData) ? transactionsData : [];
+
+  const allPenaltiesData = allPenaltiesResponse?.data || allPenaltiesResponse;
+  const allPenaltiesList = Array.isArray(allPenaltiesData) ? allPenaltiesData : [];
+
+  const auctionPenalties = allPenaltiesList.filter((p: any) => p.user_id === user?.id)
+  const transactionPenalties = transactionsList
+    .filter((t: any) => t.type === "penalty" && Number(t.amount) < 0)
     .map((t: any) => ({
       id: t.id || t._id,
       user_id: t.user_id,
       coin_penalty: Math.abs(Number(t.amount)),
       reason: t.reason,
       created_at: t.createdAt || t.created_at,
-    })) || []
+    }))
     
   const userPenalties = [...auctionPenalties, ...transactionPenalties].sort(
     (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
@@ -107,7 +113,7 @@ export default function ProfilePage() {
     }
   }
 
-  const recentTransactions = transactions?.slice(0, 5) || []
+  const recentTransactions = transactionsList.slice(0, 5)
   const recentPenalties = userPenalties.slice(0, 3)
 
   const getRoleLabel = (role: string) => {
